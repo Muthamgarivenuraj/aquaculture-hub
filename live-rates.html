@@ -12,10 +12,10 @@
   .container{max-width:720px;margin:0 auto;padding:16px}
   header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
   .logo{font-weight:800;font-size:1.3rem}
-  a.back{padding:8px 14px;border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text)}
+  a.back{padding:8px 14px;border:1px solid var(--border);border-radius:10px;text-decoration:none;color:#0b1220}
   h2{margin:12px 0}
 
-  select,input{width:100%;padding:13px;border:1px solid var(--border);border-radius:12px;font-size:1rem;font-weight:600;background:#fff}
+  select,input,textarea{width:100%;padding:13px;border:1px solid var(--border);border-radius:12px;font-size:1rem;font-weight:600;background:#fff}
   input[readonly]{background:#f9fbff}
   label{display:block;margin:6px 0 4px;color:#334155;font-weight:700}
 
@@ -35,7 +35,6 @@
   .row:nth-child(even){background:#f9fbff}
   .left{display:flex;align-items:center;gap:8px;justify-content:flex-start;color:#1e66f5}
   .right{display:flex;align-items:center;justify-content:flex-end;color:#059669;font-weight:800}
-
   @media(max-width:640px){
     .head{display:none}
     .row{grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)}
@@ -49,6 +48,7 @@
   @keyframes blink-down{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.3;transform:translateY(2px)}}
 
   /* Harvest Calc */
+  .h3{margin:10px 0;color:#1e66f5;font-size:1.05rem;font-weight:800}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .kpi{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-top:1px dashed var(--border);font-weight:700}
   .total{font-size:1.1rem}
@@ -56,21 +56,21 @@
   .btn:disabled{opacity:.5;pointer-events:none}
   @media(max-width:640px){ .grid2{grid-template-columns:1fr} }
 
-  footer{text-align:center;margin:18px 0;color:var(--muted);font-size:.85rem}
+  footer{text-align:center;margin:18px 0;color:#5f6b85;font-size:.85rem}
 </style>
 </head>
 <body>
 <div class="container">
   <header>
-    <div class="logo" data-i18n="pageLive">Live Rates</div>
-    <a class="back" href="index.html" data-i18n="home">Home</a>
+    <div class="logo">Live Rates</div>
+    <a class="back" href="index.html">Home</a>
   </header>
 
   <h2 id="districtName">Nellore</h2>
 
   <div class="card pad" style="margin-bottom:10px">
-    <label data-i18n="district">Select District</label>
-    <select id="districtSelect" data-i18n-placeholder="district">
+    <label>Select District</label>
+    <select id="districtSelect">
       <option>Select District</option>
       <option>Nellore</option><option>West Godavari</option>
       <option>East Godavari</option><option>Krishna</option><option>Prakasam</option>
@@ -79,8 +79,8 @@
 
   <!-- Tabs -->
   <div class="tabs">
-    <div class="tab active" data-tab="shrimp" data-i18n="shrimp">Prawns</div>
-    <div class="tab" data-tab="harvest" data-i18n="harvest">Harvest</div>
+    <div class="tab active" data-tab="shrimp">Prawns</div>
+    <div class="tab" data-tab="harvest">Harvest</div>
   </div>
 
   <!-- Prawns List -->
@@ -92,15 +92,16 @@
     <div id="list"></div>
   </div>
 
-  <!-- Harvest Calculator -->
+  <!-- Harvest Calculator (no list) -->
   <div class="card" id="harvestCalc" style="display:none">
     <div class="pad">
+      <h3 class="h3">Ice Booking</h3>
       <div class="grid2">
         <div>
-          <label data-i18n="unit">Unit</label>
+          <label>Unit</label>
           <select id="unit">
-            <option value="ton" selected data-i18n="uTon">Tons</option>
-            <option value="can" data-i18n="uCan">Cans</option>
+            <option value="ton" selected>Tons</option>
+            <option value="can">Cans</option>
           </select>
         </div>
         <div>
@@ -111,18 +112,19 @@
 
       <div class="grid2" style="margin-top:10px">
         <div>
-          <label data-i18n="qty">Quantity</label>
+          <label>Quantity</label>
           <input id="qty" type="number" min="0" step="0.5" value="1" />
         </div>
         <div>
-          <label data-i18n="km">Distance (km)</label>
+          <label>Distance (km)</label>
           <input id="km" type="number" min="0" step="1" value="10" />
         </div>
       </div>
 
-      <div class="grid2" style="margin-top:10px">
+      <h3 class="h3" style="margin-top:16px">Van Booking</h3>
+      <div class="grid2">
         <div>
-          <label data-i18n="vehicle">Vehicle</label>
+          <label>Vehicle</label>
           <select id="vehicle">
             <option value="2">2 Ton Van — ₹100/km</option>
             <option value="5">5 Ton Van — ₹200/km</option>
@@ -131,17 +133,17 @@
           </select>
         </div>
         <div>
-          <label data-i18n="rate">Rate (₹/km)</label>
+          <label>Rate (₹/km)</label>
           <input id="vehRate" type="number" value="100" readonly />
         </div>
       </div>
 
-      <div class="kpi"><span data-i18n="iceCost">Ice cost</span> <strong id="iceCost">₹ 0</strong></div>
-      <div class="kpi"><span data-i18n="transCost">Transport cost</span> <strong id="transCost">₹ 0</strong></div>
-      <div class="kpi total"><span data-i18n="total">Total</span> <strong id="total">₹ 0</strong></div>
+      <!-- Only Transport + Total (no Ice cost row) -->
+      <div class="kpi"><span>Transport cost</span> <strong id="transCost">₹ 0</strong></div>
+      <div class="kpi total"><span>Total</span> <strong id="total">₹ 0</strong></div>
 
       <div style="margin-top:10px">
-        <a id="bookBtn" class="btn" href="#" target="_blank" rel="noopener" data-i18n="book">Book</a>
+        <a id="bookBtn" class="btn" href="#" target="_blank" rel="noopener">Book</a>
       </div>
     </div>
   </div>
@@ -150,24 +152,113 @@
 </div>
 
 <script>
-/* Vehicles */
-const VEHICLES = {
+/* -------- District -------- */
+const dSel=document.getElementById('districtSelect');
+const saved=localStorage.getItem('district');
+if(saved){ dSel.value=saved; document.getElementById('districtName').textContent=saved; }
+dSel.addEventListener('change',e=>{
+  localStorage.setItem('district',e.target.value);
+  document.getElementById('districtName').textContent=e.target.value;
+  render();
+});
+document.getElementById('yr').textContent=new Date().getFullYear();
+
+/* -------- Load rates.csv (shrimp only) -------- */
+const CSV_URL='rates.csv';
+const RATES={shrimp:{}, __loaded:false};
+
+async function loadCSV(){
+  if(RATES.__loaded) return;
+  try{
+    const res=await fetch(CSV_URL,{cache:'no-store'});
+    const text=await res.text();
+    for(const line of text.split(/\r?\n/)){
+      const clean=line.trim();
+      if(!clean || clean.startsWith('type,')) continue;
+      const parts=clean.split(',').map(s=>s.trim());
+      if(parts.length<4) continue;
+      const [type,district,key,priceStr]=parts;
+      const price=parseFloat(priceStr);
+      if(type!=='shrimp' || !district || !key || isNaN(price)) continue;
+      if(!RATES.shrimp[district]) RATES.shrimp[district]={};
+      RATES.shrimp[district][key]=price;
+    }
+    RATES.__loaded=true;
+  }catch(e){ console.warn('Failed to load rates.csv',e); }
+}
+
+/* -------- Arrows (yesterday vs today) -------- */
+function dateKey(d){return d.toISOString().slice(0,10)}
+function todayKey(){return dateKey(new Date())}
+function yesterdayKey(){const d=new Date(); d.setDate(d.getDate()-1); return dateKey(d)}
+function storageKey(dst,day){return `lr_shrimp_${dst}_${day}`}
+function trend(prev,curr){
+  if(prev==null||isNaN(prev)||curr==null||isNaN(curr)) return '';
+  if(curr>prev) return '<span class="trend up">▲</span>';
+  if(curr<prev) return '<span class="trend down">▼</span>';
+  return '';
+}
+
+/* -------- Render tabs -------- */
+let activeTab='shrimp';
+async function render(){
+  const district = localStorage.getItem('district') || 'Nellore';
+
+  if(activeTab==='shrimp'){
+    document.getElementById('prawnsList').style.display='block';
+    document.getElementById('harvestCalc').style.display='none';
+
+    await loadCSV();
+    const list=document.getElementById('list'); list.innerHTML='';
+    const yKey=yesterdayKey(), tKey=todayKey();
+    const prev = JSON.parse(localStorage.getItem(storageKey(district,yKey)) || '{}');
+    const curr = {};
+    for(let c=200;c>=30;c-=10){
+      const price = (RATES.shrimp[district]||{})[String(c)];
+      curr[c]=price??null;
+      list.insertAdjacentHTML('beforeend', `
+        <div class="row">
+          <div class="cell left">${trend(prev[c], price)} ${c}c</div>
+          <div class="cell right">${price!=null?`₹ ${price}`:'—'}</div>
+        </div>
+      `);
+    }
+    localStorage.setItem(storageKey(district,tKey), JSON.stringify(curr));
+  } else {
+    document.getElementById('prawnsList').style.display='none';
+    document.getElementById('harvestCalc').style.display='block';
+  }
+}
+
+/* -------- Tabs -------- */
+document.querySelectorAll('.tab').forEach(tb=>{
+  tb.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    tb.classList.add('active');
+    activeTab = tb.dataset.tab;
+    render();
+  });
+});
+
+/* -------- Harvest calculator -------- */
+const VEHICLES={
   "2":  {label:"2 Ton Van",  rate:100},
   "5":  {label:"5 Ton Van",  rate:200},
-  "8":  {label:"8 Ton Truck", rate:300},
+  "8":  {label:"8 Ton Truck",rate:300},
   "10": {label:"10 Ton Truck",rate:400}
 };
-/* Prices */
-const PRICES={ton:[1200,1500,2000],can:[120,140,160]};
+const PRICES={ton:[1200,1500,2000], can:[120,140,160]};
 
-/* Elements */
-const unit=document.getElementById('unit'),unitPrice=document.getElementById('unitPrice'),
-      qty=document.getElementById('qty'),km=document.getElementById('km'),
-      vehicle=document.getElementById('vehicle'),vehRate=document.getElementById('vehRate'),
-      iceCostEl=document.getElementById('iceCost'),transCostEl=document.getElementById('transCost'),
-      totalEl=document.getElementById('total'),bookBtn=document.getElementById('bookBtn');
+const unit=document.getElementById('unit'),
+      unitPrice=document.getElementById('unitPrice'),
+      qty=document.getElementById('qty'),
+      km=document.getElementById('km'),
+      vehicle=document.getElementById('vehicle'),
+      vehRate=document.getElementById('vehRate'),
+      transCostEl=document.getElementById('transCost'),
+      totalEl=document.getElementById('total'),
+      bookBtn=document.getElementById('bookBtn');
 
-/* Fill price options */
 function fillPriceOptions(){
   unitPrice.innerHTML="";
   (PRICES[unit.value]||[]).forEach((p,i)=>{
@@ -176,37 +267,54 @@ function fillPriceOptions(){
     if(i===0) opt.selected=true;
     unitPrice.appendChild(opt);
   });
+  document.getElementById('priceLabel').textContent =
+    unit.value==='ton' ? 'Price (₹/ton)' : 'Price (₹/can)';
 }
-/* Update vehicle rate */
-function updateVehRate(){ const v=VEHICLES[vehicle.value]; vehRate.value=v?v.rate:0; }
-/* Recalc total */
+function updateVehRate(){
+  const v=VEHICLES[vehicle.value];
+  vehRate.value=v ? v.rate : 0;
+}
 function recalc(){
   const price=parseFloat(unitPrice.value)||0;
   const q=parseFloat(qty.value)||0;
   const kms=parseFloat(km.value)||0;
   const rate=parseFloat(vehRate.value)||0;
-  const iceCost=Math.round(price*q);
+
+  const harvestCost=Math.round(price*q);     // not shown as a row, but included in total
   const transCost=Math.round(rate*kms);
-  const total=iceCost+transCost;
-  iceCostEl.textContent=`₹ ${iceCost}`;
+  const total=harvestCost+transCost;
+
   transCostEl.textContent=`₹ ${transCost}`;
   totalEl.textContent=`₹ ${total}`;
+
   const district=localStorage.getItem('district')||'Nellore';
-  const msg=["Harvest Booking",`District: ${district}`,`Unit: ${unit.value==='ton'?'Ton(s)':'Can(s)'}`,`Price: ₹${price} / ${unit.value}`,`Quantity: ${q}`,`Vehicle: ${VEHICLES[vehicle.value].label} (${rate}₹/km)`,`Distance: ${kms} km`,`Ice Cost: ₹${iceCost}`,`Transport Cost: ₹${transCost}`,`Total: ₹${total}`].join('\n');
+  const msg=[
+    "Harvest Booking",
+    `District: ${district}`,
+    `Unit: ${unit.value==='ton'?'Ton(s)':'Can(s)'}`,
+    `Price: ₹${price} / ${unit.value}`,
+    `Quantity: ${q}`,
+    `Vehicle: ${VEHICLES[vehicle.value].label} (${rate}₹/km)`,
+    `Distance: ${kms} km`,
+    `Transport Cost: ₹${transCost}`,
+    `Total: ₹${total}`
+  ].join('\n');
   bookBtn.href=`https://wa.me/?text=${encodeURIComponent(msg)}`;
   bookBtn.disabled=total<=0;
 }
 
-/* Events */
-unit.addEventListener('change',()=>{fillPriceOptions();recalc();});
-unitPrice.addEventListener('change',recalc);
-qty.addEventListener('input',recalc);
-km.addEventListener('input',recalc);
-vehicle.addEventListener('change',()=>{updateVehRate();recalc();});
+/* events */
+unit.addEventListener('change', ()=>{ fillPriceOptions(); recalc(); });
+unitPrice.addEventListener('change', recalc);
+qty.addEventListener('input', recalc);
+km.addEventListener('input', recalc);
+vehicle.addEventListener('change', ()=>{ updateVehRate(); recalc(); });
 
-/* Init */
-fillPriceOptions();updateVehRate();recalc();
-document.getElementById('yr').textContent=new Date().getFullYear();
+/* init */
+fillPriceOptions();
+updateVehRate();
+recalc();
+render();
 </script>
 </body>
 </html>
