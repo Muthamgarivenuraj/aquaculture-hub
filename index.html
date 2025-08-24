@@ -8,7 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root{--bg:#f6f8fb;--card:#fff;--text:#0b1220;--muted:#5f6b85;--brand:#1e66f5;--border:#e5e7ef}
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
     .container{max-width:1080px;margin:0 auto;padding:16px}
     header{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 0}
     .brand{display:flex;gap:10px;align-items:center}
@@ -27,6 +28,16 @@
     select{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:#fff;font-weight:600}
     .row{display:grid;grid-template-columns:1fr;gap:10px}
     footer{margin:28px 0 10px;color:#5f6b85;font-size:.85rem;text-align:center}
+
+    /* 🎨 Mobile-only soft colors for each widget */
+    @media(max-width:679px){
+      .card:nth-child(1){ background:#e6f0ff; }  /* light blue */
+      .card:nth-child(2){ background:#e8fdf5; }  /* light green */
+      .card:nth-child(3){ background:#fff5e6; }  /* light orange */
+      .card:nth-child(4){ background:#fbefff; }  /* light purple */
+      .card:nth-child(5){ background:#fdf4e6; }  /* light yellow */
+      .card:nth-child(6){ background:#e9f7ff; }  /* light cyan */
+    }
   </style>
 </head>
 <body>
@@ -87,7 +98,7 @@
     <footer>© <span id="yr"></span> Aquaculture A–Z Hub • AP-first</footer>
   </div>
 
-<!-- tiny i18n core (embedded for single-file deploy) -->
+<!-- Tiny i18n core (no external files needed) -->
 <script>
   const I18N = {
     en:{ title:"Aquaculture A–Z Hub", subtitle:"Andhra Pradesh",
@@ -117,11 +128,11 @@
     document.querySelectorAll('[data-lang]').forEach(b=> b.classList.toggle('active', b.dataset.lang===getLang()));
   }
   document.querySelectorAll('[data-lang]').forEach(b=> b.addEventListener('click',()=> setLang(b.dataset.lang)));
-  // district persistence
+  // District persistence
   const dSel = document.getElementById('districtSelect');
   const savedD = localStorage.getItem('district'); if(savedD) dSel.value = savedD;
   dSel.addEventListener('change', e=> localStorage.setItem('district', e.target.value));
-  // init
+  // Init
   document.getElementById('yr').textContent = new Date().getFullYear();
   applyI18N();
 </script>
