@@ -1,99 +1,17 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Knowledge Center — Aquaculture A–Z Hub (AP)</title>
-  <meta name="description" content="Guides, calculators and video resources for aquaculture in Andhra Pradesh." />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root{--bg:#f6f8fb;--card:#fff;--text:#0b1220;--muted:#5f6b85;--brand:#1e66f5;--border:#e5e7ef}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
-    .container{max-width:1080px;margin:0 auto;padding:16px}
-    header{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 0}
-    .brand{display:flex;gap:10px;align-items:center}
-    .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#1e66f5,#7aa0ff)}
-    .title{font-size:1.25rem;font-weight:800;margin:0}
-    .back{display:inline-flex;gap:8px;align-items:center;text-decoration:none;color:var(--text);font-weight:700;border:1px solid var(--border);padding:8px 12px;border-radius:10px;background:#fff}
-    .lang{display:flex;gap:6px}
-    .pill{border:1px solid var(--border);background:var(--card);padding:8px 12px;border-radius:999px;cursor:pointer}
-    .pill.active{background:var(--text);color:#fff;border-color:var(--text)}
-    .panel{background:linear-gradient(180deg,#eef3ff,transparent);border:1px solid var(--border);border-radius:20px;padding:16px}
-    .row{display:grid;grid-template-columns:1fr;gap:10px}
-    @media(min-width:720px){.row{grid-template-columns:1fr 1fr}}
-    .select{position:relative}
-    select, input, textarea{width:100%;appearance:none;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:#fff;font-weight:600}
-    .select svg{position:absolute;right:12px;top:50%;transform:translateY(-50%)}
-    .grid{display:grid;grid-template-columns:1fr;gap:12px}
-    @media(min-width:680px){.grid{grid-template-columns:repeat(2,1fr)}}
-    @media(min-width:980px){.grid{grid-template-columns:repeat(3,1fr)}}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:14px}
-    .card h3{margin:0 0 6px;font-size:1.05rem}
-    .muted{color:var(--muted)}
-    .tag{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:#fff;font-weight:600}
-    .actions{display:flex;gap:8px;flex-wrap:wrap}
-    .btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;text-decoration:none;color:var(--text)}
-    .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
-    table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border);background:#fff;border-radius:14px;overflow:hidden}
-    th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border)}
-    th{background:#f3f6ff;font-weight:800}
-    tr:last-child td{border-bottom:none}
-    footer{margin:28px 0 10px;color:var(--muted);font-size:.85rem;text-align:center}
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <div class="brand"><div class="logo"></div><div><p class="title">Knowledge Center</p><small class="muted">Guides, calculators, videos</small></div></div>
-      <a class="back" href="index.html">← Home</a>
-    </header>
-
-    <section class="panel">
-      <div class="grid">
-        <div class="card">
-          <h3>Pond Preparation — Step by Step</h3>
-          <p class="muted">Drying, liming, fertilization, filling.</p>
-          <a class="btn" href="#" onclick="alert('Open detailed article page later.')">Open</a>
-        </div>
-        <div class="card">
-          <h3>Stocking Density Calculator</h3>
-          <p class="muted">Estimate shrimp count based on pond area.</p>
-          <a class="btn primary" href="#calc">Open Calculator</a>
-        </div>
-        <div class="card">
-          <h3>Common Diseases & Treatments</h3>
-          <p class="muted">WSSV, EMS, Vibrio — prevention & cure.</p>
-          <a class="btn" href="#" onclick="alert('Open disease guide later.')">Open</a>
-        </div>
-      </div>
-
-      <div id="calc" class="card" style="margin-top:12px">
-        <h3>Stocking Density Calculator</h3>
-        <div class="row">
-          <div><label>Pond area (acres)</label><input type="number" id="area" placeholder="e.g., 1.2" step="0.01"></div>
-          <div><label>Density (PL/m²)</label><input type="number" id="density" placeholder="e.g., 60"></div>
-        </div>
-        <div class="actions" style="margin-top:10px">
-          <button class="btn primary" onclick="calc()">Calculate</button>
-          <span id="out" class="tag">—</span>
-        </div>
-      </div>
-    </section>
-
-    <footer>© YEAR Aquaculture A–Z Hub • Knowledge</footer>
-  </div>
-<script>
-function calc(){
-  const area = parseFloat(document.getElementById('area').value||0);
-  const density = parseFloat(document.getElementById('density').value||0);
-  // 1 acre ≈ 4046.86 m²
-  const count = Math.round(area * 4046.86 * density);
-  document.getElementById('out').textContent = isFinite(count) && count>0 ? (count.toLocaleString() + " PL") : "—";
-}
-document.body.innerHTML = document.body.innerHTML.replace("YEAR", new Date().getFullYear());
-</script>
-
-</body>
-</html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Knowledge — Prawn Culture A–Z (AP)</title><meta name="description" content="Guide">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f8fb;--card:#fff;--text:#0b1220;--muted:#5f6b85;--brand:#1e66f5;--border:#e5e7ef}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+.container{max-width:1080px;margin:0 auto;padding:16px}header{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 0}
+.brand{display:flex;gap:10px;align-items:center}.logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#1e66f5,#7aa0ff)}
+.title{font-size:1.25rem;font-weight:800;margin:0}.muted{color:#5f6b85}.panel{background:linear-gradient(180deg,#eef3ff,transparent);border:1px solid var(--border);border-radius:20px;padding:16px}
+.grid{display:grid;grid-template-columns:1fr;gap:12px}@media(min-width:680px){.grid{grid-template-columns:repeat(2,1fr)}}@media(min-width:980px){.grid{grid-template-columns:repeat(3,1fr)}}
+.card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px}a.btn,button.btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;text-decoration:none;color:#0b1220}
+.btn.primary{background:#1e66f5;color:#fff;border-color:#1e66f5}footer{margin:28px 0 10px;color:#5f6b85;font-size:.85rem;text-align:center}
+</style></head><body>
+<div class='container'><header><div class='brand'><div class='logo'></div><div><p class='title'>Knowledge</p></div></div><a class='btn' href='index.html'>← Home</a></header><section class='panel'><div class='card'><p>Guide will be added.</p></div></section></div>
+</body></html>
