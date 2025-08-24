@@ -1,1 +1,256 @@
 
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aquaculture A–Z Hub — Andhra Pradesh</title>
+  <meta name="description" content="One-stop aquaculture portal for Andhra Pradesh: live rates, vendors, labs, knowledge center, news & schemes." />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f6f8fb; --card:#ffffff; --text:#0b1220; --muted:#5f6b85; --brand:#1e66f5; --brand-2:#0b5ed7; --border:#e5e7ef;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial; background:var(--bg); color:var(--text)}
+    .container{max-width:1080px;margin:0 auto;padding:16px}
+    header{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#1e66f5,#7aa0ff)}
+    .title{font-weight:800;font-size:1.5rem;line-height:1.1;margin:0}
+    .subtitle{margin:2px 0 0;color:var(--muted);font-size:.95rem}
+    .tools{display:flex;gap:8px;align-items:center}
+    .btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:8px 12px;font-weight:600;cursor:pointer;color:var(--text)}
+    .btn:active{transform:translateY(1px)}
+    .lang{display:flex;gap:6px}
+    .pill{border:1px solid var(--border);background:var(--card);padding:8px 12px;border-radius:999px;cursor:pointer}
+    .pill.active{background:var(--text);color:#fff;border-color:var(--text)}
+
+    .hero{background:linear-gradient(180deg,#eef3ff,transparent);border:1px solid var(--border);border-radius:24px;padding:18px;margin-top:8px}
+    .row{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width:720px){.row{grid-template-columns:1fr 1fr}}
+
+    .select{position:relative}
+    select{width:100%;appearance:none;padding:14px 44px 14px 14px;border:1px solid var(--border);border-radius:12px;background:#fff;font-weight:600}
+    .select svg{position:absolute;right:12px;top:50%;transform:translateY(-50%)}
+
+    .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
+    @media(min-width:680px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media(min-width:980px){.grid{grid-template-columns:repeat(3,1fr)}}
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;display:flex;gap:14px;align-items:center;transition:all .15s ease}
+    .card:hover{box-shadow:0 6px 24px rgba(10,30,70,.08);transform:translateY(-2px)}
+    .ico{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;background:#ecf2ff}
+    .card h3{margin:0 0 4px;font-size:1.05rem}
+    .card p{margin:0;color:var(--muted);font-size:.9rem}
+    .card a{color:inherit;text-decoration:none;display:flex;align-items:center;gap:14px}
+
+    footer{margin:28px 0 10px;color:var(--muted);font-size:.85rem;text-align:center}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1 class="title" data-i18n="appTitle">Aquaculture A–Z Hub</h1>
+          <p class="subtitle" data-i18n="tag">Andhra Pradesh Aquaculture A–Z Hub</p>
+        </div>
+      </div>
+      <div class="tools">
+        <div class="lang" role="group" aria-label="Language switch">
+          <button class="pill active" data-lang="en">English</button>
+          <button class="pill" data-lang="te">తెలుగు</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="row">
+        <div>
+          <div class="select" aria-label="District selector">
+            <select id="districtSelect"></select>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5" stroke="#5f6b85" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="select" aria-label="Mandal selector">
+          <select id="mandalSelect"><option>All Mandals</option></select>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5" stroke="#5f6b85" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+
+      <div class="grid" style="margin-top:14px">
+        <div class="card">
+          <a href="live-rates.html">
+            <div class="ico" aria-hidden="true">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3v18h18" stroke="var(--brand)" stroke-width="2"/><path d="M7 14l4-4 3 3 5-6" stroke="var(--brand)" stroke-width="2" fill="none"/></svg>
+            </div>
+            <div>
+              <h3 data-i18n="liveRates">Live Rates</h3>
+              <p data-i18n="liveRatesSub">Shrimp, feed, diesel & ice</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="card">
+          <a href="vendors.html">
+            <div class="ico" aria-hidden="true">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="7" height="7" rx="2" stroke="var(--brand)" stroke-width="2"/><rect x="14" y="4" width="7" height="7" rx="2" stroke="var(--brand)" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="2" stroke="var(--brand)" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="2" stroke="var(--brand)" stroke-width="2"/></svg>
+            </div>
+            <div>
+              <h3 data-i18n="products">Feeds · Seeds · Medicines · Labs</h3>
+              <p data-i18n="productsSub">Dealers & inventory nearby</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="card">
+          <a href="technicians.html">
+            <div class="ico" aria-hidden="true">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a5 5 0 100 10 5 5 0 000-10z" stroke="var(--brand)" stroke-width="2"/><path d="M4 22a8 8 0 1116 0" stroke="var(--brand)" stroke-width="2"/></svg>
+            </div>
+            <div>
+              <h3 data-i18n="techs">Technicians & Labs</h3>
+              <p data-i18n="techsSub">Directory & contact</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="card">
+          <a href="knowledge.html">
+            <div class="ico" aria-hidden="true">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6h12a4 4 0 014 4v8H8a4 4 0 00-4 4V6z" stroke="var(--brand)" stroke-width="2"/></svg>
+            </div>
+            <div>
+              <h3 data-i18n="knowledge">Knowledge Center</h3>
+              <p data-i18n="knowledgeSub">Guides, calculators, videos</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="card">
+          <a href="news.html">
+            <div class="ico" aria-hidden="true">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="16" rx="2" stroke="var(--brand)" stroke-width="2"/><path d="M7 8h10M7 12h10M7 16h6" stroke="var(--brand)" stroke-width="2"/></svg>
+            </div>
+            <div>
+              <h3 data-i18n="news">News & Schemes</h3>
+              <p data-i18n="newsSub">Latest updates & subsidies</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="card">
+          <a href="post-requirement.html">
+            <div class="ico" aria-hidden="true">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5v14M5 12h14" stroke="var(--brand)" stroke-width="2"/></svg>
+            </div>
+            <div>
+              <h3 data-i18n="postReq">Post a Requirement</h3>
+              <p data-i18n="postReqSub">Get dealer callbacks fast</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span>© <span id="yr"></span> Aquaculture A–Z Hub • AP-first • Built for mobile</span>
+    </footer>
+  </div>
+
+<script>
+  // ---------- Simple language system (EN / TE) ----------
+  const dict = {
+    en:{
+      appTitle:"Aquaculture A–Z Hub",
+      tag:"Andhra Pradesh Aquaculture A–Z Hub",
+      liveRates:"Live Rates", liveRatesSub:"Shrimp, feed, diesel & ice",
+      products:"Feeds · Seeds · Medicines · Labs", productsSub:"Dealers & inventory nearby",
+      techs:"Technicians & Labs", techsSub:"Directory & contact",
+      knowledge:"Knowledge Center", knowledgeSub:"Guides, calculators, videos",
+      news:"News & Schemes", newsSub:"Latest updates & subsidies",
+      postReq:"Post a Requirement", postReqSub:"Get dealer callbacks fast",
+      district:"Select District", mandal:"All Mandals"
+    },
+    te:{
+      appTitle:"ఆక్వాకల్చర్ A–Z హబ్",
+      tag:"ఆంధ్రప్రదేశ్ కోసం ఒకే చోట సమాచారం",
+      liveRates:"లైవ్ రేట్స్", liveRatesSub:"ష్రింప్, ఫీడ్, డీజిల్, ఐస్",
+      products:"ఫీడ్స్ · సీడ్స్ · మెడిసిన్స్ · ల్యాబ్స్", productsSub:"మీ దగ్గర ఉన్న డీలర్లు",
+      techs:"టెక్నీషియన్స్ & ల్యాబ్స్", techsSub:"డైరెక్టరీ & కాంటాక్ట్",
+      knowledge:"నాలెడ్జ్ సెంటర్", knowledgeSub:"గైడ్స్, కాల్క్యులేటర్లు, వీడియోలు",
+      news:"న్యూస్ & స్కీమ్‌లు", newsSub:"తాజా అప్‌డేట్స్ & సబ్సిడీలు",
+      postReq:"రిక్వైర్‌మెంట్ పోస్ట్ చేయండి", postReqSub:"డీలర్ నుండి కాల్‌బ్యాక్",
+      district:"జిల్లా ఎంచుకోండి", mandal:"అన్ని మండలాలు"
+    }
+  };
+
+  const langButtons = document.querySelectorAll('.pill[data-lang]');
+  let currentLang = localStorage.getItem('lang') || 'en';
+  function applyLang(){
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const key = el.dataset.i18n; el.textContent = dict[currentLang][key];
+    });
+    document.querySelectorAll('.pill').forEach(b=>b.classList.toggle('active', b.dataset.lang===currentLang));
+    // placeholders
+    document.getElementById('districtSelect').options[0].textContent = dict[currentLang].district;
+    document.getElementById('mandalSelect').options[0].textContent = dict[currentLang].mandal;
+  }
+  langButtons.forEach(btn=>btn.addEventListener('click',()=>{
+    currentLang = btn.dataset.lang; localStorage.setItem('lang', currentLang); applyLang();
+  }));
+
+  // ---------- Districts & Mandals (minimal seed) ----------
+  const apDistricts = {
+    "Nellore":["All Mandals","Kavali","Kovur","Vidavalur","Indukurpet"],
+    "West Godavari":["All Mandals","Kolleru","Achanta","Palacole"],
+    "East Godavari":["All Mandals","Kakinada","Razole","Amalapuram"],
+    "Krishna":["All Mandals","Machilipatnam","Avanigadda"],
+    "Prakasam":["All Mandals","Ongole","Chirala"]
+  };
+
+  const districtSel = document.getElementById('districtSelect');
+  const mandalSel = document.getElementById('mandalSelect');
+
+  // populate districts
+  function loadDistricts(){
+    districtSel.innerHTML = '';
+    const opt0 = document.createElement('option');
+    opt0.textContent = dict[currentLang].district; opt0.disabled = true; opt0.selected = true; opt0.value='';
+    districtSel.appendChild(opt0);
+    Object.keys(apDistricts).sort().forEach(d=>{
+      const o=document.createElement('option'); o.value=d; o.textContent=d; districtSel.appendChild(o);
+    });
+  }
+
+  districtSel.addEventListener('change', e=>{
+    const d = e.target.value; localStorage.setItem('district', d);
+    mandalSel.innerHTML = '';
+    (apDistricts[d]||[dict[currentLang].mandal]).forEach((m,i)=>{
+      const o=document.createElement('option'); o.value = i===0? '' : m; o.textContent=m; mandalSel.appendChild(o);
+    });
+  });
+
+  mandalSel.addEventListener('change', e=>{
+    localStorage.setItem('mandal', e.target.value || '');
+  });
+
+  // footer year
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // init
+  loadDistricts();
+  applyLang();
+  // restore selection
+  const savedD = localStorage.getItem('district');
+  if(savedD && apDistricts[savedD]){ districtSel.value = savedD; districtSel.dispatchEvent(new Event('change')); }
+  const savedM = localStorage.getItem('mandal');
+  if(savedM){ mandalSel.value = savedM; }
+</script>
+</body>
+</html>
