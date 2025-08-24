@@ -1,1 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live Rates — Aquaculture A–Z Hub (AP)</title>
+  <meta name="description" content="District-wise live aquaculture rates for Andhra Pradesh: shrimp (count-wise), feed bag price, diesel and ice." />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#f6f8fb;--card:#fff;--text:#0b1220;--muted:#5f6b85;--brand:#1e66f5;--border:#e5e7ef;--radius:16px}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    .container{max-width:1080px;margin:0 auto;padding:16px}
+    header{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 0}
+    .brand{display:flex;gap:10px;align-items:center}
+    .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#1e66f5,#7aa0ff)}
+    .title{font-size:1.25rem;font-weight:800;margin:0}
+    .back{display:inline-flex;gap:8px;align-items:center;text-decoration:none;color:var(--text);font-weight:700;border:1px solid var(--border);padding:8px 12px;border-radius:10px;background:#fff}
+    .lang{display:flex;gap:6px}
+    .pill{border:1px solid var(--border);background:var(--card);padding:8px 12px;border-radius:999px;cursor:pointer}
+    .pill.active{background:var(--text);color:#fff;border-color:var(--text)}
+
+    .panel{background:linear-gradient(180deg,#eef3ff,transparent);border:1px solid var(--border);border-radius:20px;padding:16px}
+    .row{display:grid;grid-template-columns:1fr;gap:10px}
+    @media(min-width:720px){.row{grid-template-columns:1fr 1fr}}
+    .select{position:relative}
+    select{width:100%;appearance:none;padding:14px 44px 14px 14px;border:1px solid var(--border);border-radius:12px;background:#fff;font-weight:600}
+    .select svg{position:absolute;right:12px;top:50%;transform:translateY(-50%)}
+
+    .tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .tab{border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 12px;font-weight:700;cursor:pointer}
+    .tab.active{background:var(--brand);border-color:var(--brand);color:#fff}
+
+    .cards{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
+    @media(min-width:680px){.cards{grid-template-columns:repeat(2,1fr)}}
+    @media(min-width:980px){.cards{grid-template-columns:repeat(3,1fr)}}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:14px}
+    .card h3{margin:0 0 8px;font-size:1.05rem}
+    .muted{color:var(--muted)}
+
+    table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border);background:#fff;border-radius:14px;overflow:hidden}
+    th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border)}
+    th{background:#f3f6ff;font-weight:800}
+    tr:last-child td{border-bottom:none}
+
+    .note{margin-top:10px;color:var(--muted);font-size:.9rem}
+    footer{margin:28px 0 10px;color:var(--muted);font-size:.85rem;text-align:center}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <p class="title" data-i18n="pageTitle">Live Rates</p>
+          <small class="muted" id="contextLine">Andhra Pradesh · All Mandals</small>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="lang" role="group" aria-label="Language switch">
+          <button class="pill active" data-lang="en">English</button>
+          <button class="pill" data-lang="te">తెలుగు</button>
+        </div>
+        <a class="back" href="index.html" aria-label="Back to home">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6" stroke="#0b1220" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-i18n="back">Home</span>
+        </a>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="row">
+        <div class="select">
+          <select id="districtSelect"></select>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5" stroke="#5f6b85" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="select">
+          <select id="mandalSelect"><option>All Mandals</option></select>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5" stroke="#5f6b85" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="shrimp" data-i18n="shrimp">Shrimp</button>
+        <button class="tab" data-tab="feed" data-i18n="feed">Feed</button>
+        <button class="tab" data-tab="diesel" data-i18n="diesel">Diesel</button>
+        <button class="tab" data-tab="ice" data-i18n="ice">Ice</button>
+      </div>
+
+      <div id="content"></div>
+      <p class="note" data-i18n="disclaimer">* Sample demo data shown. Replace with admin-updated live values later.</p>
+    </section>
+
+    <footer>
+      <span>© <span id="yr"></span> Aquaculture A–Z Hub • Live Rates</span>
+    </footer>
+  </div>
+
+<script>
+  // ---------- i18n ----------
+  const dict = {
+    en:{
+      pageTitle:"Live Rates", back:"Home",
+      district:"Select District", mandal:"All Mandals",
+      shrimp:"Shrimp", feed:"Feed", diesel:"Diesel", ice:"Ice",
+      size:"Size (count)", rate:"Rate (₹/kg)", brand:"Brand", bag:"Bag (kg)", price:"Price (₹)", last:"Last Updated",
+      disclaimer:"* Sample demo data shown. Replace with admin-updated live values later."
+    },
+    te:{
+      pageTitle:"లైవ్ రేట్స్", back:"హోమ్",
+      district:"జిల్లా ఎంచుకోండి", mandal:"అన్ని మండలాలు",
+      shrimp:"ష్రింప్", feed:"ఫీడ్", diesel:"డీజిల్", ice:"ఐస్",
+      size:"సైజ్ (కౌంట్)", rate:"రేట్ (₹/కి.గ్రా)", brand:"బ్రాండ్", bag:"బ్యాగ్ (కి.గ్రా)", price:"ధర (₹)", last:"చివరి అప్‌డేట్",
+      disclaimer:"* ఇది డెమో డేటా. తరువాత అడ్మిన్ అప్‌డేట్ చేసే లైవ్ విలువలు వస్తాయి."
+    }
+  };
+  let currentLang = localStorage.getItem('lang')||'en';
+  const langButtons = document.querySelectorAll('.pill[data-lang]');
+  function t(key){return dict[currentLang][key]||key}
+
+  function applyLang(){
+    document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent = t(el.dataset.i18n)});
+    document.getElementById('districtSelect').options[0].textContent = t('district');
+    document.getElementById('mandalSelect').options[0].textContent = t('mandal');
+    document.querySelectorAll('.pill').forEach(b=>b.classList.toggle('active', b.dataset.lang===currentLang));
+    // re-render content to update headers
+    renderActiveTab();
+  }
+  langButtons.forEach(btn=>btn.addEventListener('click',()=>{currentLang=btn.dataset.lang;localStorage.setItem('lang',currentLang);applyLang()}));
+
+  // ---------- Districts & Mandals ----------
+  const apDistricts = {
+    "Nellore":["All Mandals","Kavali","Kovur","Vidavalur","Indukurpet"],
+    "West Godavari":["All Mandals","Kolleru","Achanta","Palacole"],
+    "East Godavari":["All Mandals","Kakinada","Razole","Amalapuram"],
+    "Krishna":["All Mandals","Machilipatnam","Avanigadda"],
+    "Prakasam":["All Mandals","Ongole","Chirala"]
+  };
+  const districtSel = document.getElementById('districtSelect');
+  const mandalSel = document.getElementById('mandalSelect');
+  function loadDistricts(){
+    districtSel.innerHTML='';
+    const opt0=document.createElement('option'); opt0.textContent=t('district'); opt0.disabled=true; opt0.selected=true; opt0.value=''; districtSel.appendChild(opt0);
+    Object.keys(apDistricts).sort().forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;districtSel.appendChild(o);});
+  }
+  districtSel.addEventListener('change', e=>{
+    const d=e.target.value; localStorage.setItem('district',d); fillMandals(d);
+    updateContextLine(); renderActiveTab();
+  });
+  function fillMandals(d){
+    mandalSel.innerHTML='';
+    (apDistricts[d]||[t('mandal')]).forEach((m,i)=>{const o=document.createElement('option');o.value=i===0?'':m;o.textContent=m;mandalSel.appendChild(o)});
+  }
+  mandalSel.addEventListener('change', e=>{localStorage.setItem('mandal', e.target.value||''); updateContextLine(); renderActiveTab();});
+
+  function updateContextLine(){
+    const d=localStorage.getItem('district')||'AP';
+    const m=localStorage.getItem('mandal')||t('mandal');
+    document.getElementById('contextLine').textContent = `${d} · ${m||t('mandal')}`;
+  }
+
+  // ---------- Demo data ----------
+  const data = {
+    shrimp:{
+      "Nellore": [
+        {size:"100c", rate:345, last:"Today 10:30"},
+        {size:"90c", rate:360, last:"Today 10:30"},
+        {size:"80c", rate:380, last:"Today 10:30"}
+      ],
+      "West Godavari": [
+        {size:"100c", rate:340, last:"Today 09:50"},
+        {size:"90c", rate:355, last:"Today 09:50"},
+        {size:"80c", rate:375, last:"Today 09:50"}
+      ],
+      "East Godavari": [
+        {size:"100c", rate:342, last:"Today 09:20"},
+        {size:"90c", rate:358, last:"Today 09:20"},
+        {size:"80c", rate:378, last:"Today 09:20"}
+      ]
+    },
+    feed:{
+      "Nellore": [
+        {brand:"Avanti 35%", bag:25, price:1450, last:"Yesterday 18:00"},
+        {brand:"CP Prima 35%", bag:25, price:1490, last:"Yesterday 18:00"}
+      ],
+      "West Godavari": [
+        {brand:"Godrej 35%", bag:25, price:1425, last:"Yesterday 17:10"}
+      ]
+    },
+    diesel:{
+      "Nellore": [{brand:"Retail Pump", bag:"—", price:94.2, last:"Today 06:00"}],
+      "West Godavari": [{brand:"Retail Pump", bag:"—", price:94.0, last:"Today 06:00"}]
+    },
+    ice:{
+      "Nellore": [{brand:"Block Ice", bag:50, price:210, last:"Today 07:30"}],
+      "West Godavari": [{brand:"Block Ice", bag:50, price:200, last:"Today 07:10"}]
+    }
+  };
+
+  // ---------- Rendering ----------
+  const content = document.getElementById('content');
+  function table(headers, rows){
+    const thead = `<thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>`;
+    const tbody = `<tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>`;
+    return `<div class="cards"><div class="card"><h3>${activeTabLabel()}</h3><table>${thead}${tbody}</table></div></div>`;
+  }
+
+  let activeTab = 'shrimp';
+  function activeTabLabel(){
+    return {shrimp:t('shrimp'), feed:t('feed'), diesel:t('diesel'), ice:t('ice')}[activeTab];
+  }
+
+  function renderActiveTab(){
+    const d = localStorage.getItem('district') || 'Nellore';
+    const dataset = data[activeTab][d] || [];
+    let headers = [];
+    let rows = [];
+    if(activeTab==='shrimp'){
+      headers = [t('size'), t('rate'), t('last')];
+      rows = dataset.map(x=>[x.size, `₹ ${x.rate}`, x.last]);
+    } else if(activeTab==='feed'){
+      headers = [t('brand'), t('bag'), t('price'), t('last')];
+      rows = dataset.map(x=>[x.brand, x.bag, `₹ ${x.price}`, x.last]);
+    } else if(activeTab==='diesel'){
+      headers = [t('brand'), t('price'), t('last')];
+      rows = dataset.map(x=>[x.brand, `₹ ${x.price}`, x.last]);
+    } else if(activeTab==='ice'){
+      headers = [t('brand'), t('bag'), t('price'), t('last')];
+      rows = dataset.map(x=>[x.brand, x.bag, `₹ ${x.price}`, x.last]);
+    }
+    content.innerHTML = table(headers, rows.length?rows:[["—","—","—"]]);
+    document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===activeTab));
+  }
+
+  document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{activeTab = btn.dataset.tab; renderActiveTab()}));
+
+  // ---------- init ----------
+  loadDistricts();
+  const savedD = localStorage.getItem('district');
+  if(savedD){ districtSel.value = savedD; fillMandals(savedD); }
+  const savedM = localStorage.getItem('mandal');
+  if(savedM){ mandalSel.value = savedM; }
+  updateContextLine();
+
+  const yr = document.getElementById('yr'); yr.textContent = new Date().getFullYear();
+  applyLang();
+</script>
+</body>
+</html>
 
