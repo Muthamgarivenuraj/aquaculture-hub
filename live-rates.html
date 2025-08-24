@@ -13,11 +13,11 @@
     .logo{font-weight:800;font-size:1.3rem}
     a.back{padding:8px 14px;border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text)}
     h2{margin:12px 0}
-    select{width:100%;padding:14px;border:1px solid var(--border);border-radius:12px;font-size:1rem;font-weight:600;margin-bottom:16px}
-    .tabs{display:flex;gap:10px;margin-bottom:12px}
+    select, input, textarea{width:100%;padding:14px;border:1px solid var(--border);border-radius:12px;font-size:1rem;font-weight:600}
+    textarea{min-height:84px;font-weight:500}
+    .tabs{display:flex;gap:10px;margin:12px 0}
     .tab{flex:1;text-align:center;padding:10px;border:1px solid var(--border);border-radius:12px;cursor:pointer;font-weight:600;background:#fff}
     .tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
-
     .section{border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:10px;background:#fff}
     .section .head{display:grid;grid-template-columns:1fr 1fr;background:#eef3ff}
     .row{display:grid;grid-template-columns:1fr 1fr}
@@ -26,24 +26,28 @@
     .row:nth-child(even){background:#f9fbff}
     .count{color:#1e66f5;display:flex;gap:8px;align-items:center;justify-content:center}
     .price{color:#059669;font-weight:800}
-
     .subttl{margin-top:16px;font-weight:800}
+    .kpi{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-top:1px dashed var(--border)}
+    .total{font-size:1.15rem;font-weight:800}
+    .btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;padding:12px 16px;border-radius:12px;border:1px solid var(--brand);background:var(--brand);color:#fff;font-weight:800;text-decoration:none}
+    .btn:disabled{opacity:.5;pointer-events:none}
     footer{text-align:center;margin:20px 0;color:var(--muted);font-size:.85rem}
-
     @media(max-width:600px){
-    .section .head{display:none}
-    .row{grid-template-columns:1fr;border-bottom:1px solid var(--border)}
-    .cell{display:flex;justify-content:space-between}
-    .count{justify-content:space-between}
-  }
-
-    /* 🔄 Blink Animations for trend arrows */
-    @keyframes blink-up { 0%,100% {opacity:1; transform:translateY(0);} 50% {opacity:0.3; transform:translateY(-2px);} }
-    @keyframes blink-down { 0%,100% {opacity:1; transform:translateY(0);} 50% {opacity:0.3; transform:translateY(2px);} }
+      .section .head{display:none}
+      .row{grid-template-columns:1fr 1fr; border-bottom:1px solid var(--border)}
+      .cell{display:flex; justify-content:center; align-items:center}
+      .count{justify-content:flex-start !important}
+      .price{justify-content:flex-end !important}
+    }
+    /* arrows blink */
+    @keyframes blink-up {0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.3;transform:translateY(-2px)}}
+    @keyframes blink-down {0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.3;transform:translateY(2px)}}
     .trend{display:inline-flex;gap:6px;align-items:center;justify-content:center;font-weight:700}
-    .trend.up {color:var(--up); animation:blink-up 1s ease-in-out 2;}
-    .trend.down {color:var(--down); animation:blink-down 1s ease-in-out 2;}
-    .trend.flat {color:var(--muted);}
+    .trend.up{color:var(--up);animation:blink-up 1s ease-in-out 2}
+    .trend.down{color:var(--down);animation:blink-down 1s ease-in-out 2}
+    .trend.flat{color:var(--muted)}
+    .radio-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:0 14px 12px}
+    .radio{display:flex;gap:8px;align-items:center;border:1px solid var(--border);border-radius:10px;padding:8px 10px}
   </style>
 </head>
 <body>
@@ -66,45 +70,70 @@
       <div class="tab" data-tab="ice" data-i18n="ice">Ice</div>
     </div>
 
-    <!-- Main data table -->
-    <div class="section" id="dataBox">
-      <div class="head" id="thead">
+    <!-- Rates table -->
+    <div class="section">
+      <div class="head">
         <div id="col1">Count</div>
         <div id="col2">Price</div>
       </div>
       <div id="ratesList"></div>
     </div>
 
-    <!-- Ice: Transport calculator -->
-    <div class="subttl" id="transportTitle" style="display:none" data-i18n="transport">Transport (Ice Delivery)</div>
-    <div class="section" id="transportBox" style="display:none">
-      <div style="padding:12px;text-align:center">
-        <label>
-          <span data-i18n="distance">Distance (km)</span>:
-          <input type="number" id="distInput" value="10" min="0" style="width:90px;padding:8px;border:1px solid var(--border);border-radius:10px;margin-left:6px">
+    <!-- ICE: Calculator -->
+    <div class="subttl" id="calcTitle" style="display:none" data-i18n="calcTitle">Ice Transport & Order</div>
+    <div class="section" id="calcBox" style="display:none">
+      <div style="padding:12px 14px;display:grid;grid-template-columns:1fr;gap:10px">
+        <label><span data-i18n="distance">Distance (km)</span>:
+          <input id="km" type="number" min="0" value="10">
+        </label>
+        <label><span data-i18n="priceTon">Ice price (₹/ton)</span>:
+          <input id="priceTon" type="number" min="0" value="2000">
+        </label>
+        <label><span data-i18n="qtyTons">Quantity (tons)</span>:
+          <input id="qty" type="number" min="0" step="0.5" value="1">
         </label>
       </div>
-      <div class="head">
-        <div id="tcol1" data-i18n="vehicle">Vehicle</div>
-        <div id="tcol2" data-i18n="rentKm">Rent (₹)</div>
+
+      <div class="radio-row">
+        <label class="radio"><input type="radio" name="veh" value="5" checked> <span>5 Ton Van (₹200/km)</span></label>
+        <label class="radio"><input type="radio" name="veh" value="8"> <span>8 Ton Truck (₹300/km)</span></label>
       </div>
-      <div id="transportList"></div>
+
+      <div class="kpi"><span data-i18n="transportCost">Transport cost</span> <strong id="transportCost">₹ 0</strong></div>
+      <div class="kpi"><span data-i18n="iceCost">Ice cost</span> <strong id="iceCost">₹ 0</strong></div>
+      <div class="kpi total"><span data-i18n="total">Total</span> <strong id="grandTotal">₹ 0</strong></div>
+
+      <div style="padding:12px 14px">
+        <label><span data-i18n="address">Delivery address</span>:
+          <textarea id="addr" placeholder="Village/Mandal, Landmark, Pin"></textarea>
+        </label>
+      </div>
+
+      <div style="padding:12px 14px">
+        <a id="bookBtn" class="btn" href="#" target="_blank" rel="noopener" data-i18n="book">Book</a>
+      </div>
     </div>
 
     <footer>© <span id="yr"></span> Aquaculture A–Z Hub</footer>
   </div>
 
 <script>
-/* === language === */
+/* i18n */
 const I18N={
   en:{pageLive:"Live Rates",home:"Home",district:"Select District",
       shrimp:"Shrimp",ice:"Ice",size:"Count",rate:"Price (₹/kg)",
       type:"Type",price:"Price (₹/block)",
-      transport:"Transport (Ice Delivery)",vehicle:"Vehicle",rentKm:"Rent (₹)",distance:"Distance (km)"},
+      calcTitle:"Ice Transport & Order", distance:"Distance (km)",
+      priceTon:"Ice price (₹/ton)", qtyTons:"Quantity (tons)",
+      transportCost:"Transport cost", iceCost:"Ice cost", total:"Total",
+      address:"Delivery address", book:"Book"},
   te:{pageLive:"లైవ్ రేట్స్",home:"హోమ్",district:"జిల్లా ఎంచుకోండి",
       shrimp:"రొయ్యలు",ice:"ఐస్",size:"కౌంట్",rate:"ధర (₹/కిలో)",
       type:"రకం",price:"ధర (₹/బ్లాక్)",
-      transport:"రవాణా (ఐస్ డెలివరీ)",vehicle:"వాహనం",rentKm:"అద్దె (₹)",distance:"దూరం (కిమీ)"}
+      calcTitle:"ఐస్ రవాణా & ఆర్డర్", distance:"దూరం (కిమీ)",
+      priceTon:"ఐస్ ధర (₹/టన్ను)", qtyTons:"పరిమాణం (టన్నులు)",
+      transportCost:"రవాణా ఖర్చు", iceCost:"ఐస్ ఖర్చు", total:"మొత్తం",
+      address:"డెలివరీ చిరునామా", book:"బుక్ చేయి"}
 };
 function getLang(){return localStorage.getItem('lang')||'en';}
 function t(k){return (I18N[getLang()]||{})[k]||k;}
@@ -117,142 +146,130 @@ function applyI18N(){
   document.getElementById('col2').textContent=activeTab==='shrimp'?t('rate'):t('price');
 }
 
-/* === CSV loader === */
-const CSV_URL = 'rates.csv'; // keep rates.csv in same folder
-const RATES = { shrimp: {}, ice: {}, __loaded:false };
-
+/* CSV loader (same as before) */
+const CSV_URL='rates.csv';
+const RATES={shrimp:{},ice:{},__loaded:false};
 async function loadRatesFromCSV(){
-  const res = await fetch(CSV_URL, {cache:'no-store'});
-  const text = await res.text();
-  for (const line of text.split(/\r?\n/)) {
-    const clean = line.trim();
-    if (!clean || clean.startsWith('type,')) continue;
-    const parts = clean.split(',').map(s=>s.trim());
-    if (parts.length < 4) continue;
-    const [type, district, key, priceStr] = parts;
-    const price = parseFloat(priceStr);
-    if (!['shrimp','ice'].includes(type) || !district || !key || isNaN(price)) continue;
-    if (!RATES[type][district]) RATES[type][district] = {};
-    RATES[type][district][key] = price;
+  const res=await fetch(CSV_URL,{cache:'no-store'}); const text=await res.text();
+  for(const line of text.split(/\r?\n/)){
+    const clean=line.trim(); if(!clean||clean.startsWith('type,')) continue;
+    const parts=clean.split(',').map(s=>s.trim()); if(parts.length<4) continue;
+    const [type,district,key,priceStr]=parts; const price=parseFloat(priceStr);
+    if(!['shrimp','ice'].includes(type)||!district||!key||isNaN(price)) continue;
+    if(!RATES[type][district]) RATES[type][district]={}; RATES[type][district][key]=price;
   }
-  RATES.__loaded = true;
+  RATES.__loaded=true;
 }
 
-/* === Date helpers for yesterday compare === */
-function dateKey(d){ return d.toISOString().slice(0,10); }
-function todayKey(){ return dateKey(new Date()); }
-function yesterdayKey(){ const d=new Date(); d.setDate(d.getDate()-1); return dateKey(d); }
-function storageKey(tab, district, dayKey){ return `rates_${tab}_${district}_${dayKey}`; }
+/* yesterday vs today storage */
+function dateKey(d){return d.toISOString().slice(0,10)}
+function todayKey(){return dateKey(new Date())}
+function yesterdayKey(){const d=new Date(); d.setDate(d.getDate()-1); return dateKey(d)}
+function storageKey(tab,district,dayKey){return `rates_${tab}_${district}_${dayKey}`}
 
-/* === Trend: show NEXT TO COUNT, blink === */
-function trendClass(curr, prev){
-  if(prev==null || isNaN(prev)) return 'flat';
-  if(curr > prev) return 'up';
-  if(curr < prev) return 'down';
-  return 'flat';
-}
-function trendSpan(cls){
-  if(cls==='up') return '<span class="trend up">▲</span>';
-  if(cls==='down') return '<span class="trend down">▼</span>';
-  return '<span class="trend flat">—</span>';
-}
+/* arrows */
+function trendClass(curr,prev){ if(prev==null||isNaN(prev))return'flat'; if(curr>prev)return'up'; if(curr<prev)return'down'; return'flat';}
+function trendSpan(cls){ if(cls==='up')return'<span class="trend up">▲</span>'; if(cls==='down')return'<span class="trend down">▼</span>'; return'<span class="trend flat">—</span>'; }
 
-/* === Transport: per-km rates by vehicle (capacity-based) === */
-const transportVehicles = [
-  {vehicle:"5 Ton Van", rate:20},  // ₹/km
-  {vehicle:"8 Ton Truck", rate:30} // ₹/km
+/* transport config (NEW rates) */
+const VEHICLES=[
+  {label:'5 Ton Van',cap:5,rate:200},
+  {label:'8 Ton Truck',cap:8,rate:300}
 ];
 
-/* === Helpers to read prices from CSV memory === */
-function getShrimpPrice(district, count){ return (RATES.shrimp[district]||{})[String(count)]; }
-function getIcePrice(district, type){ return (RATES.ice[district]||{})[type]; }
+/* helpers */
+function getShrimpPrice(d,c){return (RATES.shrimp[d]||{})[String(c)]}
+function getIcePrice(d,type){return (RATES.ice[d]||{})[type]}
 
-/* === Renderers === */
+/* renderers */
 let activeTab='shrimp';
 
-function renderTransport(){
-  const box=document.getElementById('transportBox');
-  const ttl=document.getElementById('transportTitle');
-  if(activeTab!=='ice'){ box.style.display='none'; ttl.style.display='none'; return; }
-  ttl.style.display='block'; box.style.display='block';
-
-  const list=document.getElementById('transportList');
-  const input=document.getElementById('distInput');
-  function recalc(){
-    const km = Math.max(0, parseFloat(input.value) || 0);
-    list.innerHTML = transportVehicles.map(v=>{
-      const cost = Math.round(v.rate * km);
-      return `<div class="row">
-        <div class="cell">${v.vehicle} (${v.rate}₹/km)</div>
-        <div class="cell">₹ ${cost}</div>
-      </div>`;
-    }).join('');
-  }
-  input.oninput = recalc;
-  recalc();
-}
-
 async function renderRates(){
-  const district = localStorage.getItem('district') || 'Nellore';
-  document.getElementById('districtName').textContent = district;
-
-  if (!RATES.__loaded) { try{ await loadRatesFromCSV(); }catch(e){ console.warn('CSV load failed',e); } }
-
-  const list=document.getElementById('ratesList');
-  list.innerHTML='';
-
-  const yKey = yesterdayKey();
-  const tKey = todayKey();
-  const prev = JSON.parse(localStorage.getItem(storageKey(activeTab, district, yKey)) || '{}');
-  const curr = {};
+  const district=localStorage.getItem('district')||'Nellore';
+  document.getElementById('districtName').textContent=district;
+  if(!RATES.__loaded){ try{await loadRatesFromCSV()}catch(e){console.warn(e)} }
+  const list=document.getElementById('ratesList'); list.innerHTML='';
+  const yKey=yesterdayKey(), tKey=todayKey();
+  const prev=JSON.parse(localStorage.getItem(storageKey(activeTab,district,yKey))||'{}');
+  const curr={};
 
   if(activeTab==='shrimp'){
     for(let c=200;c>=30;c-=10){
-      const price = getShrimpPrice(district, c);
-      curr[c] = price ?? null;
-      const cls = trendClass(price, prev[c]);
-      list.innerHTML += `
-        <div class="row">
-          <div class="cell count">${trendSpan(cls)} ${c}c</div>
-          <div class="cell price">${price!=null ? `₹ ${price}` : '—'}</div>
-        </div>`;
+      const price=getShrimpPrice(district,c); curr[c]=price??null;
+      const cls=trendClass(price,prev[c]);
+      list.innerHTML+=`<div class="row"><div class="cell count">${trendSpan(cls)} ${c}c</div><div class="cell price">${price!=null?`₹ ${price}`:'—'}</div></div>`;
     }
-  } else {
-    const items = Object.keys(RATES.ice[district]||{});
-    if(items.length===0){ items.push('Block Ice 50kg'); }
+  }else{
+    const items=Object.keys(RATES.ice[district]||{}); if(items.length===0){items.push('Block Ice 50kg')}
     items.forEach(type=>{
-      const price = getIcePrice(district, type);
-      curr[type] = price ?? null;
-      const cls = trendClass(price, prev[type]);
-      list.innerHTML += `
-        <div class="row">
-          <div class="cell count">${trendSpan(cls)} ${type}</div>
-          <div class="cell price">${price!=null ? `₹ ${price}` : '—'}</div>
-        </div>`;
+      const price=getIcePrice(district,type); curr[type]=price??null;
+      const cls=trendClass(price,prev[type]);
+      list.innerHTML+=`<div class="row"><div class="cell count">${trendSpan(cls)} ${type}</div><div class="cell price">${price!=null?`₹ ${price}`:'—'}</div></div>`;
     });
   }
-
-  // Save today's snapshot (used tomorrow)
-  localStorage.setItem(storageKey(activeTab, district, tKey), JSON.stringify(curr));
-
+  localStorage.setItem(storageKey(activeTab,district,tKey),JSON.stringify(curr));
   applyI18N();
-  renderTransport();
+  renderCalculator();  // show/hide calc section based on tab
 }
 
-/* === Events & Init === */
-document.querySelectorAll('.tab').forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    activeTab=tab.dataset.tab;
-    renderRates();
-  });
-});
+function renderCalculator(){
+  const show = activeTab==='ice';
+  document.getElementById('calcTitle').style.display = show?'block':'none';
+  document.getElementById('calcBox').style.display = show?'block':'none';
+  if(!show) return;
 
+  const kmEl=document.getElementById('km');
+  const priceTonEl=document.getElementById('priceTon');
+  const qtyEl=document.getElementById('qty');
+  const addrEl=document.getElementById('addr');
+  const bookBtn=document.getElementById('bookBtn');
+
+  function calc(){
+    const km = Math.max(0, parseFloat(kmEl.value)||0);
+    const pton = Math.max(0, parseFloat(priceTonEl.value)||0);
+    const qty = Math.max(0, parseFloat(qtyEl.value)||0);
+
+    const vehVal = document.querySelector('input[name="veh"]:checked').value;
+    const veh = VEHICLES.find(v=>String(v.cap)===vehVal);
+    const transport = Math.round(veh.rate * km);
+    const iceCost   = Math.round(pton * qty);
+    const total     = transport + iceCost;
+
+    document.getElementById('transportCost').textContent = `₹ ${transport}`;
+    document.getElementById('iceCost').textContent = `₹ ${iceCost}`;
+    document.getElementById('grandTotal').textContent = `₹ ${total}`;
+
+    const district=localStorage.getItem('district')||'Nellore';
+    const msg = [
+      `Ice Booking`,
+      `District: ${district}`,
+      `Vehicle: ${veh.label} (${veh.rate}₹/km)`,
+      `Distance: ${km} km`,
+      `Ice: ${qty} ton(s) @ ₹${pton}/ton`,
+      `Transport: ₹${transport}`,
+      `Ice Cost: ₹${iceCost}`,
+      `Total: ₹${total}`,
+      `Address: ${addrEl.value||'-'}`
+    ].join('\n');
+
+    bookBtn.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+    bookBtn.disabled = (total<=0);
+  }
+
+  // attach
+  kmEl.oninput = priceTonEl.oninput = qtyEl.oninput = calc;
+  document.querySelectorAll('input[name="veh"]').forEach(r=>r.onchange=calc);
+  addrEl.oninput = calc;
+  calc();
+}
+
+/* events & init */
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); activeTab=tab.dataset.tab; renderRates(); });
+});
 document.getElementById('yr').textContent=new Date().getFullYear();
-const dSel=document.getElementById('districtSelect');
-const saved=localStorage.getItem('district'); if(saved){ dSel.value=saved; document.getElementById('districtName').textContent=saved; }
-dSel.addEventListener('change',e=>{ localStorage.setItem('district',e.target.value); document.getElementById('districtName').textContent=e.target.value; renderRates(); });
+const dSel=document.getElementById('districtSelect'); const saved=localStorage.getItem('district'); if(saved){dSel.value=saved; document.getElementById('districtName').textContent=saved;}
+dSel.addEventListener('change',e=>{localStorage.setItem('district',e.target.value); document.getElementById('districtName').textContent=e.target.value; renderRates();});
 
 applyI18N();
 renderRates();
