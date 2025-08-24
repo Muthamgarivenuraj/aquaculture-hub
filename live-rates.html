@@ -28,7 +28,6 @@
     .price{color:#059669;font-weight:800}
 
     .subttl{margin-top:16px;font-weight:800}
-
     footer{text-align:center;margin:20px 0;color:var(--muted);font-size:.85rem}
 
     @media(max-width:600px){
@@ -96,23 +95,38 @@
   </div>
 
 <script>
-/* === language (keep your existing I18N/applyI18N/init code) === */
+/* === language === */
+const I18N={
+  en:{pageLive:"Live Rates",home:"Home",district:"Select District",
+      shrimp:"Shrimp",ice:"Ice",size:"Count",rate:"Price (₹/kg)",
+      type:"Type",price:"Price (₹/block)",
+      transport:"Transport (Ice Delivery)",vehicle:"Vehicle",rentKm:"Rent (₹)",distance:"Distance (km)"},
+  te:{pageLive:"లైవ్ రేట్స్",home:"హోమ్",district:"జిల్లా ఎంచుకోండి",
+      shrimp:"రొయ్యలు",ice:"ఐస్",size:"కౌంట్",rate:"ధర (₹/కిలో)",
+      type:"రకం",price:"ధర (₹/బ్లాక్)",
+      transport:"రవాణా (ఐస్ డెలివరీ)",vehicle:"వాహనం",rentKm:"అద్దె (₹)",distance:"దూరం (కిమీ)"}
+};
+function getLang(){return localStorage.getItem('lang')||'en';}
+function t(k){return (I18N[getLang()]||{})[k]||k;}
+function applyI18N(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(sel=>{
+    if(sel.options.length){sel.options[0].textContent=t(sel.getAttribute('data-i18n-placeholder'));}
+  });
+  document.getElementById('col1').textContent=activeTab==='shrimp'?t('size'):t('type');
+  document.getElementById('col2').textContent=activeTab==='shrimp'?t('rate'):t('price');
+}
 
-/* ============== CSV LOADER ============== */
-const CSV_URL = 'rates.csv'; // same-folder CSV; works on GitHub Pages
-
-// RATES structure after load:
-// RATES.shrimp[district][count] = price
-// RATES.ice[district][type] = price
-const RATES = { shrimp: {}, ice: {} };
+/* === CSV loader === */
+const CSV_URL = 'rates.csv'; // keep rates.csv in same folder
+const RATES = { shrimp: {}, ice: {}, __loaded:false };
 
 async function loadRatesFromCSV(){
   const res = await fetch(CSV_URL, {cache:'no-store'});
   const text = await res.text();
   for (const line of text.split(/\r?\n/)) {
     const clean = line.trim();
-    if (!clean || clean.startsWith('#')) continue;
-    // naive CSV split (no commas inside fields in our format)
+    if (!clean || clean.startsWith('type,')) continue;
     const parts = clean.split(',').map(s=>s.trim());
     if (parts.length < 4) continue;
     const [type, district, key, priceStr] = parts;
@@ -121,15 +135,16 @@ async function loadRatesFromCSV(){
     if (!RATES[type][district]) RATES[type][district] = {};
     RATES[type][district][key] = price;
   }
+  RATES.__loaded = true;
 }
 
-/* ============== “Yesterday vs Today” storage ============== */
+/* === Date helpers for yesterday compare === */
 function dateKey(d){ return d.toISOString().slice(0,10); }
 function todayKey(){ return dateKey(new Date()); }
 function yesterdayKey(){ const d=new Date(); d.setDate(d.getDate()-1); return dateKey(d); }
 function storageKey(tab, district, dayKey){ return `rates_${tab}_${district}_${dayKey}`; }
 
-/* ============== Trend helpers (arrow near COUNT) ============== */
+/* === Trend: show NEXT TO COUNT, blink === */
 function trendClass(curr, prev){
   if(prev==null || isNaN(prev)) return 'flat';
   if(curr > prev) return 'up';
@@ -142,28 +157,49 @@ function trendSpan(cls){
   return '<span class="trend flat">—</span>';
 }
 
-/* ============== Renderers (now read from CSV) ============== */
+/* === Transport: per-km rates by vehicle (capacity-based) === */
+const transportVehicles = [
+  {vehicle:"5 Ton Van", rate:20},  // ₹/km
+  {vehicle:"8 Ton Truck", rate:30} // ₹/km
+];
+
+/* === Helpers to read prices from CSV memory === */
+function getShrimpPrice(district, count){ return (RATES.shrimp[district]||{})[String(count)]; }
+function getIcePrice(district, type){ return (RATES.ice[district]||{})[type]; }
+
+/* === Renderers === */
 let activeTab='shrimp';
 
-function getShrimpPrice(district, count){
-  const map = RATES.shrimp[district] || {};
-  return map[count]; // may be undefined if not present
-}
-function getIcePrice(district, type){
-  const map = RATES.ice[district] || {};
-  return map[type];
+function renderTransport(){
+  const box=document.getElementById('transportBox');
+  const ttl=document.getElementById('transportTitle');
+  if(activeTab!=='ice'){ box.style.display='none'; ttl.style.display='none'; return; }
+  ttl.style.display='block'; box.style.display='block';
+
+  const list=document.getElementById('transportList');
+  const input=document.getElementById('distInput');
+  function recalc(){
+    const km = Math.max(0, parseFloat(input.value) || 0);
+    list.innerHTML = transportVehicles.map(v=>{
+      const cost = Math.round(v.rate * km);
+      return `<div class="row">
+        <div class="cell">${v.vehicle} (${v.rate}₹/km)</div>
+        <div class="cell">₹ ${cost}</div>
+      </div>`;
+    }).join('');
+  }
+  input.oninput = recalc;
+  recalc();
 }
 
 async function renderRates(){
   const district = localStorage.getItem('district') || 'Nellore';
+  document.getElementById('districtName').textContent = district;
+
+  if (!RATES.__loaded) { try{ await loadRatesFromCSV(); }catch(e){ console.warn('CSV load failed',e); } }
+
   const list=document.getElementById('ratesList');
   list.innerHTML='';
-
-  // ensure CSV loaded first
-  if (!RATES.__loaded) {
-    try { await loadRatesFromCSV(); } catch(e){ console.warn('CSV load failed', e); }
-    RATES.__loaded = true;
-  }
 
   const yKey = yesterdayKey();
   const tKey = todayKey();
@@ -172,8 +208,7 @@ async function renderRates(){
 
   if(activeTab==='shrimp'){
     for(let c=200;c>=30;c-=10){
-      // read from CSV; if missing, show "—"
-      const price = getShrimpPrice(district, String(c));
+      const price = getShrimpPrice(district, c);
       curr[c] = price ?? null;
       const cls = trendClass(price, prev[c]);
       list.innerHTML += `
@@ -183,8 +218,8 @@ async function renderRates(){
         </div>`;
     }
   } else {
-    const items = Object.keys(RATES.ice[district]||{}); // all ice items for this district
-    if(items.length===0){ items.push('Block Ice 50kg'); } // fallback label
+    const items = Object.keys(RATES.ice[district]||{});
+    if(items.length===0){ items.push('Block Ice 50kg'); }
     items.forEach(type=>{
       const price = getIcePrice(district, type);
       curr[type] = price ?? null;
@@ -197,12 +232,14 @@ async function renderRates(){
     });
   }
 
+  // Save today's snapshot (used tomorrow)
   localStorage.setItem(storageKey(activeTab, district, tKey), JSON.stringify(curr));
+
   applyI18N();
-  renderTransport(); // your transport calculator function as before
+  renderTransport();
 }
 
-/* ============== Tabs & Init (keep rest of your code) ============== */
+/* === Events & Init === */
 document.querySelectorAll('.tab').forEach(tab=>{
   tab.addEventListener('click',()=>{
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -214,12 +251,11 @@ document.querySelectorAll('.tab').forEach(tab=>{
 
 document.getElementById('yr').textContent=new Date().getFullYear();
 const dSel=document.getElementById('districtSelect');
-const saved=localStorage.getItem('district');if(saved){dSel.value=saved;document.getElementById('districtName').textContent=saved;}
-dSel.addEventListener('change',e=>{localStorage.setItem('district',e.target.value);document.getElementById('districtName').textContent=e.target.value;renderRates();});
+const saved=localStorage.getItem('district'); if(saved){ dSel.value=saved; document.getElementById('districtName').textContent=saved; }
+dSel.addEventListener('change',e=>{ localStorage.setItem('district',e.target.value); document.getElementById('districtName').textContent=e.target.value; renderRates(); });
 
 applyI18N();
 renderRates();
 </script>
-
 </body>
 </html>
