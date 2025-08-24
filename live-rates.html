@@ -20,16 +20,19 @@
   input[readonly]{background:#f9fbff}
   label{display:block;margin:6px 0 4px;color:#334155;font-weight:700}
 
+  .display{width:100%;padding:12px;border:1px solid var(--border);border-radius:12px;background:#f9fbff;font-weight:700}
+  .currency{font-variant-numeric:tabular-nums}
+
   .card{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:12px}
   .pad{padding:14px}
 
-  /* Tabs: Prawns → Harvest → Seeds */
+  /* Tabs */
   .tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
   .tab{padding:10px;border:1px solid var(--border);border-radius:12px;cursor:pointer;font-weight:700;text-align:center;background:#fff}
   .tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
   @media(max-width:640px){ .tabs{grid-template-columns:1fr 1fr} }
 
-  /* Prawns two-col */
+  /* Prawns table */
   .head2{display:grid;grid-template-columns:1fr 1fr;background:#eef3ff}
   .cell{padding:12px 14px;text-align:center;font-weight:700}
   .row2{display:grid;grid-template-columns:1fr 1fr}
@@ -44,16 +47,15 @@
   @keyframes blink-up{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.3;transform:translateY(-2px)}}
   @keyframes blink-down{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.3;transform:translateY(2px)}}
 
-  /* Seeds controls */
+  /* Grids */
   .filters{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
   @media(max-width:800px){ .filters{grid-template-columns:1fr} }
   .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   @media(max-width:640px){ .info-grid{grid-template-columns:1fr} }
 
-  .muted{color:var(--muted)}
   .h3{margin:10px 0;color:#1e66f5;font-size:1.05rem;font-weight:800}
   .btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;padding:12px 16px;border-radius:12px;border:1px solid var(--brand);background:var(--brand);color:#fff;font-weight:800;text-decoration:none;width:100%}
-
+  .muted{color:var(--muted)}
   footer{text-align:center;margin:18px 0;color:var(--muted);font-size:.85rem}
 </style>
 </head>
@@ -150,14 +152,41 @@
     </div>
 
     <div class="pad" style="border-top:1px solid var(--border)">
+      <!-- NOT EDITABLE: PL & Price -->
       <div class="info-grid">
-        <div><label data-i18n="pl">Seeds PL</label><input id="staticPL" value="" readonly></div>
-        <div><label data-i18n="pricePer1000">Price / 1000</label><input id="staticPrice" value="" readonly></div>
+        <div>
+          <label data-i18n="pl">Seeds PL</label>
+          <div id="plDisp" class="display">—</div>
+        </div>
+        <div>
+          <label data-i18n="pricePer1000">Price / 1000</label>
+          <div id="priceDisp" class="display currency">₹ 0</div>
+        </div>
       </div>
+
+      <!-- Availability range -->
       <div class="info-grid" style="margin-top:10px">
         <div><label data-i18n="availFrom">Available From</label><input id="staticFrom" value="" readonly></div>
         <div><label data-i18n="availTo">Available To</label><input id="staticTo" value="" readonly></div>
       </div>
+
+      <!-- Booking + Production -->
+      <div class="info-grid" style="margin-top:10px">
+        <div><label id="lblBooking">Customer Booking Date</label><input id="bookingDate" type="date" /></div>
+        <div><label id="lblQty">Quantity (×1000 PL)</label><input id="seedQty" type="number" min="0" step="1" value="0" /></div>
+      </div>
+
+      <div class="info-grid" style="margin-top:10px">
+        <div><label id="lblProd">Production</label><input id="production" type="text" placeholder="e.g., Farm A / Batch-1"></div>
+        <div><label id="lblProdNo">Production No.</label><input id="productionNo" type="number" min="0" step="1" placeholder="e.g., 150000"></div>
+      </div>
+
+      <!-- Total (read-only) -->
+      <div class="info-grid" style="margin-top:10px">
+        <div><label id="lblTotal">Total Amount</label><input id="seedTotal" class="currency" value="₹ 0" readonly></div>
+        <div></div>
+      </div>
+
       <div style="margin-top:10px"><a id="seedBookBtn" class="btn" href="#" target="_blank" rel="noopener" data-i18n="book">Book</a></div>
     </div>
   </div>
@@ -194,6 +223,12 @@ function applyI18N(){
   const s=document.getElementById('districtSelect'); if(s&&s.options.length){ s.options[0].textContent=t('district'); }
   document.getElementById('priceLabel').textContent=(unit.value==='ton')?t('priceTon'):t('priceCan');
   document.getElementById('todayDate').textContent=new Date().toLocaleDateString(lang()==='te'?'te-IN':'en-IN',{year:'numeric',month:'short',day:'numeric'});
+  // extra labels
+  document.getElementById('lblBooking').textContent = (lang()==='te')?'కస్టమర్ బుకింగ్ తేదీ':'Customer Booking Date';
+  document.getElementById('lblProd').textContent    = (lang()==='te')?'ప్రొడక్షన్':'Production';
+  document.getElementById('lblProdNo').textContent  = (lang()==='te')?'ప్రొడక్షన్ నం.':'Production No.';
+  document.getElementById('lblQty').textContent     = (lang()==='te')?'పరిమాణం (×1000 PL)':'Quantity (×1000 PL)';
+  document.getElementById('lblTotal').textContent   = (lang()==='te')?'మొత్తం అమౌంట్':'Total Amount';
 }
 
 /* ===== header/date/district ===== */
@@ -284,10 +319,9 @@ unitPrice.addEventListener('change',recalc); qty.addEventListener('input',recalc
 km.addEventListener('input',recalc); vehicle.addEventListener('change',()=>{updateVehRate();recalc();});
 fillPriceOptions(); updateVehRate(); recalc();
 
-/* ===== Seeds (names from CSV; static PL/Price; AP→District→Hatchery, TN→Hatchery only) ===== */
+/* ===== Seeds (CSV with price_per_1000; AP→District→Hatchery, TN→Hatchery only) ===== */
 const SEED_STATIC = {
-  pl: "Vannamei SPF PL",       // static PL
-  price: 350,                  // static price per 1000
+  pl: "Vannamei SPF PL",
   from: (()=>{const d=new Date(); d.setDate(d.getDate()+1); return d.toISOString().slice(0,10);})(),
   to:   (()=>{const d=new Date(); d.setDate(d.getDate()+8); return d.toISOString().slice(0,10);})()
 };
@@ -301,8 +335,15 @@ async function loadSeeds(){
     const rows=text.split(/\r?\n/).map(r=>r.trim()).filter(Boolean);
     const start=rows[0]?.toLowerCase().includes('state')?1:0;
     for(let i=start;i<rows.length;i++){
-      const [state,district,hatchery]=rows[i].split(',').map(s=>s?.trim()||'');
-      if(state && hatchery) SEEDS.push({state,district,hatchery});
+      const [state,district,hatchery,pl,price_per_1000,available] = rows[i].split(',').map(s=>s?.trim()||'');
+      if(state && hatchery){
+        SEEDS.push({
+          state,
+          district,
+          hatchery,
+          price: isNaN(parseFloat(price_per_1000)) ? 0 : parseFloat(price_per_1000)
+        });
+      }
     }
     SEEDS_LOADED=true;
   }catch(e){ console.warn('seeds.csv not found'); }
@@ -325,14 +366,26 @@ function fillHatcheries(){
     rows = SEEDS.filter(r=>r.state==='Andhra Pradesh' && (!district || r.district===district));
   }
   hSel.innerHTML = `<option value="">${t('hatchery')}</option>` +
-    rows.map(r=>`<option data-state="${r.state}" data-district="${r.district||''}">${r.hatchery}</option>`).join('');
+    rows.map(r=>`<option data-state="${r.state}" data-district="${r.district||''}" data-price="${r.price}">${r.hatchery}</option>`).join('');
 }
 
 function applySeedsStatic(){
-  document.getElementById('staticPL').value = SEED_STATIC.pl;
-  document.getElementById('staticPrice').value = `₹ ${SEED_STATIC.price}`;
+  document.getElementById('plDisp').textContent = SEED_STATIC.pl;
   document.getElementById('staticFrom').value = SEED_STATIC.from;
-  document.getElementById('staticTo').value = SEED_STATIC.to;
+  document.getElementById('staticTo').value   = SEED_STATIC.to;
+  // defaults
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('bookingDate').value = today;
+}
+
+function updatePriceAndTotal(){
+  const opt = document.getElementById('seedHatchery').selectedOptions[0];
+  const price = opt ? (parseFloat(opt.getAttribute('data-price'))||0) : 0;
+  document.getElementById('priceDisp').textContent = `₹ ${price}`;
+  const qty = parseInt(document.getElementById('seedQty').value||'0',10);
+  const total = price * qty;
+  document.getElementById('seedTotal').value = `₹ ${total}`;
+  updateSeedBookLink(price, qty, total);
 }
 
 function updateSeedsUI(){
@@ -341,31 +394,45 @@ function updateSeedsUI(){
   wrap.style.display = (state==='Tamil Nadu') ? 'none' : '';
   fillHatcheries();
   applySeedsStatic();
-  updateSeedBookLink(); // even if no hatchery selected
+  updatePriceAndTotal();
 }
 
-function updateSeedBookLink(){
+function updateSeedBookLink(price, qty, total){
   const hSel=document.getElementById('seedHatchery');
   const opt=hSel.selectedOptions[0];
   const hatchName = opt ? opt.textContent : '';
   const state = opt ? opt.getAttribute('data-state') || document.getElementById('seedState').value : document.getElementById('seedState').value;
   const district = (state==='Andhra Pradesh') ? (opt?.getAttribute('data-district') || document.getElementById('seedDistrict').value || '') : '';
+  const booking = document.getElementById('bookingDate').value || '';
+  const prod    = document.getElementById('production').value || '';
+  const prodNo  = document.getElementById('productionNo').value || '';
+
   const msg = [
-    "Seeds Enquiry",
+    "Seeds Booking",
     `Hatchery: ${hatchName||'-'}`,
     `State: ${state}`,
     `District: ${district|| (localStorage.getItem('district')||'')}`,
     `Seeds PL: ${SEED_STATIC.pl}`,
-    `Price / 1000: ₹${SEED_STATIC.price}`,
-    `Available: ${SEED_STATIC.from} → ${SEED_STATIC.to}`
+    `Price / 1000: ₹${price||0}`,
+    `Quantity (x1000): ${qty||0}`,
+    `Total Amount: ₹${total||0}`,
+    `Available: ${SEED_STATIC.from} → ${SEED_STATIC.to}`,
+    `Customer Booking Date: ${booking||'-'}`,
+    `Production: ${prod||'-'}`,
+    `Production No.: ${prodNo||'-'}`
   ].join('\n');
+
   document.getElementById('seedBookBtn').href=`https://wa.me/?text=${encodeURIComponent(msg)}`;
 }
 
 /* Events */
 document.getElementById('seedState').addEventListener('change', updateSeedsUI);
-document.getElementById('seedDistrict').addEventListener('change', ()=>{ fillHatcheries(); updateSeedBookLink(); });
-document.getElementById('seedHatchery').addEventListener('change', updateSeedBookLink);
+document.getElementById('seedDistrict').addEventListener('change', ()=>{ fillHatcheries(); updatePriceAndTotal(); });
+document.getElementById('seedHatchery').addEventListener('change', updatePriceAndTotal);
+document.getElementById('bookingDate').addEventListener('change', updatePriceAndTotal);
+document.getElementById('production').addEventListener('input', updatePriceAndTotal);
+document.getElementById('productionNo').addEventListener('input', updatePriceAndTotal);
+document.getElementById('seedQty').addEventListener('input', updatePriceAndTotal);
 
 /* Init seeds once */
 async function initSeeds(){
