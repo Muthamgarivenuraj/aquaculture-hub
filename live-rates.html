@@ -29,7 +29,7 @@
   .tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
   @media(max-width:640px){ .tabs{grid-template-columns:1fr 1fr} }
 
-  /* Two-col list (prawns) */
+  /* Prawns two-col */
   .head2{display:grid;grid-template-columns:1fr 1fr;background:#eef3ff}
   .cell{padding:12px 14px;text-align:center;font-weight:700}
   .row2{display:grid;grid-template-columns:1fr 1fr}
@@ -39,25 +39,17 @@
   .right{display:flex;align-items:center;justify-content:flex-end;color:#059669;font-weight:800}
   @media(max-width:640px){ .head2{display:none} .row2{grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)} }
 
-  /* arrows */
-  .trend{display:inline-flex;gap:6px;align-items:center;font-weight:700}
-  .up{color:#0ea75a;animation:blink-up 1s ease-in-out 2}
-  .down{color:#e11d48;animation:blink-down 1s ease-in-out 2}
-  @keyframes blink-up{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.3;transform:translateY(-2px)}}
-  @keyframes blink-down{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.3;transform:translateY(2px)}}
-
-  /* Seeds table (6 columns) */
-  .head6{display:grid;grid-template-columns:1.1fr 1.1fr 1.4fr 1fr .8fr 1.2fr;background:#eef3ff}
-  .row6{display:grid;grid-template-columns:1.1fr 1.1fr 1.4fr 1fr .8fr 1.2fr}
-  .head6 .cell, .row6 .cell{padding:10px 12px}
-  .row6:nth-child(odd){background:#fff}
-  .row6:nth-child(even){background:#f9fbff}
-  .muted{color:var(--muted)}
+  /* Seeds list 3-col */
+  .head3{display:grid;grid-template-columns:1.2fr 1.2fr 1.6fr;background:#eef3ff}
+  .row3{display:grid;grid-template-columns:1.2fr 1.2fr 1.6fr}
+  .head3 .cell, .row3 .cell{padding:10px 12px}
+  .row3:nth-child(odd){background:#fff}
+  .row3:nth-child(even){background:#f9fbff}
   @media(max-width:800px){
-    .head6{display:none}
-    .row6{grid-template-columns:1fr; border-bottom:1px solid var(--border)}
-    .row6 .cell{display:flex;justify-content:space-between;gap:10px}
-    .row6 .label{color:#64748b;font-weight:600}
+    .head3{display:none}
+    .row3{grid-template-columns:1fr; border-bottom:1px solid var(--border)}
+    .row3 .cell{display:flex;justify-content:space-between;gap:10px}
+    .row3 .label{color:#64748b;font-weight:600}
   }
 
   /* Calculator (Harvest) */
@@ -69,6 +61,7 @@
   .btn:disabled{opacity:.5;pointer-events:none}
   @media(max-width:640px){ .grid2{grid-template-columns:1fr} }
 
+  .muted{color:var(--muted)}
   footer{text-align:center;margin:18px 0;color:var(--muted);font-size:.85rem}
 </style>
 </head>
@@ -86,30 +79,30 @@
 
   <div class="card pad" style="margin-bottom:10px">
     <label data-i18n="district">Select District</label>
-    <select id="districtSelect" data-i18n-placeholder="district">
+    <select id="districtSelect">
       <option>Select District</option>
       <option>Nellore</option><option>West Godavari</option>
       <option>East Godavari</option><option>Krishna</option><option>Prakasam</option>
     </select>
   </div>
 
-  <!-- Tabs: Seeds | Prawns – Price | Harvesting -->
+  <!-- Tabs -->
   <div class="tabs">
     <div class="tab active" data-tab="seeds" data-i18n="seeds">Seeds</div>
     <div class="tab" data-tab="shrimp" data-i18n="prawnsPrice">Prawns – Price</div>
     <div class="tab" data-tab="harvest" data-i18n="harvesting">Harvesting</div>
   </div>
 
-  <!-- SEEDS DIRECTORY (State → District → Hatchery → PL → Price → Available Date) -->
+  <!-- SEEDS -->
   <div class="card" id="seedsSection">
     <div class="pad">
       <div class="grid2" style="margin-bottom:10px">
         <div>
           <label data-i18n="state">State</label>
           <select id="seedState">
-            <option value="Andhra Pradesh">Andhra Pradesh</option>
-            <option value="Telangana">Telangana</option>
-            <option value="Tamil Nadu">Tamil Nadu</option>
+            <option>Andhra Pradesh</option>
+            <option>Telangana</option>
+            <option>Tamil Nadu</option>
           </select>
         </div>
         <div>
@@ -123,55 +116,55 @@
       </div>
     </div>
 
-    <div class="head6">
+    <!-- Hatchery list -->
+    <div class="head3">
       <div class="cell" data-i18n="state">State</div>
       <div class="cell" data-i18n="district">District</div>
       <div class="cell" data-i18n="hatchery">Hatchery</div>
-      <div class="cell" data-i18n="pl">PL of Seeds</div>
-      <div class="cell" data-i18n="price">Price</div>
-      <div class="cell" data-i18n="availDate">Available Date</div>
     </div>
     <div id="seedList"></div>
 
+    <!-- Static seeds info -->
     <div class="pad" style="border-top:1px solid var(--border)">
-      <a id="seedBookBtn" class="btn" href="#" target="_blank" rel="noopener" data-i18n="book">Book</a>
+      <div class="grid2">
+        <div><label data-i18n="pl">Seeds PL</label><input id="staticPL" value="Vannamei SPF PL" readonly></div>
+        <div><label data-i18n="price">Price / 1000</label><input id="staticPrice" value="₹ 350" readonly></div>
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <div><label data-i18n="availDate">Available Date</label><input id="staticDate" value="" readonly></div>
+        <div style="display:flex;align-items:flex-end">
+          <a id="seedBookBtn" class="btn" href="#" target="_blank" rel="noopener" data-i18n="book">Book</a>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- PRAWNS – PRICE -->
   <div class="card" id="prawnsList" style="display:none">
     <div class="head2">
-      <div class="cell" id="col1" data-i18n="count">Count</div>
-      <div class="cell" id="col2" data-i18n="price">Price</div>
+      <div class="cell" data-i18n="count">Count</div>
+      <div class="cell" data-i18n="price">Price</div>
     </div>
     <div id="list"></div>
   </div>
 
-  <!-- HARVESTING (calculator only) -->
+  <!-- HARVESTING -->
   <div class="card" id="harvestCalc" style="display:none">
     <div class="pad">
       <h3 class="h3" data-i18n="iceBooking">Ice Booking</h3>
       <div class="grid2">
-        <div>
-          <label data-i18n="unit">Unit</label>
-          <select id="unit">
-            <option value="ton" data-i18n="uTon" selected>Tons</option>
-            <option value="can" data-i18n="uCan">Cans</option>
-          </select>
+        <div><label data-i18n="unit">Unit</label>
+          <select id="unit"><option value="ton" selected data-i18n="uTon">Tons</option><option value="can" data-i18n="uCan">Cans</option></select>
         </div>
-        <div>
-          <label id="priceLabel">Price (₹/ton)</label>
-          <select id="unitPrice"></select>
-        </div>
+        <div><label id="priceLabel">Price (₹/ton)</label><select id="unitPrice"></select></div>
       </div>
       <div class="grid2" style="margin-top:10px">
-        <div><label data-i18n="qty">Quantity</label><input id="qty" type="number" min="0" step="0.5" value="1" /></div>
-        <div><label data-i18n="km">Distance (km)</label><input id="km" type="number" min="0" step="1" value="10" /></div>
+        <div><label data-i18n="qty">Quantity</label><input id="qty" type="number" min="0" step="0.5" value="1"/></div>
+        <div><label data-i18n="km">Distance (km)</label><input id="km" type="number" min="0" step="1" value="10"/></div>
       </div>
       <h3 class="h3" style="margin-top:16px" data-i18n="vanBooking">Van Booking</h3>
       <div class="grid2">
-        <div>
-          <label data-i18n="vehicle">Vehicle</label>
+        <div><label data-i18n="vehicle">Vehicle</label>
           <select id="vehicle">
             <option value="2">2 Ton Van — ₹100/km</option>
             <option value="5">5 Ton Van — ₹200/km</option>
@@ -179,7 +172,7 @@
             <option value="10">10 Ton Truck — ₹400/km</option>
           </select>
         </div>
-        <div><label data-i18n="rate">Rate (₹/km)</label><input id="vehRate" type="number" value="100" readonly /></div>
+        <div><label data-i18n="rate">Rate (₹/km)</label><input id="vehRate" type="number" value="100" readonly/></div>
       </div>
       <div class="kpi"><span data-i18n="transCost">Transport cost</span> <strong id="transCost">₹ 0</strong></div>
       <div class="kpi total"><span data-i18n="total">Total</span> <strong id="total">₹ 0</strong></div>
@@ -191,93 +184,36 @@
 </div>
 
 <script>
-/* ---------- i18n ---------- */
+/* ====== CONFIG: static seeds details ====== */
+function nextDayISO(){const d=new Date(); d.setDate(d.getDate()+1); return d.toISOString().slice(0,10);}
+const SEED_STATIC = { pl:"Vannamei SPF PL", price:350, available: nextDayISO() };
+
+/* ====== i18n (same keys as before + short labels) ====== */
 const I18N = {
-  en:{
-    pageLive:"Live Rates",home:"Home",district:"Select District",
-    seeds:"Seeds",prawnsPrice:"Prawns – Price",harvesting:"Harvesting",
-    count:"Count",price:"Price",
-    iceBooking:"Ice Booking",vanBooking:"Van Booking",
-    unit:"Unit",uTon:"Tons",uCan:"Cans",qty:"Quantity",km:"Distance (km)",
-    vehicle:"Vehicle",rate:"Rate (₹/km)",transCost:"Transport cost",total:"Total",book:"Book",
-    priceTon:"Price (₹/ton)",priceCan:"Price (₹/can)",
-    state:"State",hatchery:"Hatchery",pl:"PL of Seeds",availDate:"Available Date"
-  },
-  te:{
-    pageLive:"లైవ్ రేట్స్",home:"హోమ్",district:"జిల్లా ఎంచుకోండి",
-    seeds:"సీడ్స్",prawnsPrice:"రొయ్యలు – ధర",harvesting:"హార్వెస్టింగ్",
-    count:"కౌంట్",price:"ధర",
-    iceBooking:"ఐస్ బుకింగ్",vanBooking:"వాన్ బుకింగ్",
-    unit:"యూనిట్",uTon:"టన్నులు",uCan:"క్యాన్స్",qty:"పరిమాణం",km:"దూరం (కిమీ)",
-    vehicle:"వాహనం",rate:"రేట్ (₹/కిమీ)",transCost:"రవాణా ఖర్చు",total:"మొత్తం",book:"బుక్ చేయి",
-    priceTon:"ధర (₹/టన్ను)",priceCan:"ధర (₹/క్యాన్)",
-    state:"రాష్ట్రం",hatchery:"హ్యాచరీ",pl:"సీడ్స్ PL",availDate:"అందుబాటులో తేదీ"
-  }
+  en:{pageLive:"Live Rates",home:"Home",district:"Select District",seeds:"Seeds",prawnsPrice:"Prawns – Price",harvesting:"Harvesting",count:"Count",price:"Price",iceBooking:"Ice Booking",vanBooking:"Van Booking",unit:"Unit",uTon:"Tons",uCan:"Cans",qty:"Quantity",km:"Distance (km)",vehicle:"Vehicle",rate:"Rate (₹/km)",transCost:"Transport cost",total:"Total",book:"Book",priceTon:"Price (₹/ton)",priceCan:"Price (₹/can)",state:"State",hatchery:"Hatchery",pl:"Seeds PL",availDate:"Available Date"},
+  te:{pageLive:"లైవ్ రేట్స్",home:"హోమ్",district:"జిల్లా ఎంచుకోండి",seeds:"సీడ్స్",prawnsPrice:"రొయ్యలు – ధర",harvesting:"హార్వెస్టింగ్",count:"కౌంట్",price:"ధర",iceBooking:"ఐస్ బుకింగ్",vanBooking:"వాన్ బుకింగ్",unit:"యూనిట్",uTon:"టన్నులు",uCan:"క్యాన్స్",qty:"పరిమాణం",km:"దూరం (కిమీ)",vehicle:"వాహనం",rate:"రేట్ (₹/కిమీ)",transCost:"రవాణా ఖర్చు",total:"మొత్తం",book:"బుక్ చేయి",priceTon:"ధర (₹/టన్ను)",priceCan:"ధర (₹/క్యాన్)",state:"రాష్ట్రం",hatchery:"హ్యాచరీ",pl:"సీడ్స్ PL",availDate:"అందుబాటులో తేదీ"}
 };
 function getLang(){ return localStorage.getItem('lang') || 'en'; }
 function t(k){ return (I18N[getLang()]||{})[k] || k; }
 function applyI18N(){
   document.querySelectorAll('[data-i18n]').forEach(el=> el.textContent = t(el.dataset.i18n));
-  const dsel = document.getElementById('districtSelect');
-  if(dsel && dsel.options.length){ dsel.options[0].textContent = t('district'); }
-  const priceLabel = document.getElementById('priceLabel');
-  if(priceLabel){ priceLabel.textContent = (unit.value==='ton') ? t('priceTon') : t('priceCan'); }
-  document.title = t('pageLive');
-  setTodayDate();
+  const dsel=document.getElementById('districtSelect'); if(dsel && dsel.options.length){ dsel.options[0].textContent=t('district'); }
+  const pl=document.getElementById('staticPL'); if(pl) pl.previousElementSibling.textContent=t('pl');
+  const pr=document.getElementById('staticPrice'); if(pr) pr.previousElementSibling.textContent=t('price');
+  const av=document.getElementById('staticDate'); if(av) av.previousElementSibling.textContent=t('availDate');
+  const priceLabel=document.getElementById('priceLabel'); if(priceLabel){ priceLabel.textContent=(unit.value==='ton')?t('priceTon'):t('priceCan'); }
+  document.title=t('pageLive'); setTodayDate();
 }
 
-/* ---------- District & Date ---------- */
+/* ====== District & Date ====== */
 const dSel=document.getElementById('districtSelect');
 const savedDist=localStorage.getItem('district');
 if(savedDist){ dSel.value=savedDist; document.getElementById('districtName').textContent=savedDist; }
-dSel.addEventListener('change',e=>{
-  localStorage.setItem('district',e.target.value);
-  document.getElementById('districtName').textContent=e.target.value;
-  render();
-});
+dSel.addEventListener('change',e=>{ localStorage.setItem('district',e.target.value); document.getElementById('districtName').textContent=e.target.value; render();});
 document.getElementById('yr').textContent=new Date().getFullYear();
-function setTodayDate(){
-  const lang = getLang() === 'te' ? 'te-IN' : 'en-IN';
-  document.getElementById('todayDate').textContent =
-    new Date().toLocaleDateString(lang,{year:'numeric',month:'short',day:'numeric'});
-}
+function setTodayDate(){ const lang=getLang()==='te'?'te-IN':'en-IN'; document.getElementById('todayDate').textContent=new Date().toLocaleDateString(lang,{year:'numeric',month:'short',day:'numeric'}); }
 
-/* ---------- Prawns CSV ---------- */
-const CSV_URL='rates.csv';
-const RATES={shrimp:{}, __loaded:false};
-async function loadCSV(){
-  if(RATES.__loaded) return;
-  try{
-    const res=await fetch(CSV_URL,{cache:'no-store'});
-    const text=await res.text();
-    for(const line of text.split(/\r?\n/)){
-      const clean=line.trim();
-      if(!clean || clean.startsWith('type,')) continue;
-      const parts=clean.split(',').map(s=>s.trim());
-      if(parts.length<4) continue;
-      const [type,district,key,priceStr]=parts;
-      const price=parseFloat(priceStr);
-      if(type!=='shrimp' || !district || !key || isNaN(price)) continue;
-      if(!RATES.shrimp[district]) RATES.shrimp[district]={};
-      RATES.shrimp[district][key]=price;
-    }
-    RATES.__loaded=true;
-  }catch(e){ console.warn('Failed to load rates.csv',e); }
-}
-
-/* ---------- Trend arrows ---------- */
-function dateKey(d){return d.toISOString().slice(0,10)}
-function todayKey(){return dateKey(new Date())}
-function yesterdayKey(){const d=new Date(); d.setDate(d.getDate()-1); return dateKey(d)}
-function storageKey(dst,day){return `lr_shrimp_${dst}_${day}`}
-function trend(prev,curr){
-  if(prev==null||isNaN(prev)||curr==null||isNaN(curr)) return '';
-  if(curr>prev) return '<span class="trend up">▲</span>';
-  if(curr<prev) return '<span class="trend down">▼</span>';
-  return '';
-}
-
-/* ---------- Seeds CSV (state,district,hatchery,pl,price,available) ---------- */
+/* ====== Seeds data (hatchery names) ====== */
 let SEEDS=[], SEEDS_LOADED=false;
 async function loadSeeds(){
   if(SEEDS_LOADED) return;
@@ -286,179 +222,118 @@ async function loadSeeds(){
     const text=await res.text();
     const rows=text.split(/\r?\n/).map(r=>r.trim()).filter(r=>r);
     if(rows.length){
-      const header = rows[0].toLowerCase();
-      const start = header.includes('state') ? 1 : 0;
+      const header=rows[0].toLowerCase();
+      const start=header.includes('state')?1:0;
       for(let i=start;i<rows.length;i++){
-        const [state,district,hatchery,pl,price,available] = rows[i].split(',').map(s=>s?.trim()||'');
-        if(!state||!hatchery) continue;
-        SEEDS.push({state,district,hatchery,pl,price,available});
+        const [state,district,hatchery]=rows[i].split(',').map(s=>s?.trim()||'');
+        if(state && hatchery) SEEDS.push({state,district,hatchery});
       }
     }
     SEEDS_LOADED=true;
-  }catch(e){
-    // If no file, keep empty list; UI will show nothing.
-    console.warn('seeds.csv not found or failed to load');
-  }
+  }catch(e){ console.warn('seeds.csv missing; showing empty list'); }
 }
-function fmtPrice(p){ const n=parseFloat(p); return isNaN(n)?(p||'—'):`₹ ${n}`; }
 function renderSeeds(){
+  // static panel values
+  document.getElementById('staticPL').value = SEED_STATIC.pl;
+  document.getElementById('staticPrice').value = `₹ ${SEED_STATIC.price}`;
+  document.getElementById('staticDate').value = SEED_STATIC.available;
+
   const list=document.getElementById('seedList'); list.innerHTML='';
   const selState=document.getElementById('seedState').value;
   const selDist=document.getElementById('seedDistrict').value;
-  const pageDist=localStorage.getItem('district')||'Nellore';
 
   const filtered = SEEDS.filter(r =>
-    (r.state===selState) &&
-    (!selDist || r.district===selDist) &&
-    (!r.district || r.district===pageDist || selDist)  // if no district filter, prefer current page district
+    r.state===selState && (!selDist || r.district===selDist)
   );
 
   if(filtered.length===0){
     list.innerHTML = `<div class="pad muted">${getLang()==='te'?'డేటా లేదు':'No data yet.'}</div>`;
-    return;
+  }else{
+    filtered.forEach(r=>{
+      list.insertAdjacentHTML('beforeend', `
+        <div class="row3">
+          <div class="cell"><span class="label">State</span><span>${r.state||'—'}</span></div>
+          <div class="cell"><span class="label">District</span><span>${r.district||'—'}</span></div>
+          <div class="cell"><span class="label">Hatchery</span><span>${r.hatchery||'—'}</span></div>
+        </div>
+      `);
+    });
   }
 
-  filtered.forEach(r=>{
-    list.insertAdjacentHTML('beforeend', `
-      <div class="row6">
-        <div class="cell"><span class="label">State</span><span>${r.state||'—'}</span></div>
-        <div class="cell"><span class="label">District</span><span>${r.district||'—'}</span></div>
-        <div class="cell"><span class="label">Hatchery</span><span>${r.hatchery||'—'}</span></div>
-        <div class="cell"><span class="label">PL</span><span>${r.pl||'—'}</span></div>
-        <div class="cell"><span class="label">Price</span><span>${fmtPrice(r.price)}</span></div>
-        <div class="cell"><span class="label">Available</span><span>${r.available||'—'}</span></div>
-      </div>
-    `);
-  });
-
-  // Prepare WhatsApp message from current filter set
-  const msgLines = filtered.slice(0,10).map(r=>`${r.hatchery} (${r.district}) — ${r.pl} — ${fmtPrice(r.price)} — ${r.available}`);
+  // Book message with static details + filters
   const msg = [
     "Seeds Enquiry",
     `State: ${selState}`,
     `District: ${selDist || (localStorage.getItem('district')||'Nellore')}`,
-    `Items:`,
-    ...msgLines
+    `Seeds PL: ${SEED_STATIC.pl}`,
+    `Price / 1000: ₹${SEED_STATIC.price}`,
+    `Available: ${SEED_STATIC.available}`
   ].join('\n');
-  document.getElementById('seedBookBtn').href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+  document.getElementById('seedBookBtn').href=`https://wa.me/?text=${encodeURIComponent(msg)}`;
 }
 
-/* ---------- Tabs render ---------- */
-let activeTab='seeds';
-async function render(){
-  applyI18N();
-
-  // toggle sections
-  document.getElementById('seedsSection').style.display   = (activeTab==='seeds')   ? 'block' : 'none';
-  document.getElementById('prawnsList').style.display     = (activeTab==='shrimp')  ? 'block' : 'none';
-  document.getElementById('harvestCalc').style.display    = (activeTab==='harvest') ? 'block' : 'none';
-
-  if(activeTab==='shrimp'){
-    const district = localStorage.getItem('district') || 'Nellore';
-    await loadCSV();
-    const list=document.getElementById('list'); list.innerHTML='';
-    const yKey=yesterdayKey(), tKey=todayKey();
-    const prev = JSON.parse(localStorage.getItem(storageKey(district,yKey)) || '{}');
-    const curr = {};
-    for(let c=200;c>=30;c-=10){
-      const price = (RATES.shrimp[district]||{})[String(c)];
-      curr[c]=price??null;
-      list.insertAdjacentHTML('beforeend', `
-        <div class="row2">
-          <div class="cell left">${trend(prev[c], price)} ${c}c</div>
-          <div class="cell right">${price!=null?`₹ ${price}`:'—'}</div>
-        </div>
-      `);
+/* ====== Prawns CSV ====== */
+const CSV_URL='rates.csv';
+const RATES={shrimp:{}, __loaded:false};
+async function loadCSV(){
+  if(RATES.__loaded) return;
+  try{
+    const res=await fetch(CSV_URL,{cache:'no-store'});
+    const text=await res.text();
+    for(const line of text.split(/\r?\n/)){
+      const clean=line.trim(); if(!clean || clean.startsWith('type,')) continue;
+      const [type,district,key,priceStr]=clean.split(',').map(s=>s.trim());
+      const price=parseFloat(priceStr);
+      if(type!=='shrimp'||!district||!key||isNaN(price)) continue;
+      (RATES.shrimp[district] ||= {})[key]=price;
     }
-    localStorage.setItem(storageKey(district,tKey), JSON.stringify(curr));
-  }
-
-  if(activeTab==='seeds'){
-    await loadSeeds();
-    renderSeeds();
-  }
+    RATES.__loaded=true;
+  }catch(e){ console.warn('Failed to load rates.csv',e); }
 }
+/* arrows */
+function dateKey(d){return d.toISOString().slice(0,10)}
+function todayKey(){return dateKey(new Date())}
+function yesterdayKey(){const d=new Date(); d.setDate(d.getDate()-1); return dateKey(d)}
+function storageKey(dst,day){return `lr_shrimp_${dst}_${day}`}
+function trend(prev,curr){ if(prev==null||isNaN(prev)||curr==null||isNaN(curr)) return ''; if(curr>prev) return '<span class="trend up">▲</span>'; if(curr<prev) return '<span class="trend down">▼</span>'; return ''; }
 
-/* ---------- Tabs click ---------- */
-document.querySelectorAll('.tab').forEach(tb=>{
-  tb.addEventListener('click',()=>{
-    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-    tb.classList.add('active');
-    activeTab = tb.dataset.tab;
-    render();
-  });
-});
-
-/* ---------- Seeds filters ---------- */
-document.getElementById('seedState').addEventListener('change', renderSeeds);
-document.getElementById('seedDistrict').addEventListener('change', renderSeeds);
-
-/* ---------- Harvest calculator ---------- */
+/* ====== Harvest calc ====== */
 const VEHICLES={"2":{label:"2 Ton Van",rate:100},"5":{label:"5 Ton Van",rate:200},"8":{label:"8 Ton Truck",rate:300},"10":{label:"10 Ton Truck",rate:400}};
 const PRICES={ton:[1200,1500,2000], can:[120,140,160]};
-const unit=document.getElementById('unit'),
-      unitPrice=document.getElementById('unitPrice'),
-      qty=document.getElementById('qty'),
-      km=document.getElementById('km'),
-      vehicle=document.getElementById('vehicle'),
-      vehRate=document.getElementById('vehRate'),
-      transCostEl=document.getElementById('transCost'),
-      totalEl=document.getElementById('total'),
-      bookBtn=document.getElementById('bookBtn');
-
-function fillPriceOptions(){
-  if(!unit || !unitPrice) return;
-  unitPrice.innerHTML="";
-  (PRICES[unit.value]||[]).forEach((p,i)=>{
-    const opt=document.createElement('option');
-    opt.value=p; opt.textContent=`₹ ${p}`;
-    if(i===0) opt.selected=true;
-    unitPrice.appendChild(opt);
-  });
-  const priceLabel = document.getElementById('priceLabel');
-  if(priceLabel){ priceLabel.textContent = (unit.value==='ton') ? t('priceTon') : t('priceCan'); }
-}
+const unit=document.getElementById('unit'), unitPrice=document.getElementById('unitPrice'), qty=document.getElementById('qty'), km=document.getElementById('km'), vehicle=document.getElementById('vehicle'), vehRate=document.getElementById('vehRate'), transCostEl=document.getElementById('transCost'), totalEl=document.getElementById('total'), bookBtn=document.getElementById('bookBtn');
+function fillPriceOptions(){ if(!unit||!unitPrice) return; unitPrice.innerHTML=""; (PRICES[unit.value]||[]).forEach((p,i)=>{const o=document.createElement('option'); o.value=p; o.textContent=`₹ ${p}`; if(i===0) o.selected=true; unitPrice.appendChild(o);}); const priceLabel=document.getElementById('priceLabel'); if(priceLabel){ priceLabel.textContent=(unit.value==='ton')?t('priceTon'):t('priceCan'); } }
 function updateVehRate(){ if(vehRate){ const v=VEHICLES[vehicle.value]; vehRate.value=v?v.rate:0; } }
-function recalc(){
-  if(!unitPrice) return;
-  const price=parseFloat(unitPrice.value)||0;
-  const q=parseFloat(qty.value)||0;
-  const kms=parseFloat(km.value)||0;
-  const rate=parseFloat(vehRate.value)||0;
-
-  const harvestCost=Math.round(price*q);     // not shown separately
-  const transCost=Math.round(rate*kms);
-  const total=harvestCost+transCost;
-
-  if(transCostEl) transCostEl.textContent=`₹ ${transCost}`;
-  if(totalEl) totalEl.textContent=`₹ ${total}`;
-
-  const district=localStorage.getItem('district')||'Nellore';
-  const msg=[
-    "Harvest Booking",
-    `District: ${district}`,
-    `Unit: ${unit.value==='ton'?t('uTon'):t('uCan')}`,
-    `${(unit.value==='ton')?t('priceTon'):t('priceCan')}: ₹${price}`,
-    `${t('qty')}: ${q}`,
-    `${t('vehicle')}: ${VEHICLES[vehicle.value].label} (${rate}₹/km)`,
-    `${t('km')}: ${kms}`,
-    `${t('transCost')}: ₹${transCost}`,
-    `${t('total')}: ₹${total}`
-  ].join('\n');
-  if(bookBtn) bookBtn.href=`https://wa.me/?text=${encodeURIComponent(msg)}`;
-  if(bookBtn) bookBtn.disabled=total<=0;
-}
-
-/* events for Harvest */
+function recalc(){ if(!unitPrice) return; const price=+unitPrice.value||0, q=+qty.value||0, kms=+km.value||0, rate=+vehRate.value||0; const harvestCost=Math.round(price*q), transCost=Math.round(rate*kms), total=harvestCost+transCost; if(transCostEl) transCostEl.textContent=`₹ ${transCost}`; if(totalEl) totalEl.textContent=`₹ ${total}`; const district=localStorage.getItem('district')||'Nellore'; const msg=["Harvest Booking",`District: ${district}`,`Unit: ${unit.value==='ton'?t('uTon'):t('uCan')}`,`${(unit.value==='ton')?t('priceTon'):t('priceCan')}: ₹${price}`,`${t('qty')}: ${q}`,`${t('vehicle')}: ${VEHICLES[vehicle.value].label} (${rate}₹/km)`,`${t('km')}: ${kms}`,`${t('transCost')}: ₹${transCost}`,`${t('total')}: ₹${total}`].join('\n'); if(bookBtn) bookBtn.href=`https://wa.me/?text=${encodeURIComponent(msg)}`; if(bookBtn) bookBtn.disabled=total<=0; }
 if(unit){ unit.addEventListener('change', ()=>{ fillPriceOptions(); applyI18N(); recalc(); }); }
 if(unitPrice){ unitPrice.addEventListener('change', recalc); }
 if(qty){ qty.addEventListener('input', recalc); }
 if(km){ km.addEventListener('input', recalc); }
 if(vehicle){ vehicle.addEventListener('change', ()=>{ updateVehRate(); recalc(); }); }
 
-/* ---------- Init ---------- */
+/* ====== Render tabs ====== */
+let activeTab='seeds';
+async function render(){
+  applyI18N();
+  document.getElementById('seedsSection').style.display=(activeTab==='seeds')?'block':'none';
+  document.getElementById('prawnsList').style.display=(activeTab==='shrimp')?'block':'none';
+  document.getElementById('harvestCalc').style.display=(activeTab==='harvest')?'block':'none';
+
+  if(activeTab==='seeds'){ await loadSeeds(); renderSeeds(); }
+  if(activeTab==='shrimp'){
+    const district=localStorage.getItem('district')||'Nellore';
+    await loadCSV();
+    const list=document.getElementById('list'); list.innerHTML='';
+    const yKey=yesterdayKey(), tKey=todayKey();
+    const prev=JSON.parse(localStorage.getItem(storageKey(district,yKey))||'{}'); const curr={};
+    for(let c=200;c>=30;c-=10){ const price=(RATES.shrimp[district]||{})[String(c)]; curr[c]=price??null; list.insertAdjacentHTML('beforeend', `<div class="row2"><div class="cell left">${trend(prev[c],price)} ${c}c</div><div class="cell right">${price!=null?`₹ ${price}`:'—'}</div></div>`); }
+    localStorage.setItem(storageKey(district,tKey), JSON.stringify(curr));
+  }
+}
+document.querySelectorAll('.tab').forEach(tb=>tb.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); tb.classList.add('active'); activeTab=tb.dataset.tab; render();}));
+
+/* ====== Init ====== */
 applyI18N();
-setTodayDate();
+document.getElementById('staticDate').value = SEED_STATIC.available;
 fillPriceOptions(); updateVehRate(); recalc();
 render();
 </script>
