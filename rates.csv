@@ -1,22 +1,22 @@
 ﻿type,district,key,price
-shrimp,Nellore,200,350
-shrimp,Nellore,190,400
-shrimp,Nellore,180,450
-shrimp,Nellore,170,500
-shrimp,Nellore,160,550
-shrimp,Nellore,150,600
-shrimp,Nellore,140,650
-shrimp,Nellore,130,700
-shrimp,Nellore,120,750
-shrimp,Nellore,110,800
-shrimp,Nellore,100,850
-shrimp,Nellore,90,900
-shrimp,Nellore,80,950
-shrimp,Nellore,70,1000
-shrimp,Nellore,60,1050
-shrimp,Nellore,50,1100
-shrimp,Nellore,40,1150
-shrimp,Nellore,30,1200
+shrimp,Nellore,200,160
+shrimp,Nellore,190,170
+shrimp,Nellore,180,170
+shrimp,Nellore,170,180
+shrimp,Nellore,160,180
+shrimp,Nellore,150,190
+shrimp,Nellore,140,200
+shrimp,Nellore,130,210
+shrimp,Nellore,120,220
+shrimp,Nellore,110,230
+shrimp,Nellore,100,240
+shrimp,Nellore,90,250
+shrimp,Nellore,80,260
+shrimp,Nellore,70,270
+shrimp,Nellore,60,290
+shrimp,Nellore,50,310
+shrimp,Nellore,40,350
+shrimp,Nellore,30,400
 ice,Nellore,Block Ice 50kg,210
 ice,Nellore,Block Ice 50kg (Alt),200
 ice,Nellore,Block Ice 50kg (Premium),220
@@ -104,3 +104,4 @@ shrimp,Prakasam,30,1200
 ice,Prakasam,Block Ice 50kg,210
 ice,Prakasam,Block Ice 50kg (Alt),200
 ice,Prakasam,Block Ice 50kg (Premium),220
+
