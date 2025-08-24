@@ -14,8 +14,9 @@
   .logo{font-weight:800;font-size:1.3rem}
   a.back{padding:8px 14px;border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text)}
   h2{margin:12px 0}
-  label{display:block;margin:6px 0 4px;color:#334155;font-weight:700}
+
   select{width:100%;padding:13px;border:1px solid var(--border);border-radius:12px;font-size:1rem;font-weight:600;background:#fff}
+  label{display:block;margin:6px 0 4px;color:#334155;font-weight:700}
 
   /* Tabs */
   .tabs{display:flex;gap:10px;margin:12px 0}
@@ -23,7 +24,7 @@
   .tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
 
   /* List card */
-  .card{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden}
+  .card{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:12px}
   .head{display:grid;grid-template-columns:1fr 1fr;background:#eef3ff}
   .cell{padding:12px 14px;text-align:center;font-weight:700}
   .row{display:grid;grid-template-columns:1fr 1fr}
@@ -32,21 +33,22 @@
   .left{display:flex;align-items:center;gap:8px;justify-content:flex-start;color:#1e66f5}
   .right{display:flex;align-items:center;justify-content:flex-end;color:#059669;font-weight:800}
 
-  /* Mobile: keep 2 columns; count left, price right */
+  /* Mobile: keep 2 columns */
   @media(max-width:640px){
     .head{display:none}
     .row{grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)}
-    .left{justify-content:flex-start}
-    .right{justify-content:flex-end}
   }
 
-  /* arrows (only up/down) */
+  /* arrows */
   .trend{display:inline-flex;gap:6px;align-items:center;font-weight:700}
   .up{color:#0ea75a;animation:blink-up 1s ease-in-out 2}
   .down{color:#e11d48;animation:blink-down 1s ease-in-out 2}
   @keyframes blink-up{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.3;transform:translateY(-2px)}}
   @keyframes blink-down{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.3;transform:translateY(2px)}}
 
+  /* Book button card */
+  .btnCard{background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px;text-align:center}
+  .btn{display:inline-block;padding:12px 20px;border-radius:12px;background:var(--brand);color:#fff;font-weight:800;text-decoration:none}
   footer{text-align:center;margin:18px 0;color:var(--muted);font-size:.85rem}
 </style>
 </head>
@@ -81,6 +83,11 @@
       <div class="cell" id="col2">Price</div>
     </div>
     <div id="list"></div>
+  </div>
+
+  <!-- Book button (only visible in Ice tab) -->
+  <div class="btnCard" id="iceBookCard" style="display:none">
+    <a href="https://wa.me/?text=Ice%20Booking%20Request" target="_blank" class="btn">Book Ice</a>
   </div>
 
   <footer>© <span id="yr"></span> Aquaculture A–Z Hub</footer>
@@ -129,13 +136,11 @@ async function loadCSV(){
   RATES.__loaded=true;
 }
 
-/* Yesterday vs today storage for trend */
+/* Arrows */
 function dateKey(d){return d.toISOString().slice(0,10)}
 function todayKey(){return dateKey(new Date())}
 function yesterdayKey(){const d=new Date(); d.setDate(d.getDate()-1); return dateKey(d)}
 function storageKey(tab,dst,day){return `lr_${tab}_${dst}_${day}`}
-
-/* Only up/down arrow (no flat) */
 function trend(prev,curr){
   if(prev==null||isNaN(prev)||curr==null||isNaN(curr)) return '';
   if(curr>prev) return '<span class="trend up">▲</span>';
@@ -185,9 +190,12 @@ async function render(){
   }
 
   localStorage.setItem(storageKey(activeTab,district,tKey), JSON.stringify(curr));
+
+  // show/hide Book button card
+  document.getElementById('iceBookCard').style.display = (activeTab==='ice') ? 'block' : 'none';
 }
 
-/* Tab clicks */
+/* Tabs */
 document.querySelectorAll('.tab').forEach(tb=>{
   tb.addEventListener('click',()=>{
     document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
