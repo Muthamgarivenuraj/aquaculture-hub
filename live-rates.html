@@ -1,17 +1,187 @@
 <!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>live-rates</title><meta name="description" content="Page">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#f6f8fb;--card:#fff;--text:#0b1220;--muted:#5f6b85;--brand:#1e66f5;--border:#e5e7ef}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
-.container{max-width:1080px;margin:0 auto;padding:16px}header{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 0}
-.brand{display:flex;gap:10px;align-items:center}.logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#1e66f5,#7aa0ff)}
-.title{font-size:1.25rem;font-weight:800;margin:0}.muted{color:#5f6b85}.panel{background:linear-gradient(180deg,#eef3ff,transparent);border:1px solid var(--border);border-radius:20px;padding:16px}
-.grid{display:grid;grid-template-columns:1fr;gap:12px}@media(min-width:680px){.grid{grid-template-columns:repeat(2,1fr)}}@media(min-width:980px){.grid{grid-template-columns:repeat(3,1fr)}}
-.card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px}a.btn,button.btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;text-decoration:none;color:#0b1220}
-.btn.primary{background:#1e66f5;color:#fff;border-color:#1e66f5}footer{margin:28px 0 10px;color:#5f6b85;font-size:.85rem;text-align:center}
-</style></head><body>
-<div class='container'><header><div class='brand'><div class='logo'></div><div><p class='title'>Live Rates</p><small class='muted'>Demo data</small></div></div><a class='btn' href='index.html'>← Home</a></header><section class='panel'><div class='card'><p>Use your earlier live-rates page if you prefer. This is a placeholder.</p></div></section><footer>© 2025</footer></div>
-</body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live Rates</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#f6f8fb;--text:#0b1220;--muted:#5f6b85;--border:#e5e7ef;--brand:#1e66f5;--up:#0ea75a;--down:#e11d48}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Arial}
+    .container{max-width:700px;margin:0 auto;padding:16px}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    .logo{font-weight:800;font-size:1.3rem}
+    a.back{padding:8px 14px;border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text)}
+    h2{margin:12px 0}
+    select{width:100%;padding:14px;border:1px solid var(--border);border-radius:12px;font-size:1rem;font-weight:600;margin-bottom:16px}
+    .tabs{display:flex;gap:10px;margin-bottom:12px}
+    .tab{flex:1;text-align:center;padding:10px;border:1px solid var(--border);border-radius:12px;cursor:pointer;font-weight:600;background:#fff}
+    .tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+    .rates{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+    .rates div{padding:14px;font-weight:700;text-align:center}
+    .head{background:#eef3ff}
+    .row{display:grid;grid-template-columns:1fr 1fr}
+    .cell{padding:12px 14px;text-align:center;font-weight:600}
+    .row:nth-child(odd){background:#fff}
+    .row:nth-child(even){background:#f9fbff}
+    .count{color:#1e66f5}
+    .price{color:#059669;font-weight:800}
+    .trend{display:inline-flex;gap:6px;align-items:center;justify-content:center;font-weight:700}
+    footer{text-align:center;margin:20px 0;color:var(--muted);font-size:.85rem}
+    @media(max-width:600px){
+      .rates{grid-template-columns:1fr}
+      .head{display:none}
+      .row{grid-template-columns:1fr;gap:0;border-bottom:1px solid var(--border)}
+      .cell{display:flex;justify-content:space-between}
+      .cell.label{font-weight:700;color:var(--muted)}
+    }
+
+    /* 🔄 Blink Animations */
+    @keyframes blink-up {
+      0%,100% {opacity:1; transform:translateY(0);}
+      50% {opacity:0.3; transform:translateY(-2px);}
+    }
+    @keyframes blink-down {
+      0%,100% {opacity:1; transform:translateY(0);}
+      50% {opacity:0.3; transform:translateY(2px);}
+    }
+    .trend.up {color:var(--up); animation:blink-up 1s ease-in-out 2;}
+    .trend.down {color:var(--down); animation:blink-down 1s ease-in-out 2;}
+    .trend.flat {color:var(--muted);}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo" data-i18n="pageLive">Live Rates</div>
+      <a class="back" href="index.html" data-i18n="home">Home</a>
+    </header>
+
+    <h2 id="districtName">Nellore</h2>
+
+    <select id="districtSelect" data-i18n-placeholder="district">
+      <option>Select District</option>
+      <option>Nellore</option><option>West Godavari</option>
+      <option>East Godavari</option><option>Krishna</option><option>Prakasam</option>
+    </select>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="shrimp" data-i18n="shrimp">Shrimp</div>
+      <div class="tab" data-tab="ice" data-i18n="ice">Ice</div>
+    </div>
+
+    <div class="rates">
+      <div class="head" id="col1">Count</div>
+      <div class="head" id="col2">Price</div>
+    </div>
+    <div id="ratesList"></div>
+
+    <footer>© <span id="yr"></span> Aquaculture A–Z Hub</footer>
+  </div>
+
+<script>
+/* === language === */
+const I18N={
+  en:{pageLive:"Live Rates",home:"Home",district:"Select District",shrimp:"Shrimp",ice:"Ice",
+      size:"Count",rate:"Price (₹/kg)",type:"Type",price:"Price (₹/block)"},
+  te:{pageLive:"లైవ్ రేట్స్",home:"హోమ్",district:"జిల్లా ఎంచుకోండి",shrimp:"ష్రింప్",ice:"ఐస్",
+      size:"కౌంట్",rate:"ధర (₹/కిలో)",type:"రకం",price:"ధర (₹/బ్లాక్)"}
+};
+function getLang(){return localStorage.getItem('lang')||'en';}
+function t(k){return (I18N[getLang()]||{})[k]||k;}
+function applyI18N(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(sel=>{
+    if(sel.options.length){sel.options[0].textContent=t(sel.getAttribute('data-i18n-placeholder'));}
+  });
+  document.getElementById('col1').textContent=activeTab==='shrimp'?t('size'):t('type');
+  document.getElementById('col2').textContent=activeTab==='shrimp'?t('rate'):t('price');
+}
+
+/* === Demo Pricing === */
+function storageKey(tab, district){ return `rates_${tab}_${district}`; }
+function currentShrimpPrice(count, district){
+  const baseByDistrict = { "Nellore": 320, "West Godavari": 315, "East Godavari": 318, "Krishna": 316, "Prakasam": 314 };
+  const base = baseByDistrict[district] || 318;
+  const premium = Math.max(0, (200 - count)) * 2.2;
+  const noise = ((new Date().getSeconds()%5)-2)*1; 
+  return Math.round(base + premium + noise);
+}
+function currentIcePrice(type, district){
+  const baseByDistrict = { "Nellore": 205, "West Godavari": 200, "East Godavari": 202, "Krishna": 203, "Prakasam": 201 };
+  let price = baseByDistrict[district] || 205;
+  if(type.includes("50")) price += 5;
+  return price;
+}
+
+/* trend icon with blink */
+function trendIcon(curr, prev){
+  if(prev==null || isNaN(prev)) return '<span class="trend flat">—</span>';
+  if(curr > prev) return '<span class="trend up">▲</span>';
+  if(curr < prev) return '<span class="trend down">▼</span>';
+  return '<span class="trend flat">—</span>';
+}
+
+/* renderers */
+let activeTab='shrimp';
+function renderRates(){
+  const district = localStorage.getItem('district') || 'Nellore';
+  const list=document.getElementById('ratesList');
+  list.innerHTML='';
+
+  const key = storageKey(activeTab, district);
+  const prev = JSON.parse(localStorage.getItem(key) || '{}');
+  const curr = {};
+
+  if(activeTab==='shrimp'){
+    for(let c=200;c>=30;c-=10){
+      const p = currentShrimpPrice(c, district);
+      curr[c] = p;
+      const row=document.createElement('div');
+      row.className='row';
+      row.innerHTML = `
+        <div class="cell count">${c}c</div>
+        <div class="cell price">₹ ${p} ${trendIcon(p, prev[c])}</div>
+      `;
+      list.appendChild(row);
+    }
+  } else {
+    const items = ["Block Ice 50kg","Block Ice 50kg (Alt)","Block Ice 50kg (Premium)"];
+    items.forEach(type=>{
+      const p = currentIcePrice(type, district);
+      curr[type] = p;
+      const row=document.createElement('div');
+      row.className='row';
+      row.innerHTML = `
+        <div class="cell count">${type}</div>
+        <div class="cell price">₹ ${p} ${trendIcon(p, prev[type])}</div>
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  localStorage.setItem(key, JSON.stringify(curr));
+  applyI18N();
+}
+
+/* === Events === */
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    activeTab=tab.dataset.tab;
+    renderRates();
+  });
+});
+
+/* === Init === */
+document.getElementById('yr').textContent=new Date().getFullYear();
+const dSel=document.getElementById('districtSelect');
+const saved=localStorage.getItem('district');if(saved){dSel.value=saved;document.getElementById('districtName').textContent=saved;}
+dSel.addEventListener('change',e=>{localStorage.setItem('district',e.target.value);document.getElementById('districtName').textContent=e.target.value;renderRates();});
+
+applyI18N();
+renderRates();
+</script>
+</body>
+</html>
