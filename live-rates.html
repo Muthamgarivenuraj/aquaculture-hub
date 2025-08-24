@@ -24,11 +24,10 @@
     .cell{padding:12px 14px;text-align:center;font-weight:600}
     .row:nth-child(odd){background:#fff}
     .row:nth-child(even){background:#f9fbff}
-    .count{color:#1e66f5}
+    .count{color:#1e66f5;display:flex;gap:8px;align-items:center;justify-content:center}
     .price{color:#059669;font-weight:800}
 
     .subttl{margin-top:16px;font-weight:800}
-    .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid var(--border);background:#fff;font-weight:600}
 
     footer{text-align:center;margin:20px 0;color:var(--muted);font-size:.85rem}
 
@@ -36,6 +35,7 @@
       .section .head{display:none}
       .row{grid-template-columns:1fr;border-bottom:1px solid var(--border)}
       .cell{display:flex;justify-content:space-between}
+      .count{justify-content:space-between}
     }
 
     /* 🔄 Blink Animations for trend arrows */
@@ -118,13 +118,23 @@ function applyI18N(){
   document.getElementById('col2').textContent=activeTab==='shrimp'?t('rate'):t('price');
 }
 
-/* === Demo pricing === */
-function storageKey(tab, district){ return `rates_${tab}_${district}`; }
+/* === Date helpers for "yesterday" comparison === */
+function dateKey(d){ return d.toISOString().slice(0,10); } // YYYY-MM-DD
+function todayKey(){ return dateKey(new Date()); }
+function yesterdayKey(){
+  const d=new Date(); d.setDate(d.getDate()-1);
+  return dateKey(d);
+}
+
+/* === Storage key per day/district/tab === */
+function storageKey(tab, district, dayKey){ return `rates_${tab}_${district}_${dayKey}`; }
+
+/* === Demo pricing (replace later with real API/json) === */
 function currentShrimpPrice(count, district){
   const baseByDistrict = { "Nellore": 320, "West Godavari": 315, "East Godavari": 318, "Krishna": 316, "Prakasam": 314 };
   const base = baseByDistrict[district] || 318;
   const premium = Math.max(0, (200 - count)) * 2.2;
-  const noise = ((new Date().getSeconds()%5)-2)*1;
+  const noise = ((new Date().getSeconds()%5)-2)*1; // tiny fluctuation
   return Math.round(base + premium + noise);
 }
 function currentIcePrice(type, district){
@@ -140,15 +150,20 @@ const transportVehicles = [
   {vehicle:"8 Ton Truck", rate:30} // ₹/km
 ];
 
-/* trend icon with blink */
-function trendIcon(curr, prev){
-  if(prev==null || isNaN(prev)) return '<span class="trend flat">—</span>';
-  if(curr > prev) return '<span class="trend up">▲</span>';
-  if(curr < prev) return '<span class="trend down">▼</span>';
+/* === Trend icon: shown NEXT TO COUNT and based on YESTERDAY === */
+function trendClass(curr, prev){
+  if(prev==null || isNaN(prev)) return 'flat';
+  if(curr > prev) return 'up';
+  if(curr < prev) return 'down';
+  return 'flat';
+}
+function trendSpan(cls){
+  if(cls==='up') return '<span class="trend up">▲</span>';
+  if(cls==='down') return '<span class="trend down">▼</span>';
   return '<span class="trend flat">—</span>';
 }
 
-/* renderers */
+/* === Renderers === */
 let activeTab='shrimp';
 
 function renderTransport(){
@@ -169,7 +184,7 @@ function renderTransport(){
       </div>`;
     }).join('');
   }
-  input.removeEventListener('input', recalc); // avoid multiple
+  input.removeEventListener('input', recalc);
   input.addEventListener('input', recalc);
   recalc();
 }
@@ -179,18 +194,21 @@ function renderRates(){
   const list=document.getElementById('ratesList');
   list.innerHTML='';
 
-  const key = storageKey(activeTab, district);
-  const prev = JSON.parse(localStorage.getItem(key) || '{}');
+  // Load yesterday & prepare today snapshots
+  const yKey = yesterdayKey();
+  const tKey = todayKey();
+  const prev = JSON.parse(localStorage.getItem(storageKey(activeTab, district, yKey)) || '{}');
   const curr = {};
 
   if(activeTab==='shrimp'){
     for(let c=200;c>=30;c-=10){
       const p = currentShrimpPrice(c, district);
       curr[c] = p;
+      const cls = trendClass(p, prev[c]);
       list.innerHTML += `
         <div class="row">
-          <div class="cell count">${c}c</div>
-          <div class="cell price">₹ ${p} ${trendIcon(p, prev[c])}</div>
+          <div class="cell count">${trendSpan(cls)} ${c}c</div>
+          <div class="cell price">₹ ${p}</div>
         </div>`;
     }
   } else {
@@ -198,15 +216,18 @@ function renderRates(){
     items.forEach(type=>{
       const p = currentIcePrice(type, district);
       curr[type] = p;
+      const cls = trendClass(p, prev[type]);
       list.innerHTML += `
         <div class="row">
-          <div class="cell count">${type}</div>
-          <div class="cell price">₹ ${p} ${trendIcon(p, prev[type])}</div>
+          <div class="cell count">${trendSpan(cls)} ${type}</div>
+          <div class="cell price">₹ ${p}</div>
         </div>`;
     });
   }
 
-  localStorage.setItem(key, JSON.stringify(curr));
+  // Save today's snapshot (used tomorrow)
+  localStorage.setItem(storageKey(activeTab, district, tKey), JSON.stringify(curr));
+
   applyI18N();
   renderTransport();
 }
