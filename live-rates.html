@@ -8,7 +8,7 @@
   <style>
     :root{--bg:#f6f8fb;--text:#0b1220;--muted:#5f6b85;--border:#e5e7ef;--brand:#1e66f5;--up:#0ea75a;--down:#e11d48}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Arial}
-    .container{max-width:700px;margin:0 auto;padding:16px}
+    .container{max-width:720px;margin:0 auto;padding:16px}
     header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
     .logo{font-weight:800;font-size:1.3rem}
     a.back{padding:8px 14px;border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text)}
@@ -17,34 +17,31 @@
     .tabs{display:flex;gap:10px;margin-bottom:12px}
     .tab{flex:1;text-align:center;padding:10px;border:1px solid var(--border);border-radius:12px;cursor:pointer;font-weight:600;background:#fff}
     .tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
-    .rates{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--border);border-radius:14px;overflow:hidden}
-    .rates div{padding:14px;font-weight:700;text-align:center}
-    .head{background:#eef3ff}
+
+    .section{border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:10px;background:#fff}
+    .section .head{display:grid;grid-template-columns:1fr 1fr;background:#eef3ff}
     .row{display:grid;grid-template-columns:1fr 1fr}
     .cell{padding:12px 14px;text-align:center;font-weight:600}
     .row:nth-child(odd){background:#fff}
     .row:nth-child(even){background:#f9fbff}
     .count{color:#1e66f5}
     .price{color:#059669;font-weight:800}
-    .trend{display:inline-flex;gap:6px;align-items:center;justify-content:center;font-weight:700}
+
+    .subttl{margin-top:16px;font-weight:800}
+    .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid var(--border);background:#fff;font-weight:600}
+
     footer{text-align:center;margin:20px 0;color:var(--muted);font-size:.85rem}
+
     @media(max-width:600px){
-      .rates{grid-template-columns:1fr}
-      .head{display:none}
-      .row{grid-template-columns:1fr;gap:0;border-bottom:1px solid var(--border)}
+      .section .head{display:none}
+      .row{grid-template-columns:1fr;border-bottom:1px solid var(--border)}
       .cell{display:flex;justify-content:space-between}
-      .cell.label{font-weight:700;color:var(--muted)}
     }
 
-    /* 🔄 Blink Animations */
-    @keyframes blink-up {
-      0%,100% {opacity:1; transform:translateY(0);}
-      50% {opacity:0.3; transform:translateY(-2px);}
-    }
-    @keyframes blink-down {
-      0%,100% {opacity:1; transform:translateY(0);}
-      50% {opacity:0.3; transform:translateY(2px);}
-    }
+    /* 🔄 Blink Animations for trend arrows */
+    @keyframes blink-up { 0%,100% {opacity:1; transform:translateY(0);} 50% {opacity:0.3; transform:translateY(-2px);} }
+    @keyframes blink-down { 0%,100% {opacity:1; transform:translateY(0);} 50% {opacity:0.3; transform:translateY(2px);} }
+    .trend{display:inline-flex;gap:6px;align-items:center;justify-content:center;font-weight:700}
     .trend.up {color:var(--up); animation:blink-up 1s ease-in-out 2;}
     .trend.down {color:var(--down); animation:blink-down 1s ease-in-out 2;}
     .trend.flat {color:var(--muted);}
@@ -70,11 +67,30 @@
       <div class="tab" data-tab="ice" data-i18n="ice">Ice</div>
     </div>
 
-    <div class="rates">
-      <div class="head" id="col1">Count</div>
-      <div class="head" id="col2">Price</div>
+    <!-- Main data table -->
+    <div class="section" id="dataBox">
+      <div class="head" id="thead">
+        <div id="col1">Count</div>
+        <div id="col2">Price</div>
+      </div>
+      <div id="ratesList"></div>
     </div>
-    <div id="ratesList"></div>
+
+    <!-- Ice: Transport calculator -->
+    <div class="subttl" id="transportTitle" style="display:none" data-i18n="transport">Transport (Ice Delivery)</div>
+    <div class="section" id="transportBox" style="display:none">
+      <div style="padding:12px;text-align:center">
+        <label>
+          <span data-i18n="distance">Distance (km)</span>:
+          <input type="number" id="distInput" value="10" min="0" style="width:90px;padding:8px;border:1px solid var(--border);border-radius:10px;margin-left:6px">
+        </label>
+      </div>
+      <div class="head">
+        <div id="tcol1" data-i18n="vehicle">Vehicle</div>
+        <div id="tcol2" data-i18n="rentKm">Rent (₹)</div>
+      </div>
+      <div id="transportList"></div>
+    </div>
 
     <footer>© <span id="yr"></span> Aquaculture A–Z Hub</footer>
   </div>
@@ -82,10 +98,14 @@
 <script>
 /* === language === */
 const I18N={
-  en:{pageLive:"Live Rates",home:"Home",district:"Select District",shrimp:"Shrimp",ice:"Ice",
-      size:"Count",rate:"Price (₹/kg)",type:"Type",price:"Price (₹/block)"},
-  te:{pageLive:"లైవ్ రేట్స్",home:"హోమ్",district:"జిల్లా ఎంచుకోండి",shrimp:"ష్రింప్",ice:"ఐస్",
-      size:"కౌంట్",rate:"ధర (₹/కిలో)",type:"రకం",price:"ధర (₹/బ్లాక్)"}
+  en:{pageLive:"Live Rates",home:"Home",district:"Select District",
+      shrimp:"Shrimp",ice:"Ice",size:"Count",rate:"Price (₹/kg)",
+      type:"Type",price:"Price (₹/block)",
+      transport:"Transport (Ice Delivery)",vehicle:"Vehicle",rentKm:"Rent (₹)",distance:"Distance (km)"},
+  te:{pageLive:"లైవ్ రేట్స్",home:"హోమ్",district:"జిల్లా ఎంచుకోండి",
+      shrimp:"ష్రింప్",ice:"ఐస్",size:"కౌంట్",rate:"ధర (₹/కిలో)",
+      type:"రకం",price:"ధర (₹/బ్లాక్)",
+      transport:"ట్రాన్స్‌పోర్ట్ (ఐస్ డెలివరీ)",vehicle:"వాహనం",rentKm:"రెంట్ (₹)",distance:"దూరం (కిమీ)"}
 };
 function getLang(){return localStorage.getItem('lang')||'en';}
 function t(k){return (I18N[getLang()]||{})[k]||k;}
@@ -98,13 +118,13 @@ function applyI18N(){
   document.getElementById('col2').textContent=activeTab==='shrimp'?t('rate'):t('price');
 }
 
-/* === Demo Pricing === */
+/* === Demo pricing === */
 function storageKey(tab, district){ return `rates_${tab}_${district}`; }
 function currentShrimpPrice(count, district){
   const baseByDistrict = { "Nellore": 320, "West Godavari": 315, "East Godavari": 318, "Krishna": 316, "Prakasam": 314 };
   const base = baseByDistrict[district] || 318;
   const premium = Math.max(0, (200 - count)) * 2.2;
-  const noise = ((new Date().getSeconds()%5)-2)*1; 
+  const noise = ((new Date().getSeconds()%5)-2)*1;
   return Math.round(base + premium + noise);
 }
 function currentIcePrice(type, district){
@@ -113,6 +133,12 @@ function currentIcePrice(type, district){
   if(type.includes("50")) price += 5;
   return price;
 }
+
+/* === Transport: per-km rates by vehicle (capacity-based) === */
+const transportVehicles = [
+  {vehicle:"5 Ton Van", rate:20},  // ₹/km
+  {vehicle:"8 Ton Truck", rate:30} // ₹/km
+];
 
 /* trend icon with blink */
 function trendIcon(curr, prev){
@@ -124,6 +150,30 @@ function trendIcon(curr, prev){
 
 /* renderers */
 let activeTab='shrimp';
+
+function renderTransport(){
+  const box=document.getElementById('transportBox');
+  const ttl=document.getElementById('transportTitle');
+  if(activeTab!=='ice'){ box.style.display='none'; ttl.style.display='none'; return; }
+  ttl.style.display='block'; box.style.display='block';
+
+  const list=document.getElementById('transportList');
+  const input=document.getElementById('distInput');
+  function recalc(){
+    const km = Math.max(0, parseFloat(input.value) || 0);
+    list.innerHTML = transportVehicles.map(v=>{
+      const cost = Math.round(v.rate * km);
+      return `<div class="row">
+        <div class="cell">${v.vehicle} (${v.rate}₹/km)</div>
+        <div class="cell">₹ ${cost}</div>
+      </div>`;
+    }).join('');
+  }
+  input.removeEventListener('input', recalc); // avoid multiple
+  input.addEventListener('input', recalc);
+  recalc();
+}
+
 function renderRates(){
   const district = localStorage.getItem('district') || 'Nellore';
   const list=document.getElementById('ratesList');
@@ -137,31 +187,28 @@ function renderRates(){
     for(let c=200;c>=30;c-=10){
       const p = currentShrimpPrice(c, district);
       curr[c] = p;
-      const row=document.createElement('div');
-      row.className='row';
-      row.innerHTML = `
-        <div class="cell count">${c}c</div>
-        <div class="cell price">₹ ${p} ${trendIcon(p, prev[c])}</div>
-      `;
-      list.appendChild(row);
+      list.innerHTML += `
+        <div class="row">
+          <div class="cell count">${c}c</div>
+          <div class="cell price">₹ ${p} ${trendIcon(p, prev[c])}</div>
+        </div>`;
     }
   } else {
     const items = ["Block Ice 50kg","Block Ice 50kg (Alt)","Block Ice 50kg (Premium)"];
     items.forEach(type=>{
       const p = currentIcePrice(type, district);
       curr[type] = p;
-      const row=document.createElement('div');
-      row.className='row';
-      row.innerHTML = `
-        <div class="cell count">${type}</div>
-        <div class="cell price">₹ ${p} ${trendIcon(p, prev[type])}</div>
-      `;
-      list.appendChild(row);
+      list.innerHTML += `
+        <div class="row">
+          <div class="cell count">${type}</div>
+          <div class="cell price">₹ ${p} ${trendIcon(p, prev[type])}</div>
+        </div>`;
     });
   }
 
   localStorage.setItem(key, JSON.stringify(curr));
   applyI18N();
+  renderTransport();
 }
 
 /* === Events === */
