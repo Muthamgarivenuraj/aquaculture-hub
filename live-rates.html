@@ -3,36 +3,90 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Ice Booking</title>
+<title>Live Rates</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{--bg:#f6f8fb;--text:#0b1220;--muted:#5f6b85;--border:#e5e7ef;--brand:#1e66f5}
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Arial}
-  .container{max-width:680px;margin:0 auto;padding:16px}
+  .container{max-width:720px;margin:0 auto;padding:16px}
   header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
   .logo{font-weight:800;font-size:1.3rem}
   a.back{padding:8px 14px;border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text)}
-  .card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px;margin:10px 0}
-  label{display:block;margin:8px 0 4px;color:#334155;font-weight:600}
+  h2{margin:12px 0}
+
   select,input,textarea{width:100%;padding:13px;border:1px solid var(--border);border-radius:12px;font-size:1rem;font-weight:600;background:#fff}
+  input[readonly]{background:#f9fbff}
   textarea{min-height:84px;font-weight:500}
+  label{display:block;margin:6px 0 4px;color:#334155;font-weight:700}
+  .muted{color:#5f6b85}
+
+  .card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px;margin:10px 0}
   .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .row-1{display:grid;grid-template-columns:1fr;gap:10px}
+
   .kpi{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-top:1px dashed var(--border);font-weight:700}
   .total{font-size:1.1rem}
   .btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;padding:12px 16px;border-radius:12px;border:1px solid var(--brand);background:var(--brand);color:#fff;font-weight:800;text-decoration:none;width:100%}
   .btn:disabled{opacity:.5;pointer-events:none}
+
   footer{text-align:center;margin:18px 0;color:var(--muted);font-size:.85rem}
-  @media(max-width:640px){ .row{grid-template-columns:1fr} }
+
+  /* mobile */
+  @media(max-width:640px){
+    .row{grid-template-columns:1fr}          /* by default rows stack on mobile */
+    .row-qsr{grid-template-columns:1fr 1fr}  /* BUT quick shrimp row stays 2 columns */
+  }
+
+  /* trend arrow styles */
+  .trend{display:inline-flex;gap:6px;align-items:center;font-weight:700}
+  .up{color:#0ea75a;animation:blink-up 1s ease-in-out 2}
+  .down{color:#e11d48;animation:blink-down 1s ease-in-out 2}
+  @keyframes blink-up{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.3;transform:translateY(-2px)}}
+  @keyframes blink-down{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.3;transform:translateY(2px)}}
+
+  /* count + arrow beside each other */
+  .countWrap{display:flex;align-items:center;gap:8px}
+  #qsPrice{ text-align:right }
 </style>
 </head>
 <body>
 <div class="container">
   <header>
-    <div class="logo" data-i18n="pageIce">Ice Booking</div>
+    <div class="logo" data-i18n="pageLive">Live Rates</div>
     <a class="back" href="index.html" data-i18n="home">Home</a>
   </header>
 
+  <h2 id="districtName">Nellore</h2>
+
+  <div class="card">
+    <label data-i18n="district">Select District</label>
+    <select id="districtSelect" data-i18n-placeholder="district">
+      <option>Select District</option>
+      <option>Nellore</option><option>West Godavari</option>
+      <option>East Godavari</option><option>Krishna</option><option>Prakasam</option>
+    </select>
+  </div>
+
+  <!-- 🦐 Quick Shrimp (Count -> Price from rates.csv) -->
+  <div class="card" id="prawnCard">
+    <div class="row row-qsr">
+      <div>
+        <label data-i18n="qs_title">Quick Shrimp Rate</label>
+        <small class="muted" id="qsDistrictNote"></small>
+        <div class="countWrap">
+          <select id="qsCount"></select>
+          <span id="qsTrend"></span><!-- arrow appears here; no flat -->
+        </div>
+      </div>
+      <div>
+        <label data-i18n="qs_price">Price</label>
+        <input id="qsPrice" type="text" readonly value="₹ —">
+      </div>
+    </div>
+  </div>
+
+  <!-- ❄️ Ice Booking Calculator -->
   <div class="card">
     <div class="row">
       <div>
@@ -44,9 +98,7 @@
       </div>
       <div>
         <label id="priceLabel">Price (₹/ton)</label>
-        <select id="unitPrice">
-          <!-- will be filled automatically -->
-        </select>
+        <select id="unitPrice"></select>
       </div>
     </div>
 
@@ -93,37 +145,110 @@
 </div>
 
 <script>
-/* i18n — reads language from Home (localStorage 'lang') */
-const I18N = {
-  en:{pageIce:"Ice Booking", home:"Home", unit:"Unit", uTon:"Tons", uCan:"Cans",
+/* i18n */
+const I18N={
+  en:{pageLive:"Live Rates",home:"Home",district:"Select District",
+      qs_title:"Quick Shrimp Rate", qs_price:"Price",
+      unit:"Unit", uTon:"Tons", uCan:"Cans",
       qty:"Quantity", km:"Distance (km)", vehicle:"Vehicle", rate:"Rate (₹/km)",
       address:"Delivery address", iceCost:"Ice cost", transCost:"Transport cost",
       total:"Total", book:"Book"},
-  te:{pageIce:"ఐస్ బుకింగ్", home:"హోమ్", unit:"యూనిట్", uTon:"టన్నులు", uCan:"క్యాన్స్",
+  te:{pageLive:"లైవ్ రేట్స్",home:"హోమ్",district:"జిల్లా ఎంచుకోండి",
+      qs_title:"త్వరిత రొయ్యల రేటు", qs_price:"ధర",
+      unit:"యూనిట్", uTon:"టన్నులు", uCan:"క్యాన్స్",
       qty:"పరిమాణం", km:"దూరం (కిమీ)", vehicle:"వాహనం", rate:"రేట్ (₹/కిమీ)",
       address:"డెలివరీ చిరునామా", iceCost:"ఐస్ ఖర్చు", transCost:"రవాణా ఖర్చు",
       total:"మొత్తం", book:"బుక్ చేయి"}
 };
-function getLang(){ return localStorage.getItem('lang') || 'en'; }
-function t(k){ return (I18N[getLang()]||{})[k] || k; }
+function getLang(){return localStorage.getItem('lang')||'en';}
+function t(k){return (I18N[getLang()]||{})[k]||k;}
 function applyI18N(){
-  document.querySelectorAll('[data-i18n]').forEach(el=> el.textContent = t(el.dataset.i18n));
-  document.getElementById('priceLabel').textContent = 
-      (unit.value==='ton') ? (getLang()==='te' ? "ధర (₹/టన్ను)" : "Price (₹/ton)")
-                           : (getLang()==='te' ? "ధర (₹/క్యాన్)" : "Price (₹/can)");
+  document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(sel=>{
+    if(sel.options.length){sel.options[0].textContent=t(sel.getAttribute('data-i18n-placeholder'));}
+  });
+  document.getElementById('priceLabel').textContent =
+    (unit.value==='ton') ? (getLang()==='te' ? "ధర (₹/టన్ను)" : "Price (₹/ton)")
+                         : (getLang()==='te' ? "ధర (₹/క్యాన్)" : "Price (₹/can)");
 }
 
-/* config: prices & vehicles */
+/* District persistence */
+const dSel=document.getElementById('districtSelect');
+const saved=localStorage.getItem('district'); if(saved){ dSel.value=saved; document.getElementById('districtName').textContent=saved; }
+dSel.addEventListener('change',e=>{ localStorage.setItem('district',e.target.value); document.getElementById('districtName').textContent=e.target.value; qsUpdatePrice(true); });
+document.getElementById('yr').textContent=new Date().getFullYear();
+
+/* ---------- Quick Shrimp Rate from CSV ---------- */
+const CSV_URL='rates.csv';
+const RATES_QS={ shrimp:{}, __loaded:false };
+
+async function loadShrimpRates(){
+  if(RATES_QS.__loaded) return;
+  try{
+    const res=await fetch(CSV_URL,{cache:'no-store'}); const text=await res.text();
+    for(const line of text.split(/\r?\n/)){
+      const clean=line.trim(); if(!clean||clean.startsWith('type,')) continue;
+      const parts=clean.split(',').map(s=>s.trim()); if(parts.length<4) continue;
+      const [type,district,key,priceStr]=parts; if(type!=='shrimp') continue;
+      const price=parseFloat(priceStr); if(!RATES_QS.shrimp[district]) RATES_QS.shrimp[district]={};
+      RATES_QS.shrimp[district][key]=price;
+    }
+    RATES_QS.__loaded=true;
+  }catch(e){ console.warn('CSV load failed',e); }
+}
+const QS_COUNTS = Array.from({length:18}, (_,i)=>200 - i*10); // 200..30
+function qsFillCounts(){
+  const sel=document.getElementById('qsCount'); sel.innerHTML='';
+  QS_COUNTS.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=`${c}c`; sel.appendChild(o); });
+}
+
+/* yesterday compare (for the quick widget) */
+function dateKey(d){return d.toISOString().slice(0,10)}
+function todayKey(){return dateKey(new Date())}
+function yesterdayKey(){const d=new Date(); d.setDate(d.getDate()-1); return dateKey(d)}
+function yKeyFor(district){ return `qs_${district}_${yesterdayKey()}` }
+function tKeyFor(district){ return `qs_${district}_${todayKey()}` }
+
+/* ONLY show up/down arrow (no flat) */
+function trend(prev, curr){
+  if(prev==null||isNaN(prev)||curr==null||isNaN(curr)) return '';
+  if(curr>prev) return '<span class="trend up">▲</span>';
+  if(curr<prev) return '<span class="trend down">▼</span>';
+  return '';
+}
+
+async function qsUpdatePrice(saveToday){
+  const district = localStorage.getItem('district') || 'Nellore';
+  document.getElementById('qsDistrictNote').textContent = district;
+
+  if(!RATES_QS.__loaded) await loadShrimpRates();
+
+  const count = document.getElementById('qsCount').value;
+  const map = RATES_QS.shrimp[district] || {};
+  const price = map[String(count)];
+  document.getElementById('qsPrice').value = price!=null ? `₹ ${price}` : '₹ —';
+
+  // arrow near COUNT
+  const prev = JSON.parse(localStorage.getItem(yKeyFor(district)) || '{}');
+  document.getElementById('qsTrend').innerHTML = trend(prev[count], price);
+
+  if(saveToday){
+    const curr = JSON.parse(localStorage.getItem(tKeyFor(district)) || '{}');
+    curr[count] = price ?? null;
+    localStorage.setItem(tKeyFor(district), JSON.stringify(curr));
+  }
+}
+
+/* ---------- Ice calculator (default ton price = 1200) ---------- */
 const PRICES = {
-  ton:  [2000, 2200, 2500],   // ₹ per ton (choose default)
-  can:  [120, 140, 160]       // ₹ per can
+  ton: [1200, 1500, 2000],   // default first = 1200
+  can: [120, 140, 160]
 };
 const VEHICLES = {
-  "5": {label: "5 Ton Van", rate: 200},
-  "8": {label: "8 Ton Truck", rate: 300}
+  "5": {label:"5 Ton Van", rate:200},
+  "8": {label:"8 Ton Truck", rate:300}
 };
 
-/* elements */
 const unit = document.getElementById('unit');
 const unitPrice = document.getElementById('unitPrice');
 const qty = document.getElementById('qty');
@@ -136,20 +261,14 @@ const totalEl = document.getElementById('total');
 const addr = document.getElementById('addr');
 const bookBtn = document.getElementById('bookBtn');
 
-/* helpers */
 function fillPriceOptions(){
   unitPrice.innerHTML = "";
-  (PRICES[unit.value] || []).forEach((p,i)=>{
-    const opt = document.createElement('option');
-    opt.value = p; opt.textContent = `₹ ${p}`;
-    if(i===0) opt.selected = true;
-    unitPrice.appendChild(opt);
+  (PRICES[unit.value]||[]).forEach((p,i)=>{
+    const opt=document.createElement('option'); opt.value=p; opt.textContent=`₹ ${p}`; if(i===0) opt.selected=true; unitPrice.appendChild(opt);
   });
+  applyI18N();
 }
-function updateVehRate(){
-  const v = VEHICLES[vehicle.value];
-  vehRate.value = v ? v.rate : 0;
-}
+function updateVehRate(){ const v=VEHICLES[vehicle.value]; vehRate.value=v?v.rate:0; }
 function recalc(){
   const price = parseFloat(unitPrice.value)||0;
   const q = parseFloat(qty.value)||0;
@@ -166,7 +285,7 @@ function recalc(){
 
   const msg = [
     "Ice Booking",
-    `Unit: ${unit.value === 'ton' ? 'Ton(s)' : 'Can(s)'}`,
+    `Unit: ${unit.value==='ton'?'Ton(s)':'Can(s)'}`,
     `Price: ₹${price} / ${unit.value}`,
     `Quantity: ${q}`,
     `Vehicle: ${VEHICLES[vehicle.value].label} (${rate}₹/km)`,
@@ -176,14 +295,13 @@ function recalc(){
     `Total: ₹${total}`,
     `Address: ${addr.value || '-'}`
   ].join('\n');
-
-  // add your phone: wa.me/91XXXXXXXXXX?text=...
+  // Set your number: https://wa.me/91XXXXXXXXXX?text=...
   bookBtn.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
   bookBtn.disabled = total<=0;
 }
 
 /* events */
-unit.addEventListener('change', ()=>{ fillPriceOptions(); applyI18N(); recalc(); });
+unit.addEventListener('change', ()=>{ fillPriceOptions(); recalc(); });
 unitPrice.addEventListener('change', recalc);
 qty.addEventListener('input', recalc);
 km.addEventListener('input', recalc);
@@ -191,9 +309,12 @@ vehicle.addEventListener('change', ()=>{ updateVehRate(); recalc(); });
 addr.addEventListener('input', recalc);
 
 /* init */
-document.getElementById('yr').textContent = new Date().getFullYear();
 applyI18N();
-fillPriceOptions();
+qsFillCounts();
+loadShrimpRates().then(()=>qsUpdatePrice(true));
+document.getElementById('qsCount').addEventListener('change', ()=>qsUpdatePrice(true));
+
+fillPriceOptions();           // includes default 1200/ton
 updateVehRate();
 recalc();
 </script>
