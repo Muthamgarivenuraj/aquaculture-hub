@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aquaculture A–Z Hub — Andhra Pradesh</title>
-  <meta name="description" content="One-stop aquaculture portal for Andhra Pradesh: live rates, vendors, labs, knowledge center, news & schemes." />
+  <title>Knowledge Center — Aquaculture A–Z Hub (AP)</title>
+  <meta name="description" content="Guides, calculators and video resources for aquaculture in Andhra Pradesh." />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -46,36 +46,54 @@
 <body>
   <div class="container">
     <header>
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <p class="title">Aquaculture A–Z Hub</p>
-          <small class="muted">Andhra Pradesh Aquaculture A–Z Hub</small>
-        </div>
-      </div>
-      <div class="lang"><a class="pill" href="#">English</a><a class="pill" href="#">తెలుగు</a></div>
+      <div class="brand"><div class="logo"></div><div><p class="title">Knowledge Center</p><small class="muted">Guides, calculators, videos</small></div></div>
+      <a class="back" href="index.html">← Home</a>
     </header>
 
     <section class="panel">
-      <div class="row">
-        <div class="select"><select><option>Select District</option><option>Nellore</option><option>West Godavari</option><option>East Godavari</option><option>Krishna</option><option>Prakasam</option></select>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5" stroke="#5f6b85" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="select"><select><option>All Mandals</option></select>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5" stroke="#5f6b85" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="grid">
+        <div class="card">
+          <h3>Pond Preparation — Step by Step</h3>
+          <p class="muted">Drying, liming, fertilization, filling.</p>
+          <a class="btn" href="#" onclick="alert('Open detailed article page later.')">Open</a>
+        </div>
+        <div class="card">
+          <h3>Stocking Density Calculator</h3>
+          <p class="muted">Estimate shrimp count based on pond area.</p>
+          <a class="btn primary" href="#calc">Open Calculator</a>
+        </div>
+        <div class="card">
+          <h3>Common Diseases & Treatments</h3>
+          <p class="muted">WSSV, EMS, Vibrio — prevention & cure.</p>
+          <a class="btn" href="#" onclick="alert('Open disease guide later.')">Open</a>
+        </div>
       </div>
 
-      <div class="grid" style="margin-top:14px">
-        <a class="card" href="live-rates.html"><h3>Live Rates</h3><p class="muted">Shrimp, feed, diesel & ice</p></a>
-        <a class="card" href="vendors.html"><h3>Feeds · Seeds · Medicines · Labs</h3><p class="muted">Dealers & inventory nearby</p></a>
-        <a class="card" href="technicians.html"><h3>Technicians & Labs</h3><p class="muted">Directory & contact</p></a>
-        <a class="card" href="knowledge.html"><h3>Knowledge Center</h3><p class="muted">Guides, calculators, videos</p></a>
-        <a class="card" href="news.html"><h3>News & Schemes</h3><p class="muted">Latest updates & subsidies</p></a>
-        <a class="card" href="post-requirement.html"><h3>Post a Requirement</h3><p class="muted">Get dealer callbacks fast</p></a>
+      <div id="calc" class="card" style="margin-top:12px">
+        <h3>Stocking Density Calculator</h3>
+        <div class="row">
+          <div><label>Pond area (acres)</label><input type="number" id="area" placeholder="e.g., 1.2" step="0.01"></div>
+          <div><label>Density (PL/m²)</label><input type="number" id="density" placeholder="e.g., 60"></div>
+        </div>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn primary" onclick="calc()">Calculate</button>
+          <span id="out" class="tag">—</span>
+        </div>
       </div>
     </section>
 
-    <footer>© 2025 Aquaculture A–Z Hub • AP-first • Built for mobile</footer>
+    <footer>© YEAR Aquaculture A–Z Hub • Knowledge</footer>
   </div>
+<script>
+function calc(){
+  const area = parseFloat(document.getElementById('area').value||0);
+  const density = parseFloat(document.getElementById('density').value||0);
+  // 1 acre ≈ 4046.86 m²
+  const count = Math.round(area * 4046.86 * density);
+  document.getElementById('out').textContent = isFinite(count) && count>0 ? (count.toLocaleString() + " PL") : "—";
+}
+document.body.innerHTML = document.body.innerHTML.replace("YEAR", new Date().getFullYear());
+</script>
 
 </body>
 </html>

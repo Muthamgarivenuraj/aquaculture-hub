@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Live Rates — Aquaculture A–Z Hub (AP)</title>
-  <meta name="description" content="District-wise live aquaculture rates for Andhra Pradesh: shrimp (count-wise), feed bag price, diesel and ice." />
+  <title>Vendors — Aquaculture A–Z Hub (AP)</title>
+  <meta name="description" content="Find aquaculture dealers in Andhra Pradesh by category and location." />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -46,50 +46,56 @@
 <body>
   <div class="container">
     <header>
-      <div class="brand"><div class="logo"></div><div><p class="title">Live Rates</p><small class="muted">AP · All Mandals</small></div></div>
+      <div class="brand"><div class="logo"></div><div><p class="title">Vendors</p><small class="muted">Feeds · Seeds · Medicines · Labs</small></div></div>
       <a class="back" href="index.html">← Home</a>
     </header>
 
     <section class="panel">
       <div class="row">
-        <div class="select"><select id="district"><option value="">Select District</option><option>Nellore</option><option>West Godavari</option><option>East Godavari</option><option>Krishna</option><option>Prakasam</option></select>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5" stroke="#5f6b85" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="select"><select id="mandal"><option>All Mandals</option></select>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5" stroke="#5f6b85" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="select"><select id="district"><option value="">Select District</option><option>Nellore</option><option>West Godavari</option><option>East Godavari</option><option>Krishna</option><option>Prakasam</option></select></div>
+        <div class="select"><select id="mandal"><option>All Mandals</option><option>Kavali</option><option>Kovur</option><option>Vidavalur</option></select></div>
       </div>
 
       <div class="actions" style="margin-top:10px">
-        <a class="btn primary" href="#" data-tab="shrimp">Shrimp</a>
-        <a class="btn" href="#" data-tab="feed">Feed</a>
-        <a class="btn" href="#" data-tab="diesel">Diesel</a>
-        <a class="btn" href="#" data-tab="ice">Ice</a>
+        <button class="btn primary" data-cat="feeds">Feeds</button>
+        <button class="btn" data-cat="seeds">Seeds</button>
+        <button class="btn" data-cat="meds">Medicines</button>
+        <button class="btn" data-cat="labs">Labs</button>
+        <button class="btn" data-cat="aerators">Aerators</button>
       </div>
 
-      <div id="content" style="margin-top:12px"></div>
-      <p class="muted">* Demo data — update from admin later.</p>
+      <div id="list" class="grid" style="margin-top:12px"></div>
     </section>
 
-    <footer>© 2025 Aquaculture A–Z Hub • Live Rates</footer>
+    <footer>© 2025 Aquaculture A–Z Hub • Vendors</footer>
   </div>
-
 <script>
-const data={shrimp:{"Nellore":[{size:"100c",rate:345,last:"2025-08-24 02:39"},{size:"90c",rate:360,last:"2025-08-24 02:39"},{size:"80c",rate:380,last:"2025-08-24 02:39"}]},
-            feed:{"Nellore":[{brand:"Avanti 35%",bag:25,price:1450,last:"2025-08-24 02:39"},{brand:"CP Prima 35%",bag:25,price:1490,last:"2025-08-24 02:39"}]},
-            diesel:{"Nellore":[{brand:"Retail Pump",price:94.2,last:"2025-08-24 02:39"}]},
-            ice:{"Nellore":[{brand:"Block Ice",bag:50,price:210,last:"2025-08-24 02:39"}]}};
-let active="shrimp";
-function render(){ 
-  const d=(document.getElementById('district').value||"Nellore");
-  const ds=(data[active][d]||[]);
-  let html="<div class='card'><h3>"+active.charAt(0).toUpperCase()+active.slice(1)+"</h3><table><thead>";
-  if(active==="shrimp"){html+="<tr><th>Size</th><th>Rate (₹/kg)</th><th>Last</th></tr></thead><tbody>"+ds.map(x=>`<tr><td>${x.size}</td><td>₹ ${x.rate}</td><td>${x.last}</td></tr>`).join("")}
-  else if(active==="feed"){html+="<tr><th>Brand</th><th>Bag (kg)</th><th>Price (₹)</th><th>Last</th></tr></thead><tbody>"+ds.map(x=>`<tr><td>${x.brand}</td><td>${x.bag}</td><td>₹ ${x.price}</td><td>${x.last}</td></tr>`).join("")}
-  else if(active==="diesel"){html+="<tr><th>Brand</th><th>Price (₹)</th><th>Last</th></tr></thead><tbody>"+ds.map(x=>`<tr><td>${x.brand}</td><td>₹ ${x.price}</td><td>${x.last}</td></tr>`).join("")}
-  else if(active==="ice"){html+="<tr><th>Brand</th><th>Bag (kg)</th><th>Price (₹)</th><th>Last</th></tr></thead><tbody>"+ds.map(x=>`<tr><td>${x.brand}</td><td>${x.bag}</td><td>₹ ${x.price}</td><td>${x.last}</td></tr>`).join("")}
-  html+="</tbody></table></div>"; document.getElementById('content').innerHTML=html;
+const data = [
+  { id:1, name:"Sri Sai Aqua Feeds", cat:"feeds", district:"Nellore", mandal:"Kavali", priceNote:"Avanti, CP", phone:"+91 9876543210" },
+  { id:2, name:"Blue Ocean Seeds", cat:"seeds", district:"Nellore", mandal:"Kovur", priceNote:"PL10–PL12", phone:"+91 9876501234" },
+  { id:3, name:"AquaCare Medicines", cat:"meds", district:"West Godavari", mandal:"Palacole", priceNote:"Probiotics, Lime", phone:"+91 9800001111" },
+  { id:4, name:"Kakinada Aqua Lab", cat:"labs", district:"East Godavari", mandal:"Kakinada", priceNote:"PCR/Water/Soil", phone:"+91 9700002222" },
+  { id:5, name:"PowerAir Aerators", cat:"aerators", district:"Nellore", mandal:"Vidavalur", priceNote:"3HP/5HP", phone:"+91 9600003333" }
+];
+let active="feeds";
+function render(){
+  const d = document.getElementById('district').value;
+  const m = document.getElementById('mandal').value;
+  const filtered = data.filter(x => (active?x.cat===active:true) && (d?x.district===d:true) && (m && m!=="All Mandals"?x.mandal===m:true));
+  document.getElementById('list').innerHTML = filtered.map(v => `
+    <div class="card">
+      <h3>${v.name}</h3>
+      <p class="muted">${v.district} · ${v.mandal} · ${v.priceNote}</p>
+      <div class="actions" style="margin-top:8px">
+        <a class="btn" href="vendor-profile.html?id=${v.id}">View</a>
+        <a class="btn primary" href="https://wa.me/919999999999?text=Hello%20${encodeURIComponent(v.name)}">WhatsApp</a>
+      </div>
+    </div>
+  `).join('') || '<div class="card"><p>No vendors found.</p></div>';
 }
-document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();document.querySelectorAll('[data-tab]').forEach(x=>x.classList.remove('primary'));b.classList.add('primary');active=b.dataset.tab;render();}));
+document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-cat]').forEach(x=>x.classList.remove('primary'));b.classList.add('primary');active=b.dataset.cat;render();}));
 document.getElementById('district').addEventListener('change',render);
+document.getElementById('mandal').addEventListener('change',render);
 render();
 </script>
 

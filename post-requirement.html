@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aquaculture A–Z Hub — Andhra Pradesh</title>
-  <meta name="description" content="One-stop aquaculture portal for Andhra Pradesh: live rates, vendors, labs, knowledge center, news & schemes." />
+  <title>Post a Requirement — Aquaculture A–Z Hub (AP)</title>
+  <meta name="description" content="Simple lead form for farmers to receive dealer callbacks." />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -46,36 +46,49 @@
 <body>
   <div class="container">
     <header>
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <p class="title">Aquaculture A–Z Hub</p>
-          <small class="muted">Andhra Pradesh Aquaculture A–Z Hub</small>
-        </div>
-      </div>
-      <div class="lang"><a class="pill" href="#">English</a><a class="pill" href="#">తెలుగు</a></div>
+      <div class="brand"><div class="logo"></div><div><p class="title">Post a Requirement</p><small class="muted">Get dealer callbacks</small></div></div>
+      <a class="back" href="index.html">← Home</a>
     </header>
 
     <section class="panel">
       <div class="row">
-        <div class="select"><select><option>Select District</option><option>Nellore</option><option>West Godavari</option><option>East Godavari</option><option>Krishna</option><option>Prakasam</option></select>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5" stroke="#5f6b85" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="select"><select><option>All Mandals</option></select>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5" stroke="#5f6b85" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><label>Your Name</label><input id="name" placeholder="e.g., Ramesh"></div>
+        <div><label>Phone</label><input id="phone" placeholder="+91 9xxxxxxxxx"></div>
       </div>
-
-      <div class="grid" style="margin-top:14px">
-        <a class="card" href="live-rates.html"><h3>Live Rates</h3><p class="muted">Shrimp, feed, diesel & ice</p></a>
-        <a class="card" href="vendors.html"><h3>Feeds · Seeds · Medicines · Labs</h3><p class="muted">Dealers & inventory nearby</p></a>
-        <a class="card" href="technicians.html"><h3>Technicians & Labs</h3><p class="muted">Directory & contact</p></a>
-        <a class="card" href="knowledge.html"><h3>Knowledge Center</h3><p class="muted">Guides, calculators, videos</p></a>
-        <a class="card" href="news.html"><h3>News & Schemes</h3><p class="muted">Latest updates & subsidies</p></a>
-        <a class="card" href="post-requirement.html"><h3>Post a Requirement</h3><p class="muted">Get dealer callbacks fast</p></a>
+      <div class="row" style="margin-top:10px">
+        <div class="select"><select id="category"><option>Feeds</option><option>Seeds</option><option>Medicines</option><option>Labs</option><option>Aerators</option></select></div>
+        <div><label>District</label><input id="district" placeholder="e.g., Nellore"></div>
+      </div>
+      <div style="margin-top:10px"><textarea id="details" rows="4" placeholder="Write your requirement..."></textarea></div>
+      <div class="actions" style="margin-top:10px">
+        <button class="btn primary" onclick="submitLead()">Submit</button>
+        <span id="msg" class="tag">—</span>
       </div>
     </section>
 
-    <footer>© 2025 Aquaculture A–Z Hub • AP-first • Built for mobile</footer>
+    <footer>© YEAR Aquaculture A–Z Hub • Leads</footer>
   </div>
+<script>
+function submitLead(){
+  const payload = {
+    name: document.getElementById('name').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    category: document.getElementById('category').value,
+    district: document.getElementById('district').value.trim(),
+    details: document.getElementById('details').value.trim(),
+    ts: new Date().toISOString()
+  };
+  // Demo: store in localStorage (later replace with backend/API)
+  const key = "leads";
+  const arr = JSON.parse(localStorage.getItem(key) || "[]");
+  arr.push(payload);
+  localStorage.setItem(key, JSON.stringify(arr));
+  document.getElementById('msg').textContent = "Submitted ✓ — dealers will contact you";
+  // Optional: open WhatsApp
+  // location.href = "https://wa.me/91xxxxxxxxxx?text=" + encodeURIComponent("New lead: " + JSON.stringify(payload));
+}
+document.body.innerHTML = document.body.innerHTML.replace("YEAR", new Date().getFullYear());
+</script>
 
 </body>
 </html>

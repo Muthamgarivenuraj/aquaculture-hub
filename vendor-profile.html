@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aquaculture A–Z Hub — Andhra Pradesh</title>
-  <meta name="description" content="One-stop aquaculture portal for Andhra Pradesh: live rates, vendors, labs, knowledge center, news & schemes." />
+  <title>Vendor Profile — Aquaculture A–Z Hub (AP)</title>
+  <meta name="description" content="Dealer profile with products, contact and WhatsApp actions." />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -46,36 +46,48 @@
 <body>
   <div class="container">
     <header>
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <p class="title">Aquaculture A–Z Hub</p>
-          <small class="muted">Andhra Pradesh Aquaculture A–Z Hub</small>
-        </div>
-      </div>
-      <div class="lang"><a class="pill" href="#">English</a><a class="pill" href="#">తెలుగు</a></div>
+      <div class="brand"><div class="logo"></div><div><p class="title" id="vName">Vendor</p><small class="muted" id="vMeta">—</small></div></div>
+      <a class="back" href="vendors.html">← Vendors</a>
     </header>
 
     <section class="panel">
-      <div class="row">
-        <div class="select"><select><option>Select District</option><option>Nellore</option><option>West Godavari</option><option>East Godavari</option><option>Krishna</option><option>Prakasam</option></select>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5" stroke="#5f6b85" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="select"><select><option>All Mandals</option></select>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5" stroke="#5f6b85" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      </div>
-
-      <div class="grid" style="margin-top:14px">
-        <a class="card" href="live-rates.html"><h3>Live Rates</h3><p class="muted">Shrimp, feed, diesel & ice</p></a>
-        <a class="card" href="vendors.html"><h3>Feeds · Seeds · Medicines · Labs</h3><p class="muted">Dealers & inventory nearby</p></a>
-        <a class="card" href="technicians.html"><h3>Technicians & Labs</h3><p class="muted">Directory & contact</p></a>
-        <a class="card" href="knowledge.html"><h3>Knowledge Center</h3><p class="muted">Guides, calculators, videos</p></a>
-        <a class="card" href="news.html"><h3>News & Schemes</h3><p class="muted">Latest updates & subsidies</p></a>
-        <a class="card" href="post-requirement.html"><h3>Post a Requirement</h3><p class="muted">Get dealer callbacks fast</p></a>
+      <div class="grid">
+        <div class="card">
+          <h3>About</h3>
+          <p class="muted" id="about">Quality aquaculture supplies and services.</p>
+          <div class="actions" style="margin-top:8px">
+            <a id="callBtn" class="btn">Call</a>
+            <a id="waBtn" class="btn primary">WhatsApp</a>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Products / Services</h3>
+          <table id="items"></table>
+        </div>
       </div>
     </section>
 
-    <footer>© 2025 Aquaculture A–Z Hub • AP-first • Built for mobile</footer>
+    <footer>© YEAR Aquaculture A–Z Hub • Vendor Profile</footer>
   </div>
+<script>
+const data = { "1": {name:"Sri Sai Aqua Feeds", meta:"Nellore · Kavali", phone:"+91 9876543210", wa:"+919876543210", about:"Authorized dealer for Avanti & CP Prima.", items:[["Avanti 35%","25 kg","₹1450"],["CP Prima 35%","25 kg","₹1490"]]},
+               "2": {name:"Blue Ocean Seeds", meta:"Nellore · Kovur", phone:"+91 9876501234", wa:"+919876501234", about:"Hatchery partner — PL10–PL12", items:[["Vannamei PL10","1000 pcs","₹350"],["Vannamei PL12","1000 pcs","₹380"]]},
+               "3": {name:"AquaCare Medicines", meta:"West Godavari · Palacole", phone:"+91 9800001111", wa:"+919800001111", about:"Probiotics, mineral mixes, disinfectants", items:[["Probiotic X","1 kg","₹520"],["Mineral Mix","1 kg","₹440"]]},
+               "4": {name:"Kakinada Aqua Lab", meta:"East Godavari · Kakinada", phone:"+91 9700002222", wa:"+919700002222", about:"PCR / Water / Soil testing", items:[["PCR Test","sample","₹1200"],["Water Test","sample","₹450"]]},
+               "5": {name:"PowerAir Aerators", meta:"Nellore · Vidavalur", phone:"+91 9600003333", wa:"+919600003333", about:"3HP & 5HP paddle wheel aerators", items:[["3HP Aerator","unit","₹38000"],["5HP Aerator","unit","₹52000"]]} };
+
+function q(k){return new URL(location).searchParams.get(k)}
+const id = q('id') || "1";
+const v = data[id];
+
+document.getElementById('vName').textContent = v.name;
+document.getElementById('vMeta').textContent = v.meta;
+document.getElementById('about').textContent = v.about;
+document.getElementById('callBtn').href = "tel:" + v.phone.replace(/\s+/g,'');
+document.getElementById('waBtn').href = "https://wa.me/" + v.wa + "?text=" + encodeURIComponent("Hello " + v.name + ", I am interested.");
+document.getElementById('items').innerHTML = "<thead><tr><th>Name</th><th>Pack</th><th>Price</th></tr></thead><tbody>"+v.items.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")+"</tbody>";
+document.body.innerHTML = document.body.innerHTML.replace("YEAR", new Date().getFullYear());
+</script>
 
 </body>
 </html>
