@@ -23,7 +23,7 @@
   .card{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:12px}
   .pad{padding:14px}
 
-  /* Tabs */
+  /* Tabs (order: prawns, seeds, harvest) */
   .tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
   .tab{padding:10px;border:1px solid var(--border);border-radius:12px;cursor:pointer;font-weight:700;text-align:center;background:#fff}
   .tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
@@ -39,7 +39,14 @@
   .right{display:flex;align-items:center;justify-content:flex-end;color:#059669;font-weight:800}
   @media(max-width:640px){ .head2{display:none} .row2{grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)} }
 
-  /* Seeds list 3-col */
+  /* trend arrows */
+  .trend{display:inline-flex;gap:6px;align-items:center;font-weight:700}
+  .up{color:#0ea75a;animation:blink-up 1s ease-in-out 2}
+  .down{color:#e11d48;animation:blink-down 1s ease-in-out 2}
+  @keyframes blink-up{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.3;transform:translateY(-2px)}}
+  @keyframes blink-down{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.3;transform:translateY(2px)}}
+
+  /* Seeds list 3-col (state, district, hatchery) */
   .head3{display:grid;grid-template-columns:1.2fr 1.2fr 1.6fr;background:#eef3ff}
   .row3{display:grid;grid-template-columns:1.2fr 1.2fr 1.6fr}
   .head3 .cell, .row3 .cell{padding:10px 12px}
@@ -86,15 +93,24 @@
     </select>
   </div>
 
-  <!-- Tabs -->
+  <!-- Tabs (order changed; prawns default active) -->
   <div class="tabs">
-    <div class="tab active" data-tab="seeds" data-i18n="seeds">Seeds</div>
-    <div class="tab" data-tab="shrimp" data-i18n="prawnsPrice">Prawns – Price</div>
+    <div class="tab active" data-tab="shrimp" data-i18n="prawnsPrice">Prawns – Price</div>
+    <div class="tab" data-tab="seeds" data-i18n="seeds">Seeds</div>
     <div class="tab" data-tab="harvest" data-i18n="harvesting">Harvesting</div>
   </div>
 
+  <!-- PRAWNS – PRICE -->
+  <div class="card" id="prawnsList">
+    <div class="head2">
+      <div class="cell" data-i18n="count">Count</div>
+      <div class="cell" data-i18n="price">Price</div>
+    </div>
+    <div id="list"></div>
+  </div>
+
   <!-- SEEDS -->
-  <div class="card" id="seedsSection">
+  <div class="card" id="seedsSection" style="display:none">
     <div class="pad">
       <div class="grid2" style="margin-bottom:10px">
         <div>
@@ -139,32 +155,31 @@
     </div>
   </div>
 
-  <!-- PRAWNS – PRICE -->
-  <div class="card" id="prawnsList" style="display:none">
-    <div class="head2">
-      <div class="cell" data-i18n="count">Count</div>
-      <div class="cell" data-i18n="price">Price</div>
-    </div>
-    <div id="list"></div>
-  </div>
-
   <!-- HARVESTING -->
   <div class="card" id="harvestCalc" style="display:none">
     <div class="pad">
       <h3 class="h3" data-i18n="iceBooking">Ice Booking</h3>
       <div class="grid2">
-        <div><label data-i18n="unit">Unit</label>
-          <select id="unit"><option value="ton" selected data-i18n="uTon">Tons</option><option value="can" data-i18n="uCan">Cans</option></select>
+        <div>
+          <label data-i18n="unit">Unit</label>
+          <select id="unit">
+            <option value="ton" selected data-i18n="uTon">Tons</option>
+            <option value="can" data-i18n="uCan">Cans</option>
+          </select>
         </div>
-        <div><label id="priceLabel">Price (₹/ton)</label><select id="unitPrice"></select></div>
+        <div>
+          <label id="priceLabel">Price (₹/ton)</label>
+          <select id="unitPrice"></select>
+        </div>
       </div>
       <div class="grid2" style="margin-top:10px">
-        <div><label data-i18n="qty">Quantity</label><input id="qty" type="number" min="0" step="0.5" value="1"/></div>
-        <div><label data-i18n="km">Distance (km)</label><input id="km" type="number" min="0" step="1" value="10"/></div>
+        <div><label data-i18n="qty">Quantity</label><input id="qty" type="number" min="0" step="0.5" value="1" /></div>
+        <div><label data-i18n="km">Distance (km)</label><input id="km" type="number" min="0" step="1" value="10" /></div>
       </div>
       <h3 class="h3" style="margin-top:16px" data-i18n="vanBooking">Van Booking</h3>
       <div class="grid2">
-        <div><label data-i18n="vehicle">Vehicle</label>
+        <div>
+          <label data-i18n="vehicle">Vehicle</label>
           <select id="vehicle">
             <option value="2">2 Ton Van — ₹100/km</option>
             <option value="5">5 Ton Van — ₹200/km</option>
@@ -172,7 +187,7 @@
             <option value="10">10 Ton Truck — ₹400/km</option>
           </select>
         </div>
-        <div><label data-i18n="rate">Rate (₹/km)</label><input id="vehRate" type="number" value="100" readonly/></div>
+        <div><label data-i18n="rate">Rate (₹/km)</label><input id="vehRate" type="number" value="100" readonly /></div>
       </div>
       <div class="kpi"><span data-i18n="transCost">Transport cost</span> <strong id="transCost">₹ 0</strong></div>
       <div class="kpi total"><span data-i18n="total">Total</span> <strong id="total">₹ 0</strong></div>
@@ -188,7 +203,7 @@
 function nextDayISO(){const d=new Date(); d.setDate(d.getDate()+1); return d.toISOString().slice(0,10);}
 const SEED_STATIC = { pl:"Vannamei SPF PL", price:350, available: nextDayISO() };
 
-/* ====== i18n (same keys as before + short labels) ====== */
+/* ====== i18n ====== */
 const I18N = {
   en:{pageLive:"Live Rates",home:"Home",district:"Select District",seeds:"Seeds",prawnsPrice:"Prawns – Price",harvesting:"Harvesting",count:"Count",price:"Price",iceBooking:"Ice Booking",vanBooking:"Van Booking",unit:"Unit",uTon:"Tons",uCan:"Cans",qty:"Quantity",km:"Distance (km)",vehicle:"Vehicle",rate:"Rate (₹/km)",transCost:"Transport cost",total:"Total",book:"Book",priceTon:"Price (₹/ton)",priceCan:"Price (₹/can)",state:"State",hatchery:"Hatchery",pl:"Seeds PL",availDate:"Available Date"},
   te:{pageLive:"లైవ్ రేట్స్",home:"హోమ్",district:"జిల్లా ఎంచుకోండి",seeds:"సీడ్స్",prawnsPrice:"రొయ్యలు – ధర",harvesting:"హార్వెస్టింగ్",count:"కౌంట్",price:"ధర",iceBooking:"ఐస్ బుకింగ్",vanBooking:"వాన్ బుకింగ్",unit:"యూనిట్",uTon:"టన్నులు",uCan:"క్యాన్స్",qty:"పరిమాణం",km:"దూరం (కిమీ)",vehicle:"వాహనం",rate:"రేట్ (₹/కిమీ)",transCost:"రవాణా ఖర్చు",total:"మొత్తం",book:"బుక్ చేయి",priceTon:"ధర (₹/టన్ను)",priceCan:"ధర (₹/క్యాన్)",state:"రాష్ట్రం",hatchery:"హ్యాచరీ",pl:"సీడ్స్ PL",availDate:"అందుబాటులో తేదీ"}
@@ -198,9 +213,9 @@ function t(k){ return (I18N[getLang()]||{})[k] || k; }
 function applyI18N(){
   document.querySelectorAll('[data-i18n]').forEach(el=> el.textContent = t(el.dataset.i18n));
   const dsel=document.getElementById('districtSelect'); if(dsel && dsel.options.length){ dsel.options[0].textContent=t('district'); }
-  const pl=document.getElementById('staticPL'); if(pl) pl.previousElementSibling.textContent=t('pl');
-  const pr=document.getElementById('staticPrice'); if(pr) pr.previousElementSibling.textContent=t('price');
-  const av=document.getElementById('staticDate'); if(av) av.previousElementSibling.textContent=t('availDate');
+  document.getElementById('staticPL').previousElementSibling.textContent=t('pl');
+  document.getElementById('staticPrice').previousElementSibling.textContent=t('price');
+  document.getElementById('staticDate').previousElementSibling.textContent=t('availDate');
   const priceLabel=document.getElementById('priceLabel'); if(priceLabel){ priceLabel.textContent=(unit.value==='ton')?t('priceTon'):t('priceCan'); }
   document.title=t('pageLive'); setTodayDate();
 }
@@ -233,7 +248,6 @@ async function loadSeeds(){
   }catch(e){ console.warn('seeds.csv missing; showing empty list'); }
 }
 function renderSeeds(){
-  // static panel values
   document.getElementById('staticPL').value = SEED_STATIC.pl;
   document.getElementById('staticPrice').value = `₹ ${SEED_STATIC.price}`;
   document.getElementById('staticDate').value = SEED_STATIC.available;
@@ -260,7 +274,6 @@ function renderSeeds(){
     });
   }
 
-  // Book message with static details + filters
   const msg = [
     "Seeds Enquiry",
     `State: ${selState}`,
@@ -310,26 +323,47 @@ if(qty){ qty.addEventListener('input', recalc); }
 if(km){ km.addEventListener('input', recalc); }
 if(vehicle){ vehicle.addEventListener('change', ()=>{ updateVehRate(); recalc(); }); }
 
-/* ====== Render tabs ====== */
-let activeTab='seeds';
+/* ====== Render tabs (prawns default) ====== */
+let activeTab='shrimp';
 async function render(){
   applyI18N();
-  document.getElementById('seedsSection').style.display=(activeTab==='seeds')?'block':'none';
-  document.getElementById('prawnsList').style.display=(activeTab==='shrimp')?'block':'none';
-  document.getElementById('harvestCalc').style.display=(activeTab==='harvest')?'block':'none';
 
-  if(activeTab==='seeds'){ await loadSeeds(); renderSeeds(); }
+  document.getElementById('prawnsList').style.display  = (activeTab==='shrimp') ? 'block' : 'none';
+  document.getElementById('seedsSection').style.display= (activeTab==='seeds')  ? 'block' : 'none';
+  document.getElementById('harvestCalc').style.display = (activeTab==='harvest') ? 'block' : 'none';
+
   if(activeTab==='shrimp'){
     const district=localStorage.getItem('district')||'Nellore';
     await loadCSV();
     const list=document.getElementById('list'); list.innerHTML='';
     const yKey=yesterdayKey(), tKey=todayKey();
     const prev=JSON.parse(localStorage.getItem(storageKey(district,yKey))||'{}'); const curr={};
-    for(let c=200;c>=30;c-=10){ const price=(RATES.shrimp[district]||{})[String(c)]; curr[c]=price??null; list.insertAdjacentHTML('beforeend', `<div class="row2"><div class="cell left">${trend(prev[c],price)} ${c}c</div><div class="cell right">${price!=null?`₹ ${price}`:'—'}</div></div>`); }
+    for(let c=200;c>=30;c-=10){
+      const price=(RATES.shrimp[district]||{})[String(c)];
+      curr[c]=price??null;
+      list.insertAdjacentHTML('beforeend', `
+        <div class="row2">
+          <div class="cell left">${trend(prev[c],price)} ${c}c</div>
+          <div class="cell right">${price!=null?`₹ ${price}`:'—'}</div>
+        </div>
+      `);
+    }
     localStorage.setItem(storageKey(district,tKey), JSON.stringify(curr));
   }
+
+  if(activeTab==='seeds'){
+    await loadSeeds();
+    renderSeeds();
+  }
 }
-document.querySelectorAll('.tab').forEach(tb=>tb.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); tb.classList.add('active'); activeTab=tb.dataset.tab; render();}));
+document.querySelectorAll('.tab').forEach(tb=>{
+  tb.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    tb.classList.add('active');
+    activeTab = tb.dataset.tab;
+    render();
+  });
+});
 
 /* ====== Init ====== */
 applyI18N();
