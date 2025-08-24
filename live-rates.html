@@ -67,6 +67,7 @@
   .btn:disabled{opacity:.5;pointer-events:none}
   @media(max-width:640px){ .grid2{grid-template-columns:1fr} }
 
+  .muted{color:var(--muted)}
   footer{text-align:center;margin:18px 0;color:var(--muted);font-size:.85rem}
 </style>
 </head>
@@ -138,18 +139,39 @@
 
   <!-- SEEDS -->
   <div class="card" id="seedsSection" style="display:none">
+    <!-- Seeds filters -->
     <div class="pad">
       <div class="grid2" style="margin-bottom:10px">
-        <div><label data-i18n="state">State</label>
-          <select id="seedState"><option>Andhra Pradesh</option><option>Telangana</option><option>Tamil Nadu</option></select>
+        <div>
+          <label data-i18n="state">State</label>
+          <select id="seedState">
+            <option>Andhra Pradesh</option>
+            <option>Tamil Nadu</option>
+          </select>
         </div>
-        <div><label data-i18n="district">Select District</label>
-          <select id="seedDistrict"><option value="">All Districts</option><option>Nellore</option><option>West Godavari</option><option>East Godavari</option><option>Krishna</option><option>Prakasam</option></select>
+
+        <!-- hidden for Tamil Nadu -->
+        <div id="seedDistrictWrap">
+          <label data-i18n="district">Select District</label>
+          <select id="seedDistrict">
+            <option value="">All Districts</option>
+            <option>Nellore</option>
+            <option>West Godavari</option>
+            <option>East Godavari</option>
+            <option>Krishna</option>
+            <option>Prakasam</option>
+          </select>
         </div>
       </div>
     </div>
-    <div class="head3"><div class="cell" data-i18n="state">State</div><div class="cell" data-i18n="district">District</div><div class="cell" data-i18n="hatchery">Hatchery</div></div>
+
+    <div class="head3">
+      <div class="cell" data-i18n="state">State</div>
+      <div class="cell" data-i18n="district">Select District</div>
+      <div class="cell" data-i18n="hatchery">Hatchery</div>
+    </div>
     <div id="seedList"></div>
+
     <div class="pad" style="border-top:1px solid var(--border)">
       <div class="grid2">
         <div><label data-i18n="pl">Seeds PL</label><input id="staticPL" value="Vannamei SPF PL" readonly></div>
@@ -216,7 +238,7 @@ function showTab(name){
   Object.entries(sections).forEach(([k,el])=>el.style.display=(k===name)?'block':'none');
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
   if(name==='shrimp') renderPrawns();
-  if(name==='seeds') renderSeeds();
+  if(name==='seeds') initSeeds();  // ensure seeds loaded
 }
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>showTab(t.dataset.tab)));
 
@@ -285,31 +307,62 @@ unitPrice.addEventListener('change',recalc); qty.addEventListener('input',recalc
 km.addEventListener('input',recalc); vehicle.addEventListener('change',()=>{updateVehRate();recalc();});
 fillPriceOptions(); updateVehRate(); recalc();
 
-/* ===== Seeds (hatchery names from seeds.csv) ===== */
-function nextDayISO(){const d=new Date(); d.setDate(d.getDate()+1); return d.toISOString().slice(0,10);}
-const SEED_STATIC={pl:"Vannamei SPF PL",price:350,available:nextDayISO()};
+/* ===== Seeds (CSV + AP/TN logic) ===== */
+const SEED_STATIC={pl:"Vannamei SPF PL",price:350,available:(()=>{const d=new Date(); d.setDate(d.getDate()+1); return d.toISOString().slice(0,10);})()};
 let SEEDS=[], SEEDS_LOADED=false;
+
 async function loadSeeds(){
   if(SEEDS_LOADED) return;
   try{
-    const text=await (await fetch('seeds.csv',{cache:'no-store'})).text();
-    const rows=text.split(/\r?\n/).map(r=>r.trim()).filter(Boolean);
-    const start=rows[0]?.toLowerCase().includes('state')?1:0;
-    for(let i=start;i<rows.length;i++){ const [state,district,hatchery]=rows[i].split(',').map(s=>s?.trim()||''); if(state&&hatchery) SEEDS.push({state,district,hatchery}); }
+    const text = await (await fetch('seeds.csv', {cache:'no-store'})).text();
+    const rows = text.split(/\r?\n/).map(r=>r.trim()).filter(Boolean);
+    const start = rows[0]?.toLowerCase().includes('state') ? 1 : 0;
+    for(let i=start;i<rows.length;i++){
+      const [state,district,hatchery] = rows[i].split(',').map(s=>s?.trim()||'');
+      if(state && hatchery) SEEDS.push({state,district,hatchery});
+    }
     SEEDS_LOADED=true;
   }catch(e){ console.warn('seeds.csv not found; list will be empty'); }
 }
-function renderSeeds(){
-  document.getElementById('staticPL').value=SEED_STATIC.pl;
-  document.getElementById('staticPrice').value=`₹ ${SEED_STATIC.price}`;
-  document.getElementById('staticDate').value=SEED_STATIC.available;
 
-  const list=document.getElementById('seedList'); list.innerHTML='';
-  const selState=document.getElementById('seedState').value;
-  const selDist=document.getElementById('seedDistrict').value;
-  const filtered=SEEDS.filter(r=> r.state===selState && (!selDist || r.district===selDist));
-  if(!filtered.length){ list.innerHTML=`<div class="pad" style="color:#5f6b85">${lang()==='te'?'డేటా లేదు':'No data yet.'}</div>`; }
-  else{
+function buildAPDistrictOptions(){
+  const dSel = document.getElementById('seedDistrict');
+  if(!dSel) return;
+  const apDistricts = Array.from(new Set(SEEDS
+    .filter(r=>r.state==='Andhra Pradesh' && r.district)
+    .map(r=>r.district))).sort((a,b)=>a.localeCompare(b));
+  dSel.innerHTML = `<option value="">${t('district')}</option>` +
+    `<option value="">All Districts</option>` +
+    apDistricts.map(d=>`<option>${d}</option>`).join('');
+}
+
+function updateSeedDistrictVisibility(){
+  const state = document.getElementById('seedState').value;
+  const wrap  = document.getElementById('seedDistrictWrap');
+  wrap.style.display = (state==='Tamil Nadu') ? 'none' : '';
+}
+
+function renderSeeds(){
+  document.getElementById('staticPL').value    = SEED_STATIC.pl;
+  document.getElementById('staticPrice').value = `₹ ${SEED_STATIC.price}`;
+  document.getElementById('staticDate').value  = SEED_STATIC.available;
+
+  const list     = document.getElementById('seedList');
+  const state    = document.getElementById('seedState').value;
+  const dSel     = document.getElementById('seedDistrict');
+  const district = (state==='Andhra Pradesh') ? (dSel.value || '') : '';
+
+  let filtered;
+  if(state==='Tamil Nadu'){
+    filtered = SEEDS.filter(r=>r.state==='Tamil Nadu');
+  }else{
+    filtered = SEEDS.filter(r=> r.state==='Andhra Pradesh' && (!district || r.district===district));
+  }
+
+  list.innerHTML = '';
+  if(filtered.length===0){
+    list.innerHTML = `<div class="pad muted">${lang()==='te'?'డేటా లేదు':'No data yet.'}</div>`;
+  }else{
     filtered.forEach(r=>{
       list.insertAdjacentHTML('beforeend',`
         <div class="row3">
@@ -319,20 +372,41 @@ function renderSeeds(){
         </div>`);
     });
   }
-  const msg=[ "Seeds Enquiry", `${t('state')}: ${selState}`,
-              `${t('district')}: ${selDist || (localStorage.getItem('district')||'Nellore')}`,
-              `${t('pl')}: ${SEED_STATIC.pl}`, `${t('pricePer1000')}: ₹${SEED_STATIC.price}`,
-              `${t('availDate')}: ${SEED_STATIC.available}` ].join('\n');
-  document.getElementById('seedBookBtn').href=`https://wa.me/?text=${encodeURIComponent(msg)}`;
+
+  const msg = [
+    "Seeds Enquiry",
+    `${t('state')}: ${state}`,
+    `${t('district')}: ${district || (localStorage.getItem('district')||'Nellore')}`,
+    `${t('pl')}: ${SEED_STATIC.pl}`,
+    `${t('pricePer1000')}: ₹${SEED_STATIC.price}`,
+    `${t('availDate')}: ${SEED_STATIC.available}`
+  ].join('\n');
+  document.getElementById('seedBookBtn').href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
 }
-document.getElementById('seedState').addEventListener('change',renderSeeds);
-document.getElementById('seedDistrict').addEventListener('change',renderSeeds);
+
+/* Events */
+document.getElementById('seedState').addEventListener('change', ()=>{
+  updateSeedDistrictVisibility();
+  renderSeeds();
+});
+document.getElementById('seedDistrict').addEventListener('change', renderSeeds);
+
+/* Init seeds once */
+let seedsInitDone=false;
+async function initSeeds(){
+  if(seedsInitDone) { renderSeeds(); return; }
+  await loadSeeds();
+  buildAPDistrictOptions();
+  updateSeedDistrictVisibility();
+  renderSeeds();
+  seedsInitDone=true;
+}
 
 /* ===== init ===== */
 applyI18N();
-showTab('shrimp');   // default tab
+showTab('shrimp');     // default
 renderPrawns();
-loadSeeds().then(renderSeeds);
+initSeeds();           // prepare seeds in background
 </script>
 </body>
 </html>
