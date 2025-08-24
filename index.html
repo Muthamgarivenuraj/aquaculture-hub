@@ -19,29 +19,33 @@
     .lang{display:flex;gap:6px}
     .pill{border:1px solid var(--border);background:#fff;padding:8px 12px;border-radius:999px;cursor:pointer}
     .pill.active{background:#0b1220;color:#fff;border-color:#0b1220}
-    .panel{background:linear-gradient(180deg,#eef3ff,transparent);border:1px solid var(--border);border-radius:20px;padding:16px}
+    .panel{background:linear-gradient(180deg,#eef3ff,transparent);border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:14px}
     .grid{display:grid;grid-template-columns:1fr;gap:12px}
     @media(min-width:680px){.grid{grid-template-columns:repeat(2,1fr)}}
     @media(min-width:980px){.grid{grid-template-columns:repeat(3,1fr)}}
     .card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px;text-decoration:none;color:inherit;display:block;transition:.15s}
     .card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(20,40,80,.08)}
     select{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:#fff;font-weight:600}
+    input[readonly]{background:#f9fbff}
     .row{display:grid;grid-template-columns:1fr;gap:10px}
     footer{margin:28px 0 10px;color:#5f6b85;font-size:.85rem;text-align:center}
 
     /* 🎨 Mobile-only soft colors for each widget */
     @media(max-width:679px){
-      #districtSelect 
-    padding:16px 16px;
-    font-size:1.1rem;
-  
       .card:nth-child(1){ background:#e6f0ff; }  /* light blue */
       .card:nth-child(2){ background:#e8fdf5; }  /* light green */
       .card:nth-child(3){ background:#fff5e6; }  /* light orange */
       .card:nth-child(4){ background:#fbefff; }  /* light purple */
       .card:nth-child(5){ background:#fdf4e6; }  /* light yellow */
       .card:nth-child(6){ background:#e9f7ff; }  /* light cyan */
+      /* bigger district select on mobile */
+      #districtSelect { padding:16px 16px; font-size:1.1rem; }
     }
+
+    /* Quick Shrimp Rate tweaks */
+    #quickShrimp { margin-top:4px }
+    #qsPrice { text-align:center }
+    label.small { font-size:.9rem; color:var(--muted); font-weight:700; display:block; margin:0 0 6px }
   </style>
 </head>
 <body>
@@ -99,10 +103,31 @@
       </div>
     </section>
 
+    <!-- Quick Shrimp Rate (Count -> Price from rates.csv) -->
+    <section class="panel" id="quickShrimp">
+      <label class="small" data-i18n="qs_title">Quick Shrimp Rate</label>
+      <small class="muted" id="qsDistrictNote"></small>
+
+      <div class="row" style="margin-top:10px">
+        <div>
+          <select id="qsCount"></select>
+        </div>
+        <div>
+          <input id="qsPrice" type="text" readonly
+                 style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:#f9fbff;font-weight:800;"
+                 value="₹ —">
+        </div>
+      </div>
+
+      <small class="muted" id="qsHint" data-i18n="qs_hint" style="display:block;margin-top:8px;">
+        Pick a count to see today’s price.
+      </small>
+    </section>
+
     <footer>© <span id="yr"></span> Aquaculture A–Z Hub • AP-first</footer>
   </div>
 
-<!-- Tiny i18n core (no external files needed) -->
+<!-- i18n + page logic -->
 <script>
   const I18N = {
     en:{ title:"Aquaculture A–Z Hub", subtitle:"Andhra Pradesh",
@@ -112,7 +137,10 @@
          knowledge:"Knowledge Center", knowledgeDesc:"Prawn culture A–Z",
          news:"News & Schemes", newsDesc:"Updates & subsidies",
          post:"Post a Requirement", postDesc:"Get dealer callbacks",
-         district:"Select District" },
+         district:"Select District",
+         qs_title:"Quick Shrimp Rate",
+         qs_hint:"Pick a count to see today’s price."
+    },
     te:{ title:"ఆక్వాకల్చర్ A–Z హబ్", subtitle:"ఆంధ్రప్రదేశ్",
          liveRates:"లైవ్ రేట్స్", liveDesc:"శ్రింప్, ఫీడ్, డీజిల్ & ఐస్",
          vendors:"వెండర్లు", vendorsDesc:"ఫీడ్స్ · సీడ్స్ · మందులు · ల్యాబ్స్",
@@ -120,7 +148,10 @@
          knowledge:"నాలెడ్జ్ సెంటర్", knowledgeDesc:"ప్రాన్స్ కల్చర్ A–Z",
          news:"న్యూస్ & స్కీమ్స్", newsDesc:"అప్డేట్స్ & సబ్సిడీలు",
          post:"రిక్వైర్మెంట్ పోస్ట్ చేయి", postDesc:"డీలర్ కాల్‌బ్యాక్స్ పొందండి",
-         district:"జిల్లా ఎంచుకోండి" }
+         district:"జిల్లా ఎంచుకోండి",
+         qs_title:"త్వరిత రొయ్యల రేటు",
+         qs_hint:"కౌంట్ ఎంచుకుంటే ఈరోజు రేటు చూపుతుంది."
+    }
   };
   function getLang(){ return localStorage.getItem('lang') || 'en'; }
   function setLang(v){ localStorage.setItem('lang', v); applyI18N(); }
@@ -132,13 +163,65 @@
     document.querySelectorAll('[data-lang]').forEach(b=> b.classList.toggle('active', b.dataset.lang===getLang()));
   }
   document.querySelectorAll('[data-lang]').forEach(b=> b.addEventListener('click',()=> setLang(b.dataset.lang)));
-  // District persistence
+
+  // district persistence
   const dSel = document.getElementById('districtSelect');
   const savedD = localStorage.getItem('district'); if(savedD) dSel.value = savedD;
-  dSel.addEventListener('change', e=> localStorage.setItem('district', e.target.value));
-  // Init
+  dSel.addEventListener('change', e=> { localStorage.setItem('district', e.target.value); qsUpdatePrice(); });
+
+  // footer year + init i18n
   document.getElementById('yr').textContent = new Date().getFullYear();
   applyI18N();
+
+  /* === Quick Shrimp Rate (Count -> Price) === */
+  const QS_COUNTS = Array.from({length:18}, (_,i)=>200 - i*10); // 200..30
+  const RATES_QS = { shrimp: {}, __loaded:false };
+  const CSV_URL_QS = 'rates.csv'; // keep this file in repo root alongside index.html
+
+  async function loadShrimpRates() {
+    if (RATES_QS.__loaded) return;
+    try {
+      const res = await fetch(CSV_URL_QS, {cache:'no-store'});
+      const text = await res.text();
+      for (const line of text.split(/\r?\n/)) {
+        const clean = line.trim();
+        if (!clean || clean.startsWith('type,')) continue;
+        const [type, district, key, priceStr] = clean.split(',').map(s=>s.trim());
+        if (type!=='shrimp') continue;
+        const price = parseFloat(priceStr);
+        if (!RATES_QS.shrimp[district]) RATES_QS.shrimp[district] = {};
+        RATES_QS.shrimp[district][key] = price;
+      }
+      RATES_QS.__loaded = true;
+    } catch(e){ console.warn('Failed to load rates.csv', e); }
+  }
+
+  function qsFillCounts() {
+    const sel = document.getElementById('qsCount');
+    sel.innerHTML = '';
+    QS_COUNTS.forEach(c=>{
+      const opt = document.createElement('option');
+      opt.value = c; opt.textContent = `${c}c`;
+      sel.appendChild(opt);
+    });
+  }
+
+  function qsUpdatePrice() {
+    const district = localStorage.getItem('district') || 'Nellore';
+    const count = document.getElementById('qsCount').value;
+    const map = RATES_QS.shrimp[district] || {};
+    const price = map[String(count)];
+    document.getElementById('qsPrice').value = (price!=null) ? `₹ ${price}` : '₹ —';
+    document.getElementById('qsDistrictNote').textContent = district;
+  }
+
+  async function initQuickShrimp() {
+    qsFillCounts();
+    document.getElementById('qsCount').addEventListener('change', qsUpdatePrice);
+    await loadShrimpRates();
+    qsUpdatePrice();
+  }
+  initQuickShrimp();
 </script>
 </body>
 </html>
