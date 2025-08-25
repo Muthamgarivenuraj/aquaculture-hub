@@ -1,446 +1,481 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title data-i18n="pageLive">Live Rates</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{--bg:#f6f8fb;--text:#0b1220;--muted:#5f6b85;--border:#e5e7ef;--brand:#1e66f5}
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Arial}
-  .container{max-width:920px;margin:0 auto;padding:16px}
-  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px}
-  .logo{font-weight:800;font-size:1.3rem}
-  .actions{display:flex;gap:8px;flex-wrap:wrap}
-  .btn-ghost{padding:8px 14px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#0b1220;text-decoration:none;cursor:pointer}
-  h2{margin:12px 0;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-  #todayDate{font-size:.9rem;color:var(--muted)}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aquaculture App</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --card: #131c31;
+      --muted: #8aa0c5;
+      --text: #e8eefc;
+      --primary: #4f8cff;
+      --accent: #22c55e;
+      --danger: #ef4444;
+      --border: #23304e;
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif; background: var(--bg); color: var(--text); }
+    header { position:sticky; top:0; z-index:10; backdrop-filter: blur(6px); background: rgba(11,18,32,0.75); border-bottom:1px solid var(--border); }
+    .container { max-width:1100px; margin:0 auto; padding:16px; }
+    .row { display:grid; gap:12px; }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width:900px){ .grid-3{ grid-template-columns:1fr 1fr;} }
+    @media (max-width:640px){ .grid-3, .grid-2{ grid-template-columns:1fr;} }
 
-  select,input{width:100%;padding:12px;border:1px solid var(--border);border-radius:12px;font-size:1rem;font-weight:600;background:#fff}
-  input[readonly]{background:#f9fbff}
-  label{display:block;margin:6px 0 4px;color:#334155;font-weight:700}
-  .display{width:100%;padding:12px;border:1px solid var(--border);border-radius:12px;background:#f9fbff;font-weight:700}
-  .currency{font-variant-numeric:tabular-nums}
+    .brand { display:flex; gap:10px; align-items:center; }
+    .logo { width:36px; height:36px; border-radius:8px; background:linear-gradient(135deg, var(--primary), #22d3ee); box-shadow: 0 6px 20px rgba(79,140,255,.35); }
+    h1 { font-size:20px; margin:0; letter-spacing:.2px; }
 
-  .card{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:12px}
-  .pad{padding:14px}
+    .toolbar { display:flex; gap:8px; align-items:center; }
+    select, input, button { background:#0f172a; color:var(--text); border:1px solid var(--border); border-radius:10px; padding:10px 12px; outline:none; }
+    select:focus, input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,140,255,.25); }
+    button { cursor:pointer; background: var(--primary); border-color: transparent; }
+    button.ghost { background: transparent; border-color: var(--border); }
+    button.success { background: var(--accent); }
+    button.danger { background: var(--danger); }
 
-  /* Tabs */
-  .tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
-  .tab{padding:10px;border:1px solid var(--border);border-radius:12px;cursor:pointer;font-weight:700;text-align:center;background:#fff}
-  .tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
-  @media(max-width:640px){ .tabs{grid-template-columns:1fr 1fr} }
+    .tabs { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+    .tab { padding:10px 14px; border:1px solid var(--border); border-radius:999px; cursor:pointer; user-select:none; opacity:.8; }
+    .tab.active { background: var(--primary); border-color: transparent; opacity:1; }
 
-  /* Prawns table */
-  .head2{display:grid;grid-template-columns:1fr 1fr;background:#eef3ff}
-  .cell{padding:12px 14px;text-align:center;font-weight:700}
-  .row2{display:grid;grid-template-columns:1fr 1fr}
-  .row2:nth-child(odd){background:#fff}
-  .row2:nth-child(even){background:#f9fbff}
-  .left{display:flex;align-items:center;gap:8px;justify-content:flex-start;color:#1e66f5}
-  .right{display:flex;align-items:center;justify-content:flex-end;color:#059669;font-weight:800}
-  @media(max-width:640px){ .head2{display:none} .row2{grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)} }
-  .trend{display:inline-flex;gap:6px;align-items:center;font-weight:700}
-  .up{color:#0ea75a;animation:blink-up 1s ease-in-out 2}
-  .down{color:#e11d48;animation:blink-down 1s ease-in-out 2}
-  @keyframes blink-up{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.3;transform:translateY(-2px)}}
-  @keyframes blink-down{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.3;transform:translateY(2px)}}
+    .card { background: var(--card); border:1px solid var(--border); border-radius:16px; padding:16px; box-shadow: 0 4px 30px rgba(0,0,0,.25); }
+    .card h2 { margin:0 0 12px; font-size:18px; }
+    .muted { color: var(--muted); font-size: 12px; }
+    .row-inline { display:flex; flex-wrap:wrap; gap:10px; align-items:end; }
+    .field { display:flex; flex-direction:column; gap:6px; min-width:140px; flex:1; }
+    label { font-size:12px; color: var(--muted); }
+    table { width:100%; border-collapse: collapse; font-size:14px; }
+    th, td { text-align:left; padding:10px; border-bottom:1px solid var(--border); }
+    th { color: var(--muted); font-weight:600; }
+    .chip { display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px; font-size:12px; border:1px solid var(--border); }
+    .up { color:#22c55e; }
+    .down { color:#ef4444; }
 
-  /* Seeds */
-  .filters{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-  @media(max-width:800px){ .filters{grid-template-columns:1fr} }
-  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  @media(max-width:640px){ .info-grid{grid-template-columns:1fr} }
+    .lang-toggle { display:flex; gap:8px; padding:6px; background:#0f172a; border:1px solid var(--border); border-radius:12px; }
+    .lang-toggle button { background:transparent; border:none; padding:8px 12px; border-radius:8px; }
+    .lang-toggle button.active { background:var(--primary); }
 
-  .h3{margin:10px 0;color:#1e66f5;font-size:1.05rem;font-weight:800}
-  .btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;padding:12px 16px;border-radius:12px;border:1px solid var(--brand);background:var(--brand);color:#fff;font-weight:800;text-decoration:none;width:100%}
-  .muted{color:var(--muted)}
-  footer{text-align:center;margin:18px 0;color:var(--muted);font-size:.85rem}
-</style>
+    .divider { height:1px; background:var(--border); margin:14px 0; opacity:.8; }
+    .hidden { display:none !important; }
+    .footer { text-align:center; padding:24px; color:var(--muted); font-size:12px; }
+  </style>
 </head>
 <body>
-<div class="container">
   <header>
-    <div class="logo" data-i18n="pageLive">Live Rates</div>
-    <div class="actions">
-      <a class="btn-ghost" href="index.html" data-i18n="home">Home</a>
-      <button class="btn-ghost" onclick="setLang('te')">తెలుగు</button>
-      <button class="btn-ghost" onclick="setLang('en')">English</button>
+    <div class="container" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1 id="t_appTitle">Aquaculture App</h1>
+          <div class="muted" id="t_subTitle">Prawns Price • Harvesting • Seeds</div>
+        </div>
+      </div>
+      <div class="toolbar">
+        <div class="lang-toggle" role="tablist">
+          <button id="btnTel" class="active" data-lang="te">తెలుగు</button>
+          <button id="btnEn" data-lang="en">English</button>
+        </div>
+      </div>
     </div>
   </header>
 
-  <h2>
-    <span id="districtName">Nellore</span>
-    <small id="todayDate"></small>
-  </h2>
+  <main class="container">
+    <div class="tabs" id="tabs">
+      <div class="tab active" data-tab="price" id="t_tabPrice">🦐 Prices</div>
+      <div class="tab" data-tab="harvest" id="t_tabHarvest">🚚 Harvesting</div>
+      <div class="tab" data-tab="seeds" id="t_tabSeeds">🌱 Seeds</div>
+    </div>
 
-  <div class="card pad" style="margin-bottom:10px">
-    <label data-i18n="district">Select District</label>
-    <select id="districtSelect">
-      <option>Select District</option>
-      <option>Nellore</option><option>West Godavari</option>
-      <option>East Godavari</option><option>Krishna</option><option>Prakasam</option>
-    </select>
-  </div>
-
-  <!-- TABS -->
-  <div class="tabs">
-    <div class="tab" data-tab="shrimp" data-i18n="prawnsPrice">Prawns – Price</div>
-    <div class="tab" data-tab="harvest" data-i18n="harvesting">Harvesting</div>
-    <div class="tab active" data-tab="seeds" data-i18n="seeds">Seeds</div>
-  </div>
-
-  <!-- PRAWNS – PRICE -->
-  <div class="card" id="prawnsList" style="display:none">
-    <div class="head2"><div class="cell" data-i18n="count">Count</div><div class="cell" data-i18n="price">Price</div></div>
-    <div id="list"></div>
-  </div>
-
-  <!-- HARVESTING -->
-  <div class="card" id="harvestCalc" style="display:none">
-    <div class="pad">
-      <h3 class="h3" data-i18n="iceBooking">Ice Booking</h3>
-      <div class="info-grid">
-        <div><label data-i18n="unit">Unit</label>
-          <select id="unit"><option value="ton" selected data-i18n="uTon">Tons</option><option value="can" data-i18n="uCan">Cans</option></select>
-        </div>
-        <div><label id="priceLabel">Price (₹/ton)</label><select id="unitPrice"></select></div>
-      </div>
-      <div class="info-grid" style="margin-top:10px">
-        <div><label data-i18n="qty">Quantity</label><input id="qty" type="number" min="0" step="0.5" value="1" /></div>
-        <div><label data-i18n="km">Distance (km)</label><input id="km" type="number" min="0" step="1" value="10" /></div>
-      </div>
-      <h3 class="h3" style="margin-top:16px" data-i18n="vanBooking">Van Booking</h3>
-      <div class="info-grid">
-        <div><label data-i18n="vehicle">Vehicle</label>
-          <select id="vehicle">
-            <option value="2">2 Ton Van — ₹100/km</option>
-            <option value="5">5 Ton Van — ₹200/km</option>
-            <option value="8">8 Ton Truck — ₹300/km</option>
-            <option value="10">10 Ton Truck — ₹400/km</option>
+    <!-- PRICES -->
+    <section class="card" id="tab-price">
+      <h2 id="t_priceTitle">Prawns – Count vs Price</h2>
+      <div class="row-inline">
+        <div class="field" style="max-width:220px;">
+          <label id="t_districtLabel">District</label>
+          <select id="priceDistrict">
+            <option>Krishna</option>
+            <option>Nellore</option>
+            <option>Prakasam</option>
+            <option>West Godavari</option>
           </select>
         </div>
-        <div><label data-i18n="rate">Rate (₹/km)</label><input id="vehRate" type="number" value="100" readonly /></div>
+        <div class="field" style="max-width:220px;">
+          <label id="t_dateLabel">Date</label>
+          <input id="priceDate" type="date"/>
+        </div>
+        <div class="field" style="max-width:280px;">
+          <label id="t_searchLabel">Search Count</label>
+          <input id="priceSearch" placeholder="e.g., 200c" />
+        </div>
       </div>
-      <div class="info-grid" style="margin-top:10px">
-        <div><label data-i18n="transCost">Transport cost</label><input id="transCost" value="₹ 0" readonly></div>
-        <div><label data-i18n="total">Total</label><input id="total" value="₹ 0" readonly></div>
+      <div class="divider"></div>
+      <div class="muted" id="priceMeta"></div>
+      <div style="overflow:auto;">
+        <table id="priceTable">
+          <thead>
+            <tr><th id="t_count">Count</th><th id="t_price">Price (₹)</th><th id="t_change">Change</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
-      <div style="margin-top:10px"><a id="bookBtn" class="btn" href="#" target="_blank" rel="noopener" data-i18n="book">Book</a></div>
-    </div>
-  </div>
+    </section>
 
-  <!-- SEEDS -->
-  <div class="card" id="seedsSection">
-    <div class="pad">
-      <div class="filters">
-        <div>
-          <label data-i18n="state">State</label>
+    <!-- HARVESTING -->
+    <section class="card hidden" id="tab-harvest">
+      <h2 id="t_harvestTitle">Harvesting & Transport</h2>
+      <div class="row grid-2">
+        <div class="card" style="background:#0f172a;">
+          <h3 id="t_iceBooking">Ice Booking</h3>
+          <div class="row-inline">
+            <div class="field">
+              <label id="t_unit">Unit</label>
+              <select id="iceUnit">
+                <option value="tons">Tons</option>
+                <option value="cans">Cans</option>
+              </select>
+            </div>
+            <div class="field">
+              <label id="t_quantity">Quantity</label>
+              <input id="iceQty" type="number" min="0" step="0.01" placeholder="0" />
+            </div>
+            <div class="field">
+              <label id="t_pricePerTon">Price / Ton (₹)</label>
+              <input id="iceRate" type="number" min="0" step="1" value="3000" />
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div id="iceOut" class="muted"></div>
+        </div>
+        <div class="card" style="background:#0f172a;">
+          <h3 id="t_vanBooking">Van Booking</h3>
+          <div class="row-inline">
+            <div class="field">
+              <label id="t_vanType">Van Type</label>
+              <select id="vanType">
+                <option value="2">2T</option>
+                <option value="5">5T</option>
+                <option value="8">8T</option>
+                <option value="10">10T</option>
+              </select>
+            </div>
+            <div class="field">
+              <label id="t_ratePerKm">Rate / km (₹)</label>
+              <input id="vanRate" type="number" min="0" step="1" value="35" />
+            </div>
+            <div class="field">
+              <label id="t_distance">Distance (km)</label>
+              <input id="vanKm" type="number" min="0" step="1" placeholder="0" />
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div id="vanOut" class="muted"></div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:12px;">
+        <button id="btnHarvestWA" class="success">📲 <span id="t_bookNow">Book via WhatsApp</span></button>
+      </div>
+    </section>
+
+    <!-- SEEDS -->
+    <section class="card hidden" id="tab-seeds">
+      <h2 id="t_seedsTitle">Seeds Booking</h2>
+      <div class="row-inline">
+        <div class="field">
+          <label id="t_state">State</label>
           <select id="seedState">
             <option>Andhra Pradesh</option>
             <option>Tamil Nadu</option>
           </select>
         </div>
-        <div id="seedDistrictWrap">
-          <label data-i18n="district">Select District</label>
-          <select id="seedDistrict"><option value="">All Districts</option></select>
+        <div class="field" id="districtWrap">
+          <label id="t_district">District</label>
+          <select id="seedDistrict"></select>
         </div>
-        <div>
-          <label data-i18n="hatchery">Hatchery</label>
-          <select id="seedHatchery"><option value="">Select hatchery</option></select>
-        </div>
-      </div>
-    </div>
-
-    <div class="pad" style="border-top:1px solid var(--border)">
-      <!-- Static PL & auto Price -->
-      <div class="info-grid">
-        <div><label data-i18n="pl">Seeds PL</label><div id="plDisp" class="display">Vannamei SPF PL</div></div>
-        <div><label data-i18n="pricePer1000">Price / 1000</label><div id="priceDisp" class="display currency">₹ 0</div></div>
-      </div>
-
-      <!-- Availability -->
-      <div class="info-grid" style="margin-top:10px">
-        <div><label data-i18n="availFrom">Available From</label><input id="staticFrom" value="" readonly></div>
-        <div><label data-i18n="availTo">Available To</label><input id="staticTo" value="" readonly></div>
-      </div>
-
-      <!-- Booking + Quantity -->
-      <div class="info-grid" style="margin-top:10px">
-        <div><label id="lblBooking">Customer Booking Date</label><input id="bookingDate" type="date" /></div>
-        <div><label id="lblQty">Quantity (×1000 PL)</label><input id="seedQty" type="number" min="0" step="1" value="0" /></div>
-      </div>
-
-      <!-- Production + Bonus -->
-      <div class="info-grid" style="margin-top:10px">
-        <div>
-          <label id="lblProd">Production</label>
-          <select id="production"><option>Batch 1</option><option>Batch 2</option></select>
-        </div>
-        <div>
-          <label id="lblBonus">Bonus (pcs)</label>
-          <input id="bonus" type="number" value="0" readonly />
+        <div class="field" style="flex:2;">
+          <label id="t_hatchery">Hatchery</label>
+          <input id="hatcherySearch" placeholder="Search hatchery" />
+          <select id="seedHatchery" size="6" style="margin-top:8px; width:100%;"></select>
         </div>
       </div>
-
-      <!-- Total Seeds + Total Amount -->
-      <div class="info-grid" style="margin-top:10px">
-        <div><label id="lblTotalSeeds">Total Seeds (pcs)</label><input id="totalSeeds" value="0" readonly></div>
-        <div><label id="lblTotal">Total Amount</label><input id="seedTotal" class="currency" value="₹ 0" readonly></div>
+      <div class="row-inline" style="margin-top:10px;">
+        <div class="field">
+          <label>PL</label>
+          <input id="seedPL" value="Vannamei SPF PL" readonly />
+        </div>
+        <div class="field">
+          <label id="t_pricePerK">Price / 1000 (₹)</label>
+          <input id="seedPrice" type="number" readonly />
+        </div>
+        <div class="field">
+          <label id="t_production">Production</label>
+          <select id="seedBatch">
+            <option>Batch 1</option>
+            <option>Batch 2</option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="t_qtyK">Quantity (×1000)</label>
+          <input id="seedQty" type="number" min="0" step="1" placeholder="0" />
+        </div>
+        <div class="field">
+          <label id="t_bookingDate">Booking Date</label>
+          <input id="seedDate" type="date" />
+        </div>
       </div>
+      <div class="divider"></div>
+      <div id="seedAvail" class="muted"></div>
+      <div id="seedSummary" class="muted" style="margin-top:8px;"></div>
+      <div class="row" style="margin-top:12px;">
+        <button id="btnSeedsWA" class="success">📲 <span id="t_bookNow2">Book via WhatsApp</span></button>
+      </div>
+    </section>
 
-      <div style="margin-top:10px"><a id="seedBookBtn" class="btn" href="#" target="_blank" rel="noopener" data-i18n="book">Book</a></div>
-    </div>
-  </div>
+    <div class="footer">© <span id="year"></span> Aquaculture — <span id="t_footer">Mobile-first responsive web app</span></div>
+  </main>
 
-  <footer>© <span id="yr"></span> Aquaculture A–Z Hub</footer>
-</div>
-
-<script>
-/* ===== i18n ===== */
-if(!localStorage.getItem('lang')){ localStorage.setItem('lang','te'); } // Telugu default
-const I18N={
-  en:{pageLive:"Live Rates",home:"Home",district:"Select District",
-      prawnsPrice:"Prawns – Price",harvesting:"Harvesting",seeds:"Seeds",
-      count:"Count",price:"Price",pricePer1000:"Price / 1000",
-      iceBooking:"Ice Booking",vanBooking:"Van Booking",
-      unit:"Unit",uTon:"Tons",uCan:"Cans",qty:"Quantity",km:"Distance (km)",
-      vehicle:"Vehicle",rate:"Rate (₹/km)",transCost:"Transport cost",total:"Total",book:"Book",
-      priceTon:"Price (₹/ton)",priceCan:"Price (₹/can)",
-      state:"State",hatchery:"Hatchery",pl:"Seeds PL",
-      availFrom:"Available From",availTo:"Available To"},
-  te:{pageLive:"లైవ్ రేట్స్",home:"హోమ్",district:"జిల్లా ఎంచుకోండి",
-      prawnsPrice:"రొయ్యలు – ధర",harvesting:"హార్వెస్టింగ్",seeds:"సీడ్స్",
-      count:"కౌంట్",price:"ధర",pricePer1000:"ధర / 1000",
-      iceBooking:"ఐస్ బుకింగ్",vanBooking:"వాన్ బుకింగ్",
-      unit:"యూనిట్",uTon:"టన్నులు",uCan:"క్యాన్స్",qty:"పరిమాణం",km:"దూరం (కిమీ)",
-      vehicle:"వాహనం",rate:"రేట్ (₹/కిమీ)",transCost:"రవాణా ఖర్చు",total:"మొత్తం",book:"బుక్ చేయి",
-      priceTon:"ధర (₹/టన్ను)",priceCan:"ధర (₹/క్యాన్)",
-      state:"రాష్ట్రం",hatchery:"హ్యాచరీ",pl:"సీడ్స్ PL",
-      availFrom:"అందుబాటులో నుండి",availTo:"వరకు"}
-};
-function lang(){return localStorage.getItem('lang')||'te';}
-function t(k){return (I18N[lang()]||{})[k]||k;}
-function setLang(code){
-  localStorage.setItem('lang',code);
-  applyI18N();
-  if(activeTab==='seeds') updateSeedsUI();
-}
-function applyI18N(){
-  document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
-  document.getElementById('todayDate').textContent=new Date().toLocaleDateString(lang()==='te'?'te-IN':'en-IN',{year:'numeric',month:'short',day:'numeric'});
-  // extra labels
-  document.getElementById('lblBooking').textContent = (lang()==='te')?'కస్టమర్ బుకింగ్ తేదీ':'Customer Booking Date';
-  document.getElementById('lblQty').textContent     = (lang()==='te')?'పరిమాణం (×1000 PL)':'Quantity (×1000 PL)';
-  document.getElementById('lblProd').textContent    = (lang()==='te')?'ప్రొడక్షన్':'Production';
-  document.getElementById('lblBonus').textContent   = (lang()==='te')?'బోనస్ (పీసెస్)':'Bonus (pcs)';
-  document.getElementById('lblTotalSeeds').textContent = (lang()==='te')?'మొత్తం సీడ్స్ (పీసెస్)':'Total Seeds (pcs)';
-  document.getElementById('lblTotal').textContent   = (lang()==='te')?'మొత్తం అమౌంట్':'Total Amount';
-}
-document.getElementById('yr').textContent=new Date().getFullYear();
-applyI18N();
-
-/* ===== header/date/district ===== */
-const dSel=document.getElementById('districtSelect');
-const saved=localStorage.getItem('district');
-if(saved){ dSel.value=saved; document.getElementById('districtName').textContent=saved; }
-dSel.addEventListener('change',e=>{
-  localStorage.setItem('district',e.target.value);
-  document.getElementById('districtName').textContent=e.target.value;
-});
-
-/* ===== Tabs ===== */
-let activeTab='seeds';
-const sections={shrimp:document.getElementById('prawnsList'),harvest:document.getElementById('harvestCalc'),seeds:document.getElementById('seedsSection')};
-function showTab(name){
-  activeTab=name;
-  Object.entries(sections).forEach(([k,el])=>el.style.display=(k===name)?'block':'none');
-  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
-  if(name==='seeds') initSeeds();
-}
-document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>showTab(t.dataset.tab)));
-showTab('seeds'); // open Seeds by default
-
-/* ===== Prawns (rates.csv) ===== */
-const RATES={shrimp:{},loaded:false};
-async function loadRates(){
-  if(RATES.loaded) return;
-  try{
-    const text=await (await fetch('rates.csv',{cache:'no-store'})).text();
-    text.split(/\r?\n/).forEach(line=>{
-      const s=line.trim(); if(!s||s.startsWith('type,')) return;
-      const [type,district,key,priceStr]=s.split(',').map(x=>x.trim());
-      if(type!=='shrimp') return;
-      (RATES.shrimp[district] ||= {})[key]=parseFloat(priceStr);
-    });
-    RATES.loaded=true;
-  }catch(e){ console.warn('rates.csv missing'); }
-}
-function dateKey(d){return d.toISOString().slice(0,10)}
-function todayKey(){return dateKey(new Date())}
-function yesterdayKey(){const d=new Date(); d.setDate(d.getDate()-1); return dateKey(d)}
-function storageKey(dst,day){return `lr_shrimp_${dst}_${day}`}
-function trend(prev,curr){ if(prev==null||isNaN(prev)||curr==null||isNaN(curr)) return ''; if(curr>prev) return '<span class="trend up">▲</span>'; if(curr<prev) return '<span class="trend down">▼</span>'; return ''; }
-async function renderPrawns(){
-  await loadRates();
-  const district=localStorage.getItem('district')||'Nellore';
-  const yKey=yesterdayKey(), tKey=todayKey();
-  const prev=JSON.parse(localStorage.getItem(storageKey(district,yKey))||'{}');
-  const curr={};
-  const list=document.getElementById('list'); list.innerHTML='';
-  for(let c=200;c>=30;c-=10){
-    const p=(RATES.shrimp[district]||{})[String(c)];
-    curr[c]=p??null;
-    list.insertAdjacentHTML('beforeend',`
-      <div class="row2">
-        <div class="cell left">${trend(prev[c],p)} ${c}c</div>
-        <div class="cell right">${p!=null?`₹ ${p}`:'—'}</div>
-      </div>`);
-  }
-  localStorage.setItem(storageKey(district,tKey), JSON.stringify(curr));
-}
-
-/* ===== Harvest calculator ===== */
-const VEHICLES={"2":{label:"2 Ton Van",rate:100},"5":{label:"5 Ton Van",rate:200},"8":{label:"8 Ton Truck",rate:300},"10":{label:"10 Ton Truck",rate:400}};
-const PRICES={ton:[1200,1500,2000], can:[120,140,160]};
-const unit=document.getElementById('unit'),unitPrice=document.getElementById('unitPrice'),qty=document.getElementById('qty'),km=document.getElementById('km'),vehicle=document.getElementById('vehicle'),vehRate=document.getElementById('vehRate'),transCostEl=document.getElementById('transCost'),totalEl=document.getElementById('total'),bookBtn=document.getElementById('bookBtn');
-function fillPriceOptions(){
-  if(!unitPrice) return;
-  unitPrice.innerHTML="";
-  (PRICES[unit.value]||[]).forEach((p,i)=>{const o=document.createElement('option');o.value=p;o.textContent=`₹ ${p}`;if(i===0)o.selected=true;unitPrice.appendChild(o);});
-  const lbl=document.getElementById('priceLabel'); if(lbl) lbl.textContent=(unit.value==='ton')?t('priceTon'):t('priceCan');
-}
-function updateVehRate(){ if(vehRate) vehRate.value=VEHICLES[vehicle.value].rate; }
-function recalc(){
-  if(!unitPrice) return;
-  const price=+unitPrice.value||0, q=+qty.value||0, kms=+km.value||0, rate=+vehRate.value||0;
-  const harvestCost=Math.round(price*q), transCost=Math.round(rate*kms), total=harvestCost+transCost;
-  if(transCostEl) transCostEl.value=`₹ ${transCost}`;
-  if(totalEl) totalEl.value=`₹ ${total}`;
-  if(bookBtn){
-    const district=localStorage.getItem('district')||'Nellore';
-    const msg=[ "Harvest Booking", `District: ${district}`, `Unit: ${unit.value==='ton'?t('uTon'):t('uCan')}`,
-      `${(unit.value==='ton')?t('priceTon'):t('priceCan')}: ₹${price}`, `${t('qty')}: ${q}`,
-      `${t('vehicle')}: ${VEHICLES[vehicle.value].label} (${rate}₹/km)`, `${t('km')}: ${kms}`,
-      `${t('transCost')}: ₹${transCost}`, `${t('total')}: ₹${total}` ].join('\n');
-    bookBtn.href=`https://wa.me/?text=${encodeURIComponent(msg)}`; bookBtn.disabled=total<=0;
-  }
-}
-if(unit){ unit.addEventListener('change',()=>{fillPriceOptions();applyI18N();recalc();}); fillPriceOptions(); }
-if(unitPrice){ unitPrice.addEventListener('change',recalc); }
-if(qty){ qty.addEventListener('input',recalc); }
-if(km){ km.addEventListener('input',recalc); }
-if(vehicle){ vehicle.addEventListener('change',()=>{updateVehRate();recalc();}); updateVehRate(); }
-recalc();
-
-/* ===== Seeds (CSV price; AP→District→Hatchery, TN→Hatchery only) ===== */
-const SEEDS=[], SEED_STATIC={from:(()=>{const d=new Date();d.setDate(d.getDate()+1);return d.toISOString().slice(0,10)})(),to:(()=>{const d=new Date();d.setDate(d.getDate()+8);return d.toISOString().slice(0,10)})()};
-let seedsLoaded=false, seedsInitDone=false;
-
-async function loadSeeds(){
-  if(seedsLoaded) return;
-  try{
-    const text=await (await fetch('seeds.csv',{cache:'no-store'})).text();
-    const lines=text.split(/\r?\n/).map(r=>r.trim()).filter(Boolean);
-    const start=lines[0]?.toLowerCase().includes('state')?1:0;
-    for(let i=start;i<lines.length;i++){
-      const [state,district,hatchery,pl,price_per_1000,available]=lines[i].split(',').map(x=>x?.trim()||'');
-      if(state && hatchery){
-        SEEDS.push({state,district,hatchery,price:isNaN(parseFloat(price_per_1000))?0:parseFloat(price_per_1000)});
+  <script>
+    // ---------- i18n ----------
+    const i18n = {
+      en: {
+        appTitle: 'Aquaculture App', subTitle:'Prawns Price • Harvesting • Seeds',
+        tabPrice:'🦐 Prices', tabHarvest:'🚚 Harvesting', tabSeeds:'🌱 Seeds',
+        priceTitle:'Prawns – Count vs Price', districtLabel:'District', dateLabel:'Date', searchLabel:'Search Count',
+        count:'Count', price:'Price (₹)', change:'Change',
+        harvestTitle:'Harvesting & Transport', iceBooking:'Ice Booking', unit:'Unit', quantity:'Quantity', pricePerTon:'Price / Ton (₹)', vanBooking:'Van Booking', vanType:'Van Type', ratePerKm:'Rate / km (₹)', distance:'Distance (km)', bookNow:'Book via WhatsApp',
+        seedsTitle:'Seeds Booking', state:'State', district:'District', hatchery:'Hatchery', pricePerK:'Price / 1000 (₹)', production:'Production', qtyK:'Quantity (×1000)', bookingDate:'Booking Date', bookNow2:'Book via WhatsApp', footer:'Mobile-first responsive web app'
+      },
+      te: {
+        appTitle: 'ఆక్వాకల్చర్ యాప్', subTitle:'చేపల ధర • హార్వెస్టింగ్ • సీడ్స్',
+        tabPrice:'🦐 ధరలు', tabHarvest:'🚚 హార్వెస్టింగ్', tabSeeds:'🌱 సీడ్స్',
+        priceTitle:'ప్రాన్స్ – కౌంట్ vs ధర', districtLabel:'జిల్లా', dateLabel:'తేదీ', searchLabel:'కౌంట్ వెతుకు',
+        count:'కౌంట్', price:'ధర (₹)', change:'మార్పు',
+        harvestTitle:'హార్వెస్టింగ్ & ట్రాన్స్‌పోర్ట్', iceBooking:'ఐస్ బుకింగ్', unit:'యూనిట్', quantity:'పరిమాణం', pricePerTon:'టన్‌కు ధర (₹)', vanBooking:'వాన్ బుకింగ్', vanType:'వాన్ టైపు', ratePerKm:'కిమీకి ధర (₹)', distance:'దూరం (కిమీ)', bookNow:'వాట్సాప్ ద్వారా బుక్ చేయండి',
+        seedsTitle:'సీడ్స్ బుకింగ్', state:'రాష్ట్రం', district:'జిల్లా', hatchery:'హ్యాచ్‌రీ', pricePerK:'1000కి ధర (₹)', production:'ప్రొడక్షన్', qtyK:'పరిమాణం (×1000)', bookingDate:'బుకింగ్ తేదీ', bookNow2:'వాట్సాప్ ద్వారా బుక్ చేయండి', footer:'మొబైల్-ఫస్టు రెస్పాన్సివ్ వెబ్ యాప్'
       }
     }
-    seedsLoaded=true;
-  }catch(e){ console.warn('seeds.csv missing'); }
-}
+    let lang = 'te';
+    const T = key => i18n[lang][key] || key;
+    function applyLang(){
+      document.getElementById('t_appTitle').textContent = T('appTitle');
+      document.getElementById('t_subTitle').textContent = T('subTitle');
+      document.getElementById('t_tabPrice').textContent = T('tabPrice');
+      document.getElementById('t_tabHarvest').textContent = T('tabHarvest');
+      document.getElementById('t_tabSeeds').textContent = T('tabSeeds');
+      document.getElementById('t_priceTitle').textContent = T('priceTitle');
+      document.getElementById('t_districtLabel').textContent = T('districtLabel');
+      document.getElementById('t_dateLabel').textContent = T('dateLabel');
+      document.getElementById('t_searchLabel').textContent = T('searchLabel');
+      document.getElementById('t_count').textContent = T('count');
+      document.getElementById('t_price').textContent = T('price');
+      document.getElementById('t_change').textContent = T('change');
+      document.getElementById('t_harvestTitle').textContent = T('harvestTitle');
+      document.getElementById('t_iceBooking').textContent = T('iceBooking');
+      document.getElementById('t_unit').textContent = T('unit');
+      document.getElementById('t_quantity').textContent = T('quantity');
+      document.getElementById('t_pricePerTon').textContent = T('pricePerTon');
+      document.getElementById('t_vanBooking').textContent = T('vanBooking');
+      document.getElementById('t_vanType').textContent = T('vanType');
+      document.getElementById('t_ratePerKm').textContent = T('ratePerKm');
+      document.getElementById('t_distance').textContent = T('distance');
+      document.getElementById('t_bookNow').textContent = T('bookNow');
+      document.getElementById('t_seedsTitle').textContent = T('seedsTitle');
+      document.getElementById('t_state').textContent = T('state');
+      document.getElementById('t_district').textContent = T('district');
+      document.getElementById('t_hatchery').textContent = T('hatchery');
+      document.getElementById('t_pricePerK').textContent = T('pricePerK');
+      document.getElementById('t_production').textContent = T('production');
+      document.getElementById('t_qtyK').textContent = T('qtyK');
+      document.getElementById('t_bookingDate').textContent = T('bookingDate');
+      document.getElementById('t_bookNow2').textContent = T('bookNow2');
+      document.getElementById('t_footer').textContent = T('footer');
+    }
 
-function fillDistricts(){
-  const dSel=document.getElementById('seedDistrict');
-  const distAll = (lang()==='te') ? 'అన్ని జిల్లాలు' : 'All Districts';
-  const ap = [...new Set(SEEDS.filter(r=>r.state==='Andhra Pradesh' && r.district).map(r=>r.district))].sort((a,b)=>a.localeCompare(b));
-  dSel.innerHTML = `<option value="">${distAll}</option>` + ap.map(d=>`<option>${d}</option>`).join('');
-}
-function fillHatcheries(){
-  const state=document.getElementById('seedState').value;
-  const district=document.getElementById('seedDistrict').value;
-  const hSel=document.getElementById('seedHatchery');
-  const hatchPlaceholder = (lang()==='te') ? 'హ్యాచరీ ఎంచుకోండి' : 'Select hatchery';
-  const list = (state==='Tamil Nadu') ? SEEDS.filter(r=>r.state==='Tamil Nadu')
-               : SEEDS.filter(r=>r.state==='Andhra Pradesh' && (!district || r.district===district));
-  hSel.innerHTML = `<option value="">${hatchPlaceholder}</option>` +
-    list.map(r=>`<option data-price="${r.price}" data-state="${r.state}" data-district="${r.district||''}">${r.hatchery}</option>`).join('');
-}
+    document.getElementById('btnTel').onclick = () => { lang='te'; applyLang(); document.getElementById('btnTel').classList.add('active'); document.getElementById('btnEn').classList.remove('active'); };
+    document.getElementById('btnEn').onclick = () => { lang='en'; applyLang(); document.getElementById('btnEn').classList.add('active'); document.getElementById('btnTel').classList.remove('active'); };
 
-function setAvailabilityDefaults(){
-  document.getElementById('staticFrom').value = SEED_STATIC.from;
-  document.getElementById('staticTo').value   = SEED_STATIC.to;
-  document.getElementById('bookingDate').value = new Date().toISOString().slice(0,10);
-}
+    // ---------- Tabs ----------
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(t => t.addEventListener('click', () => {
+      tabs.forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      const target = t.dataset.tab;
+      document.querySelectorAll('main section.card').forEach(sec => sec.classList.add('hidden'));
+      document.getElementById('tab-'+target).classList.remove('hidden');
+    }));
 
-function calcBonusAndTotals(){
-  const qty = parseInt(document.getElementById('seedQty').value||'0',10);   // thousands
-  const price = parseFloat(document.getElementById('seedHatchery').selectedOptions[0]?.getAttribute('data-price')||'0');
-  const bonus = (qty === 100) ? 30000 : 0; // 1 lac => 30k bonus
-  const totalSeeds = qty*1000 + bonus;
-  const totalAmount = price * qty;         // bonus is free
-  document.getElementById('bonus').value = bonus;
-  document.getElementById('totalSeeds').value = totalSeeds;
-  document.getElementById('priceDisp').textContent = `₹ ${price}`;
-  document.getElementById('seedTotal').value = `₹ ${totalAmount}`;
-  updateSeedBookLink({price,qty,bonus,totalSeeds,totalAmount});
-}
+    // ---------- Utils ----------
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+    function parseCSV(text){
+      const lines = text.trim().split(/\r?\n/);
+      const headers = lines.shift().split(',').map(h=>h.trim());
+      return lines.map(l => {
+        const cells = l.split(',');
+        const obj = {}; headers.forEach((h,i)=> obj[h] = (cells[i]||'').trim());
+        return obj;
+      });
+    }
+    function formatINR(n){ return new Intl.NumberFormat('en-IN').format(Number(n)||0); }
+    function todayStr(){ return new Date().toISOString().slice(0,10); }
 
-function updateSeedsUI(){
-  const wrap=document.getElementById('seedDistrictWrap');
-  const state=document.getElementById('seedState').value;
-  wrap.style.display = (state==='Tamil Nadu') ? 'none' : '';
-  fillHatcheries();
-  setAvailabilityDefaults();
-  calcBonusAndTotals();
-}
+    // ---------- Prices ----------
+    const priceTableBody = document.querySelector('#priceTable tbody');
+    const priceMeta = document.getElementById('priceMeta');
+    const searchInput = document.getElementById('priceSearch');
 
-function updateSeedBookLink(ctx){
-  const opt=document.getElementById('seedHatchery').selectedOptions[0];
-  const hatch = opt?opt.textContent:'';
-  const state = opt?.getAttribute('data-state') || document.getElementById('seedState').value;
-  const district = (state==='Andhra Pradesh') ? (opt?.getAttribute('data-district') || document.getElementById('seedDistrict').value || '') : '';
-  const booking = document.getElementById('bookingDate').value||'';
-  const prod = document.getElementById('production').value||'Batch 1';
-  const msg = [
-    "Seeds Booking",
-    `Hatchery: ${hatch||'-'}`,
-    `State: ${state}`,
-    `District: ${district||'-'}`,
-    `Seeds PL: Vannamei SPF PL`,
-    `Price / 1000: ₹${ctx?.price||0}`,
-    `Quantity (x1000): ${ctx?.qty||0}`,
-    `Bonus (pcs): ${ctx?.bonus||0}`,
-    `Total Seeds (pcs): ${ctx?.totalSeeds||0}`,
-    `Total Amount: ₹${ctx?.totalAmount||0}`,
-    `Available: ${document.getElementById('staticFrom').value} → ${document.getElementById('staticTo').value}`,
-    `Customer Booking Date: ${booking||'-'}`,
-    `Production: ${prod}`
-  ].join('\n');
-  document.getElementById('seedBookBtn').href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-}
+    async function loadRates(){
+      try {
+        const res = await fetch('rates.csv?ts=' + Date.now());
+        const text = await res.text();
+        const rows = parseCSV(text); // Expect columns: count, price
+        const prevMap = JSON.parse(localStorage.getItem('prevRates')||'{}');
+        const date = $('#priceDate').value || todayStr();
+        localStorage.setItem('prevRates', JSON.stringify(Object.fromEntries(rows.map(r=>[r.count, Number(r.price)]))));
 
-/* events */
-document.getElementById('seedState').addEventListener('change', updateSeedsUI);
-document.getElementById('seedDistrict').addEventListener('change', ()=>{ fillHatcheries(); calcBonusAndTotals(); });
-document.getElementById('seedHatchery').addEventListener('change', calcBonusAndTotals);
-document.getElementById('seedQty').addEventListener('input', calcBonusAndTotals);
-document.getElementById('bookingDate').addEventListener('change', calcBonusAndTotals);
-document.getElementById('production').addEventListener('change', calcBonusAndTotals);
+        renderRates(rows, prevMap);
+        priceMeta.textContent = `${$('#priceDistrict').value} • ${date}`;
+      } catch(e){
+        priceMeta.textContent = 'Failed to load rates.csv';
+      }
+    }
 
-/* init */
-async function initSeeds(){
-  if(seedsInitDone){ updateSeedsUI(); return; }
-  await loadSeeds();
-  fillDistricts();
-  updateSeedsUI();
-  seedsInitDone=true;
-}
-initSeeds();
-</script>
+    function renderRates(rows, prev){
+      const q = searchInput.value.trim().toLowerCase();
+      const filtered = rows.filter(r => !q || (r.count||'').toLowerCase().includes(q));
+      priceTableBody.innerHTML = '';
+      filtered.forEach(r => {
+        const tr = document.createElement('tr');
+        const change = (prev && r.count in prev) ? (Number(r.price)-Number(prev[r.count])) : 0;
+        tr.innerHTML = `
+          <td>${r.count}</td>
+          <td>₹ ${formatINR(r.price)}</td>
+          <td>${ change===0 ? '<span class="chip">—</span>' : (change>0 ? `<span class="chip up">▲ +${formatINR(change)}</span>` : `<span class="chip down">▼ ${formatINR(change)}</span>`) }</td>
+        `;
+        priceTableBody.appendChild(tr);
+      });
+    }
+
+    $('#priceDistrict').addEventListener('change', loadRates);
+    $('#priceDate').addEventListener('change', loadRates);
+    searchInput.addEventListener('input', ()=> loadRates());
+
+    // ---------- Harvest ----------
+    const iceUnit = $('#iceUnit'), iceQty=$('#iceQty'), iceRate=$('#iceRate'), iceOut=$('#iceOut');
+    const vanType=$('#vanType'), vanRate=$('#vanRate'), vanKm=$('#vanKm'), vanOut=$('#vanOut');
+
+    function calcIce(){
+      const unit = iceUnit.value; let qty = Number(iceQty.value)||0; const rate = Number(iceRate.value)||0;
+      if(unit==='cans'){ qty = qty/20; } // approx: 20 cans ≈ 1 ton
+      const cost = qty*rate;
+      iceOut.textContent = `Ice: ${formatINR(qty.toFixed(2))} tons × ₹${formatINR(rate)} = ₹${formatINR(cost.toFixed(0))}`;
+      return { tons: qty, rate, cost };
+    }
+    function calcVan(){
+      const t = Number(vanType.value)||0; const r = Number(vanRate.value)||0; const km = Number(vanKm.value)||0;
+      const cost = r*km;
+      vanOut.textContent = `Van: ${t}T @ ₹${formatINR(r)} /km × ${formatINR(km)} km = ₹${formatINR(cost)}`;
+      return { t, r, km, cost };
+    }
+    [iceUnit, iceQty, iceRate].forEach(el=> el.addEventListener('input', calcIce));
+    [vanType, vanRate, vanKm].forEach(el=> el.addEventListener('input', calcVan));
+
+    $('#btnHarvestWA').addEventListener('click', ()=>{
+      const a = calcIce(); const b = calcVan();
+      const total = Math.round((a.cost||0) + (b.cost||0));
+      const msg = `Harvest Booking\nIce: ${a.tons.toFixed(2)} tons @ ₹${a.rate}\nVan: ${b.t}T, ₹${b.r}/km, ${b.km} km\nTotal: ₹${total}`;
+      const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    });
+
+    // ---------- Seeds ----------
+    const seedState=$('#seedState'), seedDistrict=$('#seedDistrict'), seedHatchery=$('#seedHatchery');
+    const hatcherySearch=$('#hatcherySearch');
+    const seedPL=$('#seedPL'), seedPrice=$('#seedPrice'), seedBatch=$('#seedBatch');
+    const seedQty=$('#seedQty'), seedDate=$('#seedDate');
+    const seedAvail=$('#seedAvail'), seedSummary=$('#seedSummary');
+    let seedsData = [];
+
+    async function loadSeeds(){
+      try{
+        const res = await fetch('seeds.csv?ts='+Date.now());
+        const text = await res.text();
+        seedsData = parseCSV(text); // columns expected: state,district,hatchery,PL,price,available
+        refreshSeedsUI();
+      } catch(e){
+        seedAvail.textContent = 'Failed to load seeds.csv';
+      }
+    }
+
+    function refreshSeedsUI(){
+      const state = seedState.value;
+      const all = seedsData.filter(r => r.state===state);
+      const dists = [...new Set(all.map(r=> r.district).filter(Boolean))].sort();
+      if(state==='Andhra Pradesh'){
+        $('#districtWrap').classList.remove('hidden');
+        seedDistrict.innerHTML = dists.map(d=>`<option>${d}</option>`).join('');
+      } else {
+        $('#districtWrap').classList.add('hidden');
+        seedDistrict.innerHTML = '';
+      }
+      populateHatcheries();
+    }
+
+    function populateHatcheries(){
+      const state = seedState.value;
+      const district = seedDistrict.value;
+      const q = hatcherySearch.value.trim().toLowerCase();
+      const list = seedsData.filter(r => r.state===state && (state!=='Andhra Pradesh' || r.district===district))
+                            .filter(r => !q || (r.hatchery||'').toLowerCase().includes(q));
+      seedHatchery.innerHTML = list.map(r => `<option data-price="${r.price}" data-avail="${r.available}" value="${r.hatchery}">${r.hatchery} — ₹${r.price}</option>`).join('');
+      updateSeedSelection();
+    }
+
+    function updateSeedSelection(){
+      const opt = seedHatchery.options[seedHatchery.selectedIndex];
+      if(!opt){ seedPrice.value=''; seedAvail.textContent=''; return; }
+      seedPrice.value = opt.dataset.price || '';
+      const from = new Date();
+      const to = new Date(); to.setDate(to.getDate()+7);
+      seedAvail.textContent = `Availability: ${from.toLocaleDateString()} → ${to.toLocaleDateString()} (static 7 days)`;
+      updateSeedSummary();
+    }
+
+    function updateSeedSummary(){
+      const qtyK = Number(seedQty.value)||0; const priceK = Number(seedPrice.value)||0;
+      // Bonus: If Quantity = 100 (1,00,000 PL), add 30,000 free
+      const bonus = qtyK===100 ? 30000 : 0;
+      const totalSeeds = qtyK*1000 + bonus;
+      const amount = qtyK * priceK;
+      seedSummary.textContent = `Bonus: ${formatINR(bonus)} pcs • Total Seeds: ${formatINR(totalSeeds)} pcs • Amount: ₹${formatINR(amount)}`;
+      return { qtyK, priceK, bonus, totalSeeds, amount };
+    }
+
+    seedState.addEventListener('change', refreshSeedsUI);
+    seedDistrict.addEventListener('change', populateHatcheries);
+    hatcherySearch.addEventListener('input', populateHatcheries);
+    seedHatchery.addEventListener('change', updateSeedSelection);
+    [seedQty, seedPrice, seedBatch, seedDate].forEach(el=> el.addEventListener('input', updateSeedSummary));
+
+    $('#btnSeedsWA').addEventListener('click', ()=>{
+      const sel = seedHatchery.value; const d = seedDistrict.value || '-';
+      const s = updateSeedSummary();
+      const msg = `Seeds Booking\nState: ${seedState.value}\nDistrict: ${d}\nHatchery: ${sel}\nPL: ${seedPL.value}\nPrice/1000: ₹${s.priceK}\nQty: ${s.qtyK}k\nBonus: ${s.bonus}\nTotal Seeds: ${s.totalSeeds}\nTotal Amount: ₹${s.amount}\nBooking Date: ${seedDate.value||todayStr()}\nProduction: ${seedBatch.value}`;
+      const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    });
+
+    // ---------- Init ----------
+    document.getElementById('year').textContent = new Date().getFullYear();
+    $('#priceDate').value = todayStr();
+    $('#seedDate').value = todayStr();
+    applyLang();
+    loadRates();
+    loadSeeds();
+    calcIce();
+    calcVan();
+  </script>
 </body>
 </html>
