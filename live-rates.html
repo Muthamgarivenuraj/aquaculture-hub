@@ -208,210 +208,263 @@
     <footer>© <span id="yr"></span> Aquaculture — Mobile-first</footer>
   </main>
 
-  <script>
-    // ---------- Language persistence from Home (no buttons here) ----------
-    const I18N = {
-      en:{ title:'Live Rates', sub:'Prawns • Harvest • Larvae',
-        tabPrices:'🦐 Prices', tabHarvest:'🚚 Harvest', tabLarvae:'🦐 Larvae',
-        priceTitle:'Prawns – Count vs Price', district:'District', date:'Date', search:'Search Count',
-        th_count:'Count', th_price:'Price (₹)', th_change:'Change',
-        harvTitle:'Harvesting & Transport', ice:'Ice Booking', unit:'Unit', qty:'Quantity', rateTon:'Price / Ton (₹)',
-        van:'Van Booking', vanType:'Van Type', rateKm:'Rate / km (₹)', km:'Distance (km)', book1:'Book via WhatsApp',
-        seedTitle:'Larvae Booking', state:'State', district2:'District', hatchery:'Hatchery', priceK:'Price / 1000 (₹)',
-        prod:'Production', qtyK:'Quantity (×1000)', bookDate:'Booking Date', book2:'Book via WhatsApp'
-      },
-      te:{ title:'లైవ్ రేట్స్', sub:'ప్రాన్స్ • హార్వెస్ట్ • రొయ్య పిల్లలు',
-        tabPrices:'🦐 ధరలు', tabHarvest:'🚚 హార్వెస్ట్', tabLarvae:'🦐 రొయ్య పిల్లలు',
-        priceTitle:'ప్రాన్స్ – కౌంట్ vs ధర', district:'జిల్లా', date:'తేదీ', search:'కౌంట్ వెతుకు',
-        th_count:'కౌంట్', th_price:'ధర (₹)', th_change:'మార్పు',
-        harvTitle:'హార్వెస్టింగ్ & ట్రాన్స్‌పోర్ట్', ice:'ఐస్ బుకింగ్', unit:'యూనిట్', qty:'పరిమాణం', rateTon:'టన్నుకు ధర (₹)',
-        van:'వాన్ బుకింగ్', vanType:'వాన్ టైపు', rateKm:'కిమీకి ధర (₹)', km:'దూరం (కిమీ)', book1:'వాట్సాప్ ద్వారా బుక్ చేయి',
-        seedTitle:'రొయ్య పిల్లలు బుకింగ్', state:'రాష్ట్రం', district2:'జిల్లా', hatchery:'హ్యాచరీ', priceK:'1000కి ధర (₹)',
-        prod:'ప్రొడక్షన్', qtyK:'పరిమాణం (×1000)', bookDate:'బుకింగ్ తేదీ', book2:'వాట్సాప్ ద్వారా బుక్ చేయి'
-      }
+ <script>
+  /* --------- LANG: carry from Home & apply --------- */
+  (function ensureLang(){
+    const qlang = new URLSearchParams(location.search).get('lang');
+    if (qlang) localStorage.setItem('lang', qlang);
+    if (!localStorage.getItem('lang')) localStorage.setItem('lang','te'); // default Telugu
+  })();
+
+  const I18N = {
+    en:{ title:'Live Rates', sub:'Prawns • Harvest • Larvae',
+      tabPrices:'🦐 Prices', tabHarvest:'🚚 Harvest', tabLarvae:'🦐 Larvae',
+      priceTitle:'Prawns – Count vs Price', district:'District', date:'Date', search:'Search Count',
+      th_count:'Count', th_price:'Price (₹)', th_change:'Change',
+      harvTitle:'Harvesting & Transport', ice:'Ice Booking', unit:'Unit', qty:'Quantity', rateTon:'Price / Ton (₹)',
+      van:'Van Booking', vanType:'Van Type', rateKm:'Rate / km (₹)', km:'Distance (km)', book1:'Book via WhatsApp',
+      seedTitle:'Larvae Booking', state:'State', district2:'District', hatchery:'Hatchery', priceK:'Price / 1000 (₹)',
+      prod:'Production', qtyK:'Quantity (×1000)', bookDate:'Booking Date', book2:'Book via WhatsApp'
+    },
+    te:{ title:'లైవ్ రేట్స్', sub:'ప్రాన్స్ • హార్వెస్ట్ • రొయ్య పిల్లలు',
+      tabPrices:'🦐 ధరలు', tabHarvest:'🚚 హార్వెస్ట్', tabLarvae:'🦐 రొయ్య పిల్లలు',
+      priceTitle:'ప్రాన్స్ – కౌంట్ vs ధర', district:'జిల్లా', date:'తేదీ', search:'కౌంట్ వెతుకు',
+      th_count:'కౌంట్', th_price:'ధర (₹)', th_change:'మార్పు',
+      harvTitle:'హార్వెస్టింగ్ & ట్రాన్స్‌పోర్ట్', ice:'ఐస్ బుకింగ్', unit:'యూనిట్', qty:'పరిమాణం', rateTon:'టన్నుకు ధర (₹)',
+      van:'వాన్ బుకింగ్', vanType:'వాన్ టైపు', rateKm:'కిమీకి ధర (₹)', km:'దూరం (కిమీ)', book1:'వాట్సాప్ ద్వారా బుక్ చేయి',
+      seedTitle:'రొయ్య పిల్లలు బుకింగ్', state:'రాష్ట్రం', district2:'జిల్లా', hatchery:'హ్యాచరీ', priceK:'1000కి ధర (₹)',
+      prod:'ప్రొడక్షన్', qtyK:'పరిమాణం (×1000)', bookDate:'బుకింగ్ తేదీ', book2:'వాట్సాప్ ద్వారా బుక్ చేయి'
+    }
+  };
+  const getLang = ()=> localStorage.getItem('lang') || 'te';
+  const T = k => (I18N[getLang()]||{})[k] || k;
+
+  function applyLang(){
+    document.documentElement.lang = getLang();
+    // header
+    document.getElementById('t_title').textContent = T('title');
+    document.getElementById('t_sub').textContent   = T('sub');
+    // tabs
+    document.querySelector('#tab-prices').textContent  = T('tabPrices');
+    document.querySelector('#tab-harvest').textContent = T('tabHarvest');
+    document.querySelector('#tab-larvae').textContent  = T('tabLarvae');
+    // prices labels
+    [
+      ['t_priceTitle','priceTitle'],['t_district','district'],['t_date','date'],['t_search','search'],
+      ['th_count','th_count'],['th_price','th_price'],['th_change','th_change'],
+      // harvest labels
+      ['t_harvTitle','harvTitle'],['t_ice','ice'],['t_unit','unit'],['t_qty','qty'],['t_rateTon','rateTon'],
+      ['t_van','van'],['t_vanType','vanType'],['t_rateKm','rateKm'],['t_km','km'],['t_book1','book1'],
+      // larvae labels
+      ['t_seedTitle','seedTitle'],['t_state','state'],['t_district2','district2'],['t_hatchery','hatchery'],
+      ['t_priceK','priceK'],['t_prod','prod'],['t_qtyK','qtyK'],['t_bookDate','bookDate'],['t_book2','book2']
+    ].forEach(([id,key])=>{ const el=document.getElementById(id); if(el) el.textContent=T(key); });
+  }
+
+  // footer year (compat)
+  document.getElementById('yr').textContent = (new Date()).getFullYear();
+
+  /* --------- Tabs (defensive) --------- */
+  const tabs = document.querySelectorAll('.tab');
+  function showTab(name){
+    document.querySelectorAll('main > section.card').forEach(s=> s.classList.add('hidden'));
+    const panel = document.getElementById('panel-'+name);
+    if (panel) panel.classList.remove('hidden');
+    tabs.forEach(t=> t.classList.toggle('active', t.dataset.tab===name));
+  }
+  tabs.forEach(t=> t.addEventListener('click', e=> { e.preventDefault(); showTab(t.dataset.tab); }));
+  const bootHash = (location.hash||'').replace('#','');
+  showTab(['prices','harvest','larvae'].includes(bootHash) ? bootHash : 'prices');
+
+  /* --------- CSV helpers (robust) --------- */
+  function parseCSV(text){
+    const lines = text.trim().split(/\r?\n/);
+    if (!lines.length) return [];
+    const rawHeaders = lines.shift().split(',').map(h=>h.trim());
+    const headers = rawHeaders.map(h=>h.toLowerCase());
+    const idx = {
+      count: headers.findIndex(h=> /count/.test(h)),
+      price: headers.findIndex(h=> /price|rate/.test(h))
     };
-    const getLang = ()=> localStorage.getItem('lang') || 'te';
-    const T = k => (I18N[getLang()]||{})[k] || k;
-    function applyLang(){
-      document.documentElement.lang = getLang();
-      const map = {
-        t_title:'title', t_sub:'sub',
-        tab-prices:'tabPrices', tab-harvest:'tabHarvest', tab-larvae:'tabLarvae',
-        t_priceTitle:'priceTitle', t_district:'district', t_date:'date', t_search:'search',
-        th_count:'th_count', th_price:'th_price', th_change:'th_change',
-        t_harvTitle:'harvTitle', t_ice:'ice', t_unit:'unit', t_qty:'qty', t_rateTon:'rateTon',
-        t_van:'van', t_vanType:'vanType', t_rateKm:'rateKm', t_km:'km', t_book1:'book1',
-        t_seedTitle:'seedTitle', t_state:'state', t_district2:'district2', t_hatchery:'hatchery', t_priceK:'priceK',
-        t_prod:'prod', t_qtyK:'qtyK', t_bookDate:'bookDate', t_book2:'book2'
+    // fallback to first two columns if not found
+    if (idx.count===-1) idx.count = 0;
+    if (idx.price===-1) idx.price = 1;
+
+    return lines.map(l=>{
+      const cells = l.split(','); 
+      return {
+        count: (cells[idx.count]||'').trim(),
+        price: (cells[idx.price]||'').trim()
       };
-      // ids with hyphen need querySelector
-      document.getElementById('t_title').textContent = T('title');
-      document.getElementById('t_sub').textContent = T('sub');
-      document.querySelector('#tab-prices').textContent = T('tabPrices');
-      document.querySelector('#tab-harvest').textContent = T('tabHarvest');
-      document.querySelector('#tab-larvae').textContent = T('tabLarvae');
-      [
-        ['t_priceTitle','priceTitle'],['t_district','district'],['t_date','date'],['t_search','search'],
-        ['th_count','th_count'],['th_price','th_price'],['th_change','th_change'],
-        ['t_harvTitle','harvTitle'],['t_ice','ice'],['t_unit','unit'],['t_qty','qty'],['t_rateTon','rateTon'],
-        ['t_van','van'],['t_vanType','vanType'],['t_rateKm','rateKm'],['t_km','km'],['t_book1','book1'],
-        ['t_seedTitle','seedTitle'],['t_state','state'],['t_district2','district2'],['t_hatchery','hatchery'],
-        ['t_priceK','priceK'],['t_prod','prod'],['t_qtyK','qtyK'],['t_bookDate','bookDate'],['t_book2','book2']
-      ].forEach(([id,key])=>{ const el=document.getElementById(id); if(el) el.textContent=T(key); });
-    }
-
-    // footer year
-    document.getElementById('yr').textContent = new Date().getFullYear?.() || new Date().getFullYear();
-
-    // Tabs + hash routing
-    const tabs = document.querySelectorAll('.tab');
-    function showTab(name){
-      document.querySelectorAll('main > section.card').forEach(s=> s.classList.add('hidden'));
-      document.getElementById('panel-'+name).classList.remove('hidden');
-      tabs.forEach(t=> t.classList.toggle('active', t.dataset.tab===name));
-    }
-    tabs.forEach(t=> t.addEventListener('click', ()=> showTab(t.dataset.tab)));
-    const hash = (location.hash||'').replace('#','');
-    if(['prices','harvest','larvae'].includes(hash)) showTab(hash);
-
-    // CSV helpers
-    function parseCSV(text){
-      const lines = text.trim().split(/\r?\n/);
-      const headers = lines.shift().split(',').map(h=>h.trim());
-      return lines.map(l=>{
-        const cells = l.split(',');
-        const o={}; headers.forEach((h,i)=> o[h]= (cells[i]||'').trim());
-        return o;
-      });
-    }
-    const fmt = n => new Intl.NumberFormat('en-IN').format(Number(n)||0);
-    const todayISO = () => new Date().toISOString().slice(0,10);
-
-    // Prices
-    const priceTableBody = document.querySelector('#priceTable tbody');
-    const priceMeta = document.getElementById('priceMeta');
-    const searchInput = document.getElementById('priceSearch');
-    async function loadRates(){
-      try{
-        const res = await fetch('rates.csv?ts='+Date.now());
-        const text = await res.text();
-        const rows = parseCSV(text); // must have headers: count,price
-        const prevMap = JSON.parse(localStorage.getItem('prevRates')||'{}');
-        localStorage.setItem('prevRates', JSON.stringify(Object.fromEntries(rows.map(r=>[r.count, Number(r.price)]))));
-        renderRates(rows, prevMap);
-        priceMeta.textContent = `${document.getElementById('priceDistrict').value} • ${document.getElementById('priceDate').value||todayISO()}`;
-      }catch(e){ priceMeta.textContent = 'Failed to load rates.csv'; }
-    }
-    function renderRates(rows, prev){
-      const q = (searchInput.value||'').trim().toLowerCase();
-      const filtered = rows.filter(r=> !q || (r.count||'').toLowerCase().includes(q));
-      priceTableBody.innerHTML='';
-      filtered.forEach(r=>{
-        const change = (prev && r.count in prev) ? (Number(r.price)-Number(prev[r.count])) : 0;
-        const mark = change===0 ? '<span class="chip">—</span>' : (change>0 ? `<span class="chip ok">▲ +${fmt(change)}</span>` : `<span class="chip bad">▼ ${fmt(change)}</span>`);
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${r.count||'-'}</td><td>₹ ${fmt(r.price)}</td><td>${mark}</td>`;
-        priceTableBody.appendChild(tr);
-      });
-    }
-    document.getElementById('priceDistrict').addEventListener('change', loadRates);
-    document.getElementById('priceDate').addEventListener('change', loadRates);
-    searchInput.addEventListener('input', loadRates);
-
-    // Harvest
-    const iceUnit = document.getElementById('iceUnit'), iceQty = document.getElementById('iceQty'),
-          iceRate = document.getElementById('iceRate'), iceOut = document.getElementById('iceOut');
-    const vanType = document.getElementById('vanType'), vanRate = document.getElementById('vanRate'),
-          vanKm = document.getElementById('vanKm'), vanOut = document.getElementById('vanOut');
-    function calcIce(){ const unit=iceUnit.value; let qty=Number(iceQty.value)||0; const rate=Number(iceRate.value)||0;
-      if(unit==='cans'){ qty = qty/20; } const cost=qty*rate;
-      iceOut.textContent = `Ice: ${qty.toFixed(2)} tons × ₹${fmt(rate)} = ₹${fmt(cost)}`; return {tons:qty, rate, cost}; }
-    function calcVan(){ const t=Number(vanType.value)||0, r=Number(vanRate.value)||0, km=Number(vanKm.value)||0;
-      const cost=r*km; vanOut.textContent = `Van: ${t}T @ ₹${fmt(r)}/km × ${fmt(km)} km = ₹${fmt(cost)}`; return {t,r,km,cost}; }
-    [iceUnit,iceQty,iceRate].forEach(el=> el.addEventListener('input', calcIce));
-    [vanType,vanRate,vanKm].forEach(el=> el.addEventListener('input', calcVan));
-    document.getElementById('btnHarvestWA').addEventListener('click', ()=>{
-      const a = calcIce(); const b = calcVan(); const total = Math.round((a.cost||0)+(b.cost||0));
-      const title = getLang()==='te' ? '*హార్వెస్ట్ బుకింగ్*' : '*Harvest Booking*';
-      const msg = [title,`Ice: ${a.tons.toFixed(2)} tons @ ₹${a.rate}`,`Van: ${b.t}T, ₹${b.r}/km, ${b.km} km`,`Total: ₹${total}`].join('\n');
-      window.open('https://wa.me/?text='+encodeURIComponent(msg), '_blank');
     });
+  }
+  const fmt = n => new Intl.NumberFormat('en-IN').format(Number(n)||0);
+  const todayISO = () => new Date().toISOString().slice(0,10);
 
-    // Larvae
-    const seedState = document.getElementById('seedState'), seedDistrict = document.getElementById('seedDistrict'),
-          seedHatchery = document.getElementById('seedHatchery'), hatcherySearch = document.getElementById('hatcherySearch'),
-          seedPL = document.getElementById('seedPL'), seedPrice = document.getElementById('seedPrice'),
-          seedBatch = document.getElementById('seedBatch'), seedQty = document.getElementById('seedQty'),
-          seedDate = document.getElementById('seedDate'), seedAvail = document.getElementById('seedAvail'),
-          seedSummary = document.getElementById('seedSummary');
-    let seedsData = [];
-    async function loadSeeds(){
-      try{
-        const res = await fetch('seeds.csv?ts='+Date.now());
-        const text = await res.text();
-        seedsData = parseCSV(text); // headers: state,district,hatchery,PL,price,available
-        refreshSeedsUI();
-      }catch(e){ seedAvail.textContent = 'Failed to load seeds.csv'; }
-    }
-    function refreshSeedsUI(){
-      const state = seedState.value;
-      const all = seedsData.filter(r=> r.state===state);
-      const dists = [...new Set(all.map(r=>r.district).filter(Boolean))].sort();
-      if(state==='Andhra Pradesh'){
-        document.getElementById('districtWrap').classList.remove('hidden');
-        seedDistrict.innerHTML = dists.map(d=>`<option>${d}</option>`).join('');
-      }else{
-        document.getElementById('districtWrap').classList.add('hidden');
-        seedDistrict.innerHTML = '';
-      }
-      populateHatcheries();
-    }
-    function populateHatcheries(){
-      const state = seedState.value; const district = seedDistrict.value; const q=(hatcherySearch.value||'').toLowerCase();
-      let list = seedsData.filter(r=> r.state===state && (state!=='Andhra Pradesh' || r.district===district));
-      if(q) list = list.filter(r=> (r.hatchery||'').toLowerCase().includes(q));
-      seedHatchery.innerHTML = list.map(r=> `<option value="${r.hatchery}" data-price="${r.price}" data-avail="${r.available||''}">${r.hatchery} — ₹${r.price}</option>`).join('');
-      updateSeedSelection();
-    }
-    function updateSeedSelection(){
-      const opt = seedHatchery.options[seedHatchery.selectedIndex];
-      if(!opt){ seedPrice.value=''; seedAvail.textContent=''; return; }
-      seedPrice.value = opt.dataset.price || '';
-      const from = new Date(), to = new Date(); to.setDate(to.getDate()+7);
-      seedAvail.textContent = `${getLang()==='te'?'అవైలబిలిటీ':'Availability'}: ${from.toLocaleDateString()} → ${to.toLocaleDateString()} (7 days)`;
-      updateSeedSummary();
-    }
-    function updateSeedSummary(){
-      const qtyK = Number(seedQty.value)||0; const priceK = Number(seedPrice.value)||0;
-      const bonus = qtyK===100 ? 30000 : 0; // 1,00,000 larvae → +30,000
-      const totalSeeds = qtyK*1000 + bonus;
-      const amount = qtyK * priceK;
-      const bonusLabel = getLang()==='te'?'బోనస్':'Bonus';
-      const totalL = getLang()==='te'?'మొత్తం పిల్లలు':'Total Larvae';
-      const amtLabel = getLang()==='te'?'మొత్తం అమౌంట్':'Total Amount';
-      seedSummary.textContent = `${bonusLabel}: ${fmt(bonus)} • ${totalL}: ${fmt(totalSeeds)} • ${amtLabel}: ₹${fmt(amount)}`;
-      return { qtyK, priceK, bonus, totalSeeds, amount };
-    }
-    seedState.addEventListener('change', refreshSeedsUI);
-    seedDistrict.addEventListener('change', populateHatcheries);
-    hatcherySearch.addEventListener('input', populateHatcheries);
-    seedHatchery.addEventListener('change', updateSeedSelection);
-    [seedQty, seedBatch, seedDate].forEach(el=> el.addEventListener('input', updateSeedSummary));
-    document.getElementById('btnSeedsWA').addEventListener('click', ()=>{
-      const sel = seedHatchery.value || '-'; const d = seedDistrict.value || '-'; const s = updateSeedSummary();
-      const title = getLang()==='te' ? '*రొయ్య పిల్లలు బుకింగ్*' : '*Larvae Booking*';
-      const lines = [title,`State: ${seedState.value}`, seedState.value==='Andhra Pradesh' ? `District: ${d}` : '',
-        `Hatchery: ${sel}`, `PL: ${seedPL.value}`, `Price/1000: ₹${s.priceK}`, `Qty: ${s.qtyK}k`,
-        `Bonus: ${s.bonus}`, `Total Larvae: ${s.totalSeeds}`, `Total Amount: ₹${s.amount}`,
-        `Booking Date: ${seedDate.value || todayISO()}`, `Production: ${seedBatch.value}`].filter(Boolean).join('\n');
-      window.open('https://wa.me/?text='+encodeURIComponent(lines), '_blank');
+  /* --------- Prices --------- */
+  const priceTableBody = document.querySelector('#priceTable tbody');
+  const priceMeta = document.getElementById('priceMeta');
+  const searchInput = document.getElementById('priceSearch');
+
+  async function loadRates(){
+    try{
+      const res = await fetch('rates.csv?ts='+Date.now());
+      const text = await res.text();
+      const rows = parseCSV(text);            // now returns {count, price}
+      const prevMap = JSON.parse(localStorage.getItem('prevRates')||'{}');
+      localStorage.setItem('prevRates', JSON.stringify(Object.fromEntries(rows.map(r=>[r.count, Number(r.price)]))));
+      renderRates(rows, prevMap);
+      priceMeta.textContent = `${document.getElementById('priceDistrict').value} • ${document.getElementById('priceDate').value||todayISO()}`;
+    }catch(e){ priceMeta.textContent = 'Failed to load rates.csv'; }
+  }
+  function renderRates(rows, prev){
+    const q = (searchInput.value||'').trim().toLowerCase();
+    const filtered = rows.filter(r=> r.count && (!q || (r.count||'').toLowerCase().includes(q)));
+    priceTableBody.innerHTML='';
+    filtered.forEach(r=>{
+      const change = (prev && r.count in prev) ? (Number(r.price)-Number(prev[r.count])) : 0;
+      const mark = change===0 ? '<span class="chip">—</span>' : (change>0 ? `<span class="chip ok">▲ +${fmt(change)}</span>` : `<span class="chip bad">▼ ${fmt(change)}</span>`);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${r.count}</td><td>₹ ${fmt(r.price)}</td><td>${mark}</td>`;
+      priceTableBody.appendChild(tr);
     });
+  }
+  document.getElementById('priceDistrict').addEventListener('change', loadRates);
+  document.getElementById('priceDate').addEventListener('change', loadRates);
+  searchInput.addEventListener('input', loadRates);
 
-    // Init
-    document.getElementById('priceDate').value = todayISO();
-    document.getElementById('seedDate').value = todayISO();
-    applyLang();
-    loadRates(); loadSeeds(); calcIce(); calcVan();
-  </script>
+  /* --------- Harvest --------- */
+  const iceUnit = document.getElementById('iceUnit'), iceQty = document.getElementById('iceQty'),
+        iceRate = document.getElementById('iceRate'), iceOut = document.getElementById('iceOut');
+  const vanType = document.getElementById('vanType'), vanRate = document.getElementById('vanRate'),
+        vanKm = document.getElementById('vanKm'), vanOut = document.getElementById('vanOut');
+
+  function calcIce(){
+    const unit=iceUnit.value; let qty=Number(iceQty.value)||0; const rate=Number(iceRate.value)||0;
+    if(unit==='cans'){ qty = qty/20; }            // ≈ 20 cans → 1 ton
+    const cost=qty*rate;
+    iceOut.textContent = `Ice: ${qty.toFixed(2)} tons × ₹${fmt(rate)} = ₹${fmt(cost)}`;
+    return {tons:qty, rate, cost};
+  }
+  function calcVan(){
+    const t=Number(vanType.value)||0, r=Number(vanRate.value)||0, km=Number(vanKm.value)||0;
+    const cost=r*km;
+    vanOut.textContent = `Van: ${t}T @ ₹${fmt(r)}/km × ${fmt(km)} km = ₹${fmt(cost)}`;
+    return {t,r,km,cost};
+  }
+  [iceUnit,iceQty,iceRate].forEach(el=> el.addEventListener('input', calcIce));
+  [vanType,vanRate,vanKm].forEach(el=> el.addEventListener('input', calcVan));
+  document.getElementById('btnHarvestWA').addEventListener('click', ()=>{
+    const a=calcIce(), b=calcVan(), total = Math.round((a.cost||0)+(b.cost||0));
+    const title = getLang()==='te' ? '*హార్వెస్ట్ బుకింగ్*' : '*Harvest Booking*';
+    const msg = [title,`Ice: ${a.tons.toFixed(2)} tons @ ₹${a.rate}`,`Van: ${b.t}T, ₹${b.r}/km, ${b.km} km`,`Total: ₹${total}`].join('\n');
+    window.open('https://wa.me/?text='+encodeURIComponent(msg), '_blank');
+  });
+
+  /* --------- Larvae (seeds.csv) --------- */
+  const seedState=document.getElementById('seedState'),
+        seedDistrict=document.getElementById('seedDistrict'),
+        seedHatchery=document.getElementById('seedHatchery'),
+        hatcherySearch=document.getElementById('hatcherySearch'),
+        seedPL=document.getElementById('seedPL'),
+        seedPrice=document.getElementById('seedPrice'),
+        seedBatch=document.getElementById('seedBatch'),
+        seedQty=document.getElementById('seedQty'),
+        seedDate=document.getElementById('seedDate'),
+        seedAvail=document.getElementById('seedAvail'),
+        seedSummary=document.getElementById('seedSummary');
+
+  let seedsData=[];
+  function parseSeedsCSV(text){
+    const lines = text.trim().split(/\r?\n/);
+    if (!lines.length) return [];
+    const headers = lines.shift().split(',').map(h=>h.trim().toLowerCase());
+    const col = {
+      state: headers.findIndex(h=>/state/.test(h)),
+      district: headers.findIndex(h=>/district/.test(h)),
+      hatchery: headers.findIndex(h=>/hatchery/.test(h)),
+      pl: headers.findIndex(h=>/pl/.test(h)),
+      price: headers.findIndex(h=>/price|rate/.test(h)),
+      available: headers.findIndex(h=>/avail/.test(h))
+    };
+    return lines.map(l=>{
+      const c=l.split(',');
+      return {
+        state:(c[col.state]||'').trim(),
+        district:(c[col.district]||'').trim(),
+        hatchery:(c[col.hatchery]||'').trim(),
+        PL:(c[col.pl]||'').trim(),
+        price:(c[col.price]||'').trim(),
+        available:(c[col.available]||'').trim()
+      };
+    });
+  }
+  async function loadSeeds(){
+    try{
+      const res = await fetch('seeds.csv?ts='+Date.now());
+      const text = await res.text();
+      seedsData = parseSeedsCSV(text);
+      refreshSeedsUI();
+    }catch(e){ seedAvail.textContent = 'Failed to load seeds.csv'; }
+  }
+  function refreshSeedsUI(){
+    const state = seedState.value;
+    const all = seedsData.filter(r=> r.state===state);
+    const dists = [...new Set(all.map(r=>r.district).filter(Boolean))].sort();
+    const wrap = document.getElementById('districtWrap');
+    if(state==='Andhra Pradesh'){ wrap.classList.remove('hidden'); seedDistrict.innerHTML = dists.map(d=>`<option>${d}</option>`).join(''); }
+    else { wrap.classList.add('hidden'); seedDistrict.innerHTML = ''; }
+    populateHatcheries();
+  }
+  function populateHatcheries(){
+    const state = seedState.value, dist = seedDistrict.value, q=(hatcherySearch.value||'').toLowerCase();
+    let list = seedsData.filter(r=> r.state===state && (state!=='Andhra Pradesh' || r.district===dist));
+    if(q) list = list.filter(r=> (r.hatchery||'').toLowerCase().includes(q));
+    seedHatchery.innerHTML = list.map(r=> `<option value="${r.hatchery}" data-price="${r.price}" data-avail="${r.available||''}">${r.hatchery} — ₹${r.price}</option>`).join('');
+    updateSeedSelection();
+  }
+  function updateSeedSelection(){
+    const opt = seedHatchery.options[seedHatchery.selectedIndex];
+    if(!opt){ seedPrice.value=''; seedAvail.textContent=''; return; }
+    seedPrice.value = opt.dataset.price || '';
+    const from = new Date(), to = new Date(); to.setDate(to.getDate()+7);
+    seedAvail.textContent = `${getLang()==='te'?'అవైలబిలిటీ':'Availability'}: ${from.toLocaleDateString()} → ${to.toLocaleDateString()} (7 days)`;
+    updateSeedSummary();
+  }
+  function updateSeedSummary(){
+    const qtyK = Number(seedQty.value)||0, priceK = Number(seedPrice.value)||0;
+    const bonus = qtyK===100 ? 30000 : 0;
+    const totalSeeds = qtyK*1000 + bonus, amount = qtyK*priceK;
+    const bonusLabel = getLang()==='te'?'బోనస్':'Bonus';
+    const totalL = getLang()==='te'?'మొత్తం పిల్లలు':'Total Larvae';
+    const amtLabel  = getLang()==='te'?'మొత్తం అమౌంట్':'Total Amount';
+    seedSummary.textContent = `${bonusLabel}: ${fmt(bonus)} • ${totalL}: ${fmt(totalSeeds)} • ${amtLabel}: ₹${fmt(amount)}`;
+    return {qtyK,priceK,bonus,totalSeeds,amount};
+  }
+  seedState.addEventListener('change', refreshSeedsUI);
+  seedDistrict.addEventListener('change', populateHatcheries);
+  hatcherySearch.addEventListener('input', populateHatcheries);
+  seedHatchery.addEventListener('change', updateSeedSelection);
+  [seedQty, seedBatch, seedDate].forEach(el=> el.addEventListener('input', updateSeedSummary));
+  document.getElementById('btnSeedsWA').addEventListener('click', ()=>{
+    const sel = seedHatchery.value || '-'; const d = seedDistrict.value || '-'; const s = updateSeedSummary();
+    const title = getLang()==='te' ? '*రొయ్య పిల్లలు బుకింగ్*' : '*Larvae Booking*';
+    const lines = [title,`State: ${seedState.value}`, seedState.value==='Andhra Pradesh' ? `District: ${d}` : '',
+      `Hatchery: ${sel}`, `PL: ${seedPL.value}`, `Price/1000: ₹${s.priceK}`, `Qty: ${s.qtyK}k`,
+      `Bonus: ${s.bonus}`, `Total Larvae: ${s.totalSeeds}`, `Total Amount: ₹${s.amount}`,
+      `Booking Date: ${seedDate.value || todayISO()}`, `Production: ${seedBatch.value}`].filter(Boolean).join('\n');
+    window.open('https://wa.me/?text='+encodeURIComponent(lines), '_blank');
+  });
+
+  /* --------- Init --------- */
+  document.getElementById('priceDate').value = todayISO();
+  document.getElementById('seedDate').value  = todayISO();
+  applyLang();
+  loadRates();
+  loadSeeds();
+  // default calc labels visible
+  (function(){ const e=new Event('input'); ['iceQty','iceRate','vanRate','vanKm'].forEach(id=>document.getElementById(id)?.dispatchEvent(e)); })();
+</script>
+
 </body>
 </html>
