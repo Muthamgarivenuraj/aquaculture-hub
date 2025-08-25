@@ -1,5 +1,4 @@
-
-<style>
+{
     :root{--bg:#f6f8fb;--card:#fff;--text:#0b1220;--muted:#5f6b85;--brand:#1e66f5;--border:#e5e7ef}
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
@@ -35,4 +34,4 @@
       .card:nth-child(5){ background:#fdf4e6; }  /* light yellow */
       .card:nth-child(6){ background:#e9f7ff; }  /* light cyan */
     }
-  </style>
+}
