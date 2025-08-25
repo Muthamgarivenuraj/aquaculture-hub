@@ -12,20 +12,19 @@
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial}
     .wrap{max-width:1100px;margin:0 auto;padding:16px}
+
+    /* Header (Only brand + Home) */
     header{position:sticky;top:0;z-index:10;background:rgba(11,18,32,.85);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
     .row{display:flex;gap:12px;align-items:center;justify-content:space-between}
     .brand{display:flex;gap:10px;align-items:center}
     .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--brand),#22d3ee);box-shadow:0 6px 18px rgba(79,140,255,.35)}
     h1{margin:0;font-size:18px}
     .muted{color:var(--muted)}
-    .lang{display:flex;gap:8px}
-    .pill{border:1px solid var(--line);background:#0f172a;color:var(--text);padding:8px 12px;border-radius:999px;cursor:pointer}
-    .pill.active{background:var(--brand);border-color:transparent}
     .home-btn{display:inline-block;padding:8px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none;font-weight:700}
-    .select, input, button{background:#0f172a;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
-    button{cursor:pointer}
+
+    /* Tabs + content */
     .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-    .tab{padding:10px 14px;border:1px solid var(--line);border-radius:999px;cursor:pointer;opacity:.9}
+    .tab{padding:10px 14px;border:1px solid var(--line);border-radius:999px;cursor:pointer;opacity:.9;background:#0f172a;color:var(--text)}
     .tab.active{background:var(--brand);border-color:transparent}
     .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 10px 26px rgba(0,0,0,.18)}
     .grid2{display:grid;grid-template-columns:1fr;gap:14px}
@@ -33,6 +32,8 @@
     .fields{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
     .field{display:flex;flex-direction:column;gap:6px;min-width:180px;flex:1}
     label{color:var(--muted);font-size:12px}
+    .select, input, button{background:#0f172a;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+    button{cursor:pointer}
     table{width:100%;border-collapse:collapse}
     th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}
     th{color:var(--muted)}
@@ -54,19 +55,8 @@
             <div class="muted" id="t_sub">Prawns • Harvest • Larvae</div>
           </div>
         </div>
-        <div class="row" style="gap:10px;justify-content:flex-end">
-          <a href="index.html" class="home-btn">🏠 Home</a>
-          <div class="lang">
-            <button class="pill active" data-lang="te">తెలుగు</button>
-            <button class="pill" data-lang="en">English</button>
-          </div>
-          <select id="districtSelect" class="select">
-            <option value="">జిల్లా ఎంచుకోండి</option>
-            <option>Nellore</option><option>Krishna</option>
-            <option>Prakasam</option><option>West Godavari</option>
-            <option>East Godavari</option>
-          </select>
-        </div>
+        <!-- Only Home button on the right -->
+        <a href="index.html" class="home-btn">🏠 Home</a>
       </div>
 
       <div class="tabs">
@@ -219,10 +209,9 @@
   </main>
 
   <script>
-    // ---------------- i18n ----------------
+    // ---------- Language persistence from Home (no buttons here) ----------
     const I18N = {
-      en:{
-        title:'Live Rates', sub:'Prawns • Harvest • Larvae',
+      en:{ title:'Live Rates', sub:'Prawns • Harvest • Larvae',
         tabPrices:'🦐 Prices', tabHarvest:'🚚 Harvest', tabLarvae:'🦐 Larvae',
         priceTitle:'Prawns – Count vs Price', district:'District', date:'Date', search:'Search Count',
         th_count:'Count', th_price:'Price (₹)', th_change:'Change',
@@ -231,8 +220,7 @@
         seedTitle:'Larvae Booking', state:'State', district2:'District', hatchery:'Hatchery', priceK:'Price / 1000 (₹)',
         prod:'Production', qtyK:'Quantity (×1000)', bookDate:'Booking Date', book2:'Book via WhatsApp'
       },
-      te:{
-        title:'లైవ్ రేట్స్', sub:'ప్రాన్స్ • హార్వెస్ట్ • రొయ్య పిల్లలు',
+      te:{ title:'లైవ్ రేట్స్', sub:'ప్రాన్స్ • హార్వెస్ట్ • రొయ్య పిల్లలు',
         tabPrices:'🦐 ధరలు', tabHarvest:'🚚 హార్వెస్ట్', tabLarvae:'🦐 రొయ్య పిల్లలు',
         priceTitle:'ప్రాన్స్ – కౌంట్ vs ధర', district:'జిల్లా', date:'తేదీ', search:'కౌంట్ వెతుకు',
         th_count:'కౌంట్', th_price:'ధర (₹)', th_change:'మార్పు',
@@ -243,13 +231,12 @@
       }
     };
     const getLang = ()=> localStorage.getItem('lang') || 'te';
-    function setLang(v){ localStorage.setItem('lang', v); applyLang(); }
-    function T(k){ return I18N[getLang()][k] || k; }
+    const T = k => (I18N[getLang()]||{})[k] || k;
     function applyLang(){
       document.documentElement.lang = getLang();
-      const ids = {
+      const map = {
         t_title:'title', t_sub:'sub',
-        tabPrices:'tabPrices', tabHarvest:'tabHarvest', tabLarvae:'tabLarvae',
+        tab-prices:'tabPrices', tab-harvest:'tabHarvest', tab-larvae:'tabLarvae',
         t_priceTitle:'priceTitle', t_district:'district', t_date:'date', t_search:'search',
         th_count:'th_count', th_price:'th_price', th_change:'th_change',
         t_harvTitle:'harvTitle', t_ice:'ice', t_unit:'unit', t_qty:'qty', t_rateTon:'rateTon',
@@ -257,23 +244,26 @@
         t_seedTitle:'seedTitle', t_state:'state', t_district2:'district2', t_hatchery:'hatchery', t_priceK:'priceK',
         t_prod:'prod', t_qtyK:'qtyK', t_bookDate:'bookDate', t_book2:'book2'
       };
-      Object.entries(ids).forEach(([id,key])=>{ const el=document.getElementById(id); if(el) el.textContent = T(key); });
-      // first option placeholder of district Select (header)
-      const dSel = document.getElementById('districtSelect');
-      if(dSel && dSel.options.length) dSel.options[0].textContent = (getLang()==='te'?'జిల్లా ఎంచుకోండి':'Select District');
-      document.querySelectorAll('[data-lang]').forEach(b=> b.classList.toggle('active', b.dataset.lang===getLang()));
+      // ids with hyphen need querySelector
+      document.getElementById('t_title').textContent = T('title');
+      document.getElementById('t_sub').textContent = T('sub');
+      document.querySelector('#tab-prices').textContent = T('tabPrices');
+      document.querySelector('#tab-harvest').textContent = T('tabHarvest');
+      document.querySelector('#tab-larvae').textContent = T('tabLarvae');
+      [
+        ['t_priceTitle','priceTitle'],['t_district','district'],['t_date','date'],['t_search','search'],
+        ['th_count','th_count'],['th_price','th_price'],['th_change','th_change'],
+        ['t_harvTitle','harvTitle'],['t_ice','ice'],['t_unit','unit'],['t_qty','qty'],['t_rateTon','rateTon'],
+        ['t_van','van'],['t_vanType','vanType'],['t_rateKm','rateKm'],['t_km','km'],['t_book1','book1'],
+        ['t_seedTitle','seedTitle'],['t_state','state'],['t_district2','district2'],['t_hatchery','hatchery'],
+        ['t_priceK','priceK'],['t_prod','prod'],['t_qtyK','qtyK'],['t_bookDate','bookDate'],['t_book2','book2']
+      ].forEach(([id,key])=>{ const el=document.getElementById(id); if(el) el.textContent=T(key); });
     }
-    document.querySelectorAll('[data-lang]').forEach(b=> b.addEventListener('click',()=> setLang(b.dataset.lang)));
-
-    // header district persistence
-    const headDistrict = document.getElementById('districtSelect');
-    const savedD = localStorage.getItem('district'); if(savedD) headDistrict.value = savedD;
-    headDistrict.addEventListener('change', e=> localStorage.setItem('district', e.target.value));
 
     // footer year
-    document.getElementById('yr').textContent = new Date().getFullYear();
+    document.getElementById('yr').textContent = new Date().getFullYear?.() || new Date().getFullYear();
 
-    // ---------------- Tabs + Hash routing ----------------
+    // Tabs + hash routing
     const tabs = document.querySelectorAll('.tab');
     function showTab(name){
       document.querySelectorAll('main > section.card').forEach(s=> s.classList.add('hidden'));
@@ -281,15 +271,10 @@
       tabs.forEach(t=> t.classList.toggle('active', t.dataset.tab===name));
     }
     tabs.forEach(t=> t.addEventListener('click', ()=> showTab(t.dataset.tab)));
-    // hash open
     const hash = (location.hash||'').replace('#','');
     if(['prices','harvest','larvae'].includes(hash)) showTab(hash);
 
-    // ---------------- Prices ----------------
-    const priceTableBody = document.querySelector('#priceTable tbody');
-    const priceMeta = document.getElementById('priceMeta');
-    const searchInput = document.getElementById('priceSearch');
-
+    // CSV helpers
     function parseCSV(text){
       const lines = text.trim().split(/\r?\n/);
       const headers = lines.shift().split(',').map(h=>h.trim());
@@ -302,18 +287,20 @@
     const fmt = n => new Intl.NumberFormat('en-IN').format(Number(n)||0);
     const todayISO = () => new Date().toISOString().slice(0,10);
 
+    // Prices
+    const priceTableBody = document.querySelector('#priceTable tbody');
+    const priceMeta = document.getElementById('priceMeta');
+    const searchInput = document.getElementById('priceSearch');
     async function loadRates(){
       try{
         const res = await fetch('rates.csv?ts='+Date.now());
         const text = await res.text();
-        const rows = parseCSV(text); // expect count,price
+        const rows = parseCSV(text); // must have headers: count,price
         const prevMap = JSON.parse(localStorage.getItem('prevRates')||'{}');
         localStorage.setItem('prevRates', JSON.stringify(Object.fromEntries(rows.map(r=>[r.count, Number(r.price)]))));
         renderRates(rows, prevMap);
         priceMeta.textContent = `${document.getElementById('priceDistrict').value} • ${document.getElementById('priceDate').value||todayISO()}`;
-      }catch(e){
-        priceMeta.textContent = 'Failed to load rates.csv';
-      }
+      }catch(e){ priceMeta.textContent = 'Failed to load rates.csv'; }
     }
     function renderRates(rows, prev){
       const q = (searchInput.value||'').trim().toLowerCase();
@@ -323,7 +310,7 @@
         const change = (prev && r.count in prev) ? (Number(r.price)-Number(prev[r.count])) : 0;
         const mark = change===0 ? '<span class="chip">—</span>' : (change>0 ? `<span class="chip ok">▲ +${fmt(change)}</span>` : `<span class="chip bad">▼ ${fmt(change)}</span>`);
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${r.count}</td><td>₹ ${fmt(r.price)}</td><td>${mark}</td>`;
+        tr.innerHTML = `<td>${r.count||'-'}</td><td>₹ ${fmt(r.price)}</td><td>${mark}</td>`;
         priceTableBody.appendChild(tr);
       });
     }
@@ -331,63 +318,40 @@
     document.getElementById('priceDate').addEventListener('change', loadRates);
     searchInput.addEventListener('input', loadRates);
 
-    // ---------------- Harvest ----------------
+    // Harvest
     const iceUnit = document.getElementById('iceUnit'), iceQty = document.getElementById('iceQty'),
           iceRate = document.getElementById('iceRate'), iceOut = document.getElementById('iceOut');
     const vanType = document.getElementById('vanType'), vanRate = document.getElementById('vanRate'),
           vanKm = document.getElementById('vanKm'), vanOut = document.getElementById('vanOut');
-
-    function calcIce(){
-      const unit = iceUnit.value; let qty = Number(iceQty.value)||0; const rate = Number(iceRate.value)||0;
-      if(unit==='cans'){ qty = qty/20; } // 20 cans ≈ 1 ton
-      const cost = qty*rate;
-      iceOut.textContent = `Ice: ${qty.toFixed(2)} tons × ₹${fmt(rate)} = ₹${fmt(cost)}`;
-      return {tons:qty, rate, cost};
-    }
-    function calcVan(){
-      const t = Number(vanType.value)||0; const r = Number(vanRate.value)||0; const km = Number(vanKm.value)||0;
-      const cost = r*km;
-      vanOut.textContent = `Van: ${t}T @ ₹${fmt(r)}/km × ${fmt(km)} km = ₹${fmt(cost)}`;
-      return {t,r,km,cost};
-    }
+    function calcIce(){ const unit=iceUnit.value; let qty=Number(iceQty.value)||0; const rate=Number(iceRate.value)||0;
+      if(unit==='cans'){ qty = qty/20; } const cost=qty*rate;
+      iceOut.textContent = `Ice: ${qty.toFixed(2)} tons × ₹${fmt(rate)} = ₹${fmt(cost)}`; return {tons:qty, rate, cost}; }
+    function calcVan(){ const t=Number(vanType.value)||0, r=Number(vanRate.value)||0, km=Number(vanKm.value)||0;
+      const cost=r*km; vanOut.textContent = `Van: ${t}T @ ₹${fmt(r)}/km × ${fmt(km)} km = ₹${fmt(cost)}`; return {t,r,km,cost}; }
     [iceUnit,iceQty,iceRate].forEach(el=> el.addEventListener('input', calcIce));
     [vanType,vanRate,vanKm].forEach(el=> el.addEventListener('input', calcVan));
-
     document.getElementById('btnHarvestWA').addEventListener('click', ()=>{
       const a = calcIce(); const b = calcVan(); const total = Math.round((a.cost||0)+(b.cost||0));
       const title = getLang()==='te' ? '*హార్వెస్ట్ బుకింగ్*' : '*Harvest Booking*';
-      const msg = [
-        title,
-        `Ice: ${a.tons.toFixed(2)} tons @ ₹${a.rate}`,
-        `Van: ${b.t}T, ₹${b.r}/km, ${b.km} km`,
-        `Total: ₹${total}`
-      ].join('\n');
+      const msg = [title,`Ice: ${a.tons.toFixed(2)} tons @ ₹${a.rate}`,`Van: ${b.t}T, ₹${b.r}/km, ${b.km} km`,`Total: ₹${total}`].join('\n');
       window.open('https://wa.me/?text='+encodeURIComponent(msg), '_blank');
     });
 
-    // ---------------- Larvae (seeds.csv) ----------------
-    const seedState = document.getElementById('seedState'),
-          seedDistrict = document.getElementById('seedDistrict'),
-          seedHatchery = document.getElementById('seedHatchery'),
-          hatcherySearch = document.getElementById('hatcherySearch'),
-          seedPL = document.getElementById('seedPL'),
-          seedPrice = document.getElementById('seedPrice'),
-          seedBatch = document.getElementById('seedBatch'),
-          seedQty = document.getElementById('seedQty'),
-          seedDate = document.getElementById('seedDate'),
-          seedAvail = document.getElementById('seedAvail'),
+    // Larvae
+    const seedState = document.getElementById('seedState'), seedDistrict = document.getElementById('seedDistrict'),
+          seedHatchery = document.getElementById('seedHatchery'), hatcherySearch = document.getElementById('hatcherySearch'),
+          seedPL = document.getElementById('seedPL'), seedPrice = document.getElementById('seedPrice'),
+          seedBatch = document.getElementById('seedBatch'), seedQty = document.getElementById('seedQty'),
+          seedDate = document.getElementById('seedDate'), seedAvail = document.getElementById('seedAvail'),
           seedSummary = document.getElementById('seedSummary');
-
     let seedsData = [];
     async function loadSeeds(){
       try{
         const res = await fetch('seeds.csv?ts='+Date.now());
         const text = await res.text();
-        seedsData = parseCSV(text); // expect: state,district,hatchery,PL,price,available
+        seedsData = parseCSV(text); // headers: state,district,hatchery,PL,price,available
         refreshSeedsUI();
-      }catch(e){
-        seedAvail.textContent = 'Failed to load seeds.csv';
-      }
+      }catch(e){ seedAvail.textContent = 'Failed to load seeds.csv'; }
     }
     function refreshSeedsUI(){
       const state = seedState.value;
@@ -403,9 +367,7 @@
       populateHatcheries();
     }
     function populateHatcheries(){
-      const state = seedState.value;
-      const district = seedDistrict.value;
-      const q = (hatcherySearch.value||'').toLowerCase();
+      const state = seedState.value; const district = seedDistrict.value; const q=(hatcherySearch.value||'').toLowerCase();
       let list = seedsData.filter(r=> r.state===state && (state!=='Andhra Pradesh' || r.district===district));
       if(q) list = list.filter(r=> (r.hatchery||'').toLowerCase().includes(q));
       seedHatchery.innerHTML = list.map(r=> `<option value="${r.hatchery}" data-price="${r.price}" data-avail="${r.available||''}">${r.hatchery} — ₹${r.price}</option>`).join('');
@@ -416,14 +378,12 @@
       if(!opt){ seedPrice.value=''; seedAvail.textContent=''; return; }
       seedPrice.value = opt.dataset.price || '';
       const from = new Date(), to = new Date(); to.setDate(to.getDate()+7);
-      // show as availability (static 7 days)
       seedAvail.textContent = `${getLang()==='te'?'అవైలబిలిటీ':'Availability'}: ${from.toLocaleDateString()} → ${to.toLocaleDateString()} (7 days)`;
       updateSeedSummary();
     }
     function updateSeedSummary(){
       const qtyK = Number(seedQty.value)||0; const priceK = Number(seedPrice.value)||0;
-      // Bonus: if qty = 100k → +30,000 larvae free
-      const bonus = qtyK===100 ? 30000 : 0;
+      const bonus = qtyK===100 ? 30000 : 0; // 1,00,000 larvae → +30,000
       const totalSeeds = qtyK*1000 + bonus;
       const amount = qtyK * priceK;
       const bonusLabel = getLang()==='te'?'బోనస్':'Bonus';
@@ -437,36 +397,21 @@
     hatcherySearch.addEventListener('input', populateHatcheries);
     seedHatchery.addEventListener('change', updateSeedSelection);
     [seedQty, seedBatch, seedDate].forEach(el=> el.addEventListener('input', updateSeedSummary));
-
     document.getElementById('btnSeedsWA').addEventListener('click', ()=>{
-      const sel = seedHatchery.value || '-';
-      const d = seedDistrict.value || '-';
-      const s = updateSeedSummary();
+      const sel = seedHatchery.value || '-'; const d = seedDistrict.value || '-'; const s = updateSeedSummary();
       const title = getLang()==='te' ? '*రొయ్య పిల్లలు బుకింగ్*' : '*Larvae Booking*';
-      const lines = [
-        title,
-        `State: ${seedState.value}`,
-        seedState.value==='Andhra Pradesh' ? `District: ${d}` : '',
-        `Hatchery: ${sel}`,
-        `PL: ${seedPL.value}`,
-        `Price/1000: ₹${s.priceK}`,
-        `Qty: ${s.qtyK}k`,
-        `Bonus: ${s.bonus}`,
-        `Total Larvae: ${s.totalSeeds}`,
-        `Total Amount: ₹${s.amount}`,
-        `Booking Date: ${seedDate.value || todayISO()}`,
-        `Production: ${seedBatch.value}`
-      ].filter(Boolean).join('\n');
+      const lines = [title,`State: ${seedState.value}`, seedState.value==='Andhra Pradesh' ? `District: ${d}` : '',
+        `Hatchery: ${sel}`, `PL: ${seedPL.value}`, `Price/1000: ₹${s.priceK}`, `Qty: ${s.qtyK}k`,
+        `Bonus: ${s.bonus}`, `Total Larvae: ${s.totalSeeds}`, `Total Amount: ₹${s.amount}`,
+        `Booking Date: ${seedDate.value || todayISO()}`, `Production: ${seedBatch.value}`].filter(Boolean).join('\n');
       window.open('https://wa.me/?text='+encodeURIComponent(lines), '_blank');
     });
 
-    // ---------------- Init ----------------
+    // Init
     document.getElementById('priceDate').value = todayISO();
     document.getElementById('seedDate').value = todayISO();
     applyLang();
-    loadRates();
-    loadSeeds();
-    calcIce(); calcVan();
+    loadRates(); loadSeeds(); calcIce(); calcVan();
   </script>
 </body>
 </html>
