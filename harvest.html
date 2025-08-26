@@ -1,1 +1,71 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Harvest • Aquaculture A–Z</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={darkMode:'class',theme:{extend:{boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'}}}}</script>
+  <style>
+    html{scroll-behavior:smooth}
+    body{background:linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#f0fdf4 100%)}
+    .dark body{background:linear-gradient(135deg,#0f172a 0%,#082f49 50%,#14532d 100%)}
+  </style>
+</head>
+<body class="text-slate-900 dark:text-slate-100">
+  <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
+      <a href="index.html" class="rounded-lg px-3 py-1.5 border border-slate-200 dark:border-slate-800">←</a>
+      <h1 class="text-lg font-bold flex-1" data-i18n="harvest_form">Harvest Booking</h1>
+      <div class="flex rounded-full bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-800">
+        <button id="langTE" class="px-3 py-1.5 text-sm rounded-full bg-white dark:bg-slate-800">తెలుగు</button>
+        <button id="langEN" class="px-3 py-1.5 text-sm rounded-full">English</button>
+      </div>
+      <button id="themeToggle" class="rounded-full px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-800">🌙/☀️</button>
+    </div>
+  </header>
 
+  <main class="max-w-4xl mx-auto p-4">
+    <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800 space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <label class="text-sm"><span data-i18n="ice_unit">Ice unit</span>
+          <select id="hIceUnit" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+            <option value="ton" selected>Ton(s)</option>
+            <option value="can">Can(s)</option>
+          </select>
+        </label>
+        <label class="text-sm"><span id="hIceQtyLbl">Ice (tons)</span>
+          <input id="hIceQty" type="number" value="1" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+        </label>
+        <label class="text-sm"><span id="hIceRateLbl">Price/ton (₹)</span>
+          <input id="hIceRate" type="number" value="1200" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+        </label>
+        <div class="text-sm flex items-end"><span data-i18n="ice_total">Ice total</span>: <b class="ml-2" id="hIceTotal">₹ 1200</b></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <label class="text-sm"><span data-i18n="van_type">Van</span>
+          <select id="hVanType" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+            <option value="2">2T</option><option value="5">5T</option><option value="8">8T</option><option value="10" selected>10T</option>
+          </select>
+        </label>
+        <label class="text-sm"><span data-i18n="van_rate">₹/km</span>
+          <input id="hVanRate" type="number" value="35" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+        </label>
+        <label class="text-sm"><span data-i18n="van_km">Distance (km)</span>
+          <input id="hVanKm" type="number" value="50" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+        </label>
+        <div class="text-sm flex items-end"><span data-i18n="transport">Transport</span>: <b class="ml-2" id="hVanTotal">₹ 1750</b></div>
+      </div>
+
+      <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 flex items-center justify-between">
+        <div class="text-sm font-medium">🧮 <span data-i18n="grand_total">Grand Total</span>: <b id="hGrand">₹ 2950</b></div>
+        <button id="hBook" class="rounded-xl px-4 py-2 bg-emerald-600 text-white" data-i18n="final_book">Finalize Booking</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const dict={en:{harvest_form:"Harvest Booking",ice_unit:"Ice unit",ice_total:"Ice total",van_type:"Van",van_rate:"₹/km",van_km:"Distance (km)",transport:"Transport",grand_total:"Grand Total",final_book:"Finalize Booking"},
+               te:{harvest_form:"హార్వెస్ట్ బుకింగ్",ice_unit:"ఐస్ యూనిట్",ice_total:"ఐస్ మొత్తం",van_type:"వాన్",van_rate:"₹/కిమీ",van_km:"దూరం (కిమీ)",transport:"ట్రాన్స్‌పోర్ట్",grand_total:"గ్రాండ్ టోటల్",final_book:"ఫైనల్ బుక్"}};
+    function setLang(){const l=localStorage.getItem('lang')||'te';document.doc
