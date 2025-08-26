@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aquaculture A–Z • Pro Tabbed Dashboard (V6)</title>
+  <title>Aquaculture A–Z • Pro Tabbed Dashboard (V7)</title>
   <meta name="description" content="Tabbed aquaculture dashboard: rates, harvest, seeds, dealers, alerts. Telugu & English toggle."/>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -15,10 +15,6 @@
     body{background: linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#f0fdf4 100%);}
     .dark body{background: linear-gradient(135deg,#0f172a 0%,#082f49 50%,#14532d 100%);}
     .tab-btn[aria-selected="true"]{background:#059669;color:white}
-    /* Flash news ticker */
-    .ticker{mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent)}
-    .ticker-track{display:flex;gap:24px;white-space:nowrap;animation:ticker 20s linear infinite}
-    @keyframes ticker{from{transform:translateX(0)} to{transform:translateX(-50%)}}
     .badge{font-size:.7rem}
   </style>
 </head>
@@ -106,31 +102,70 @@
           </div>
         </div>
 
-        <!-- RIGHT: Flash News (scrolling) -->
+        <!-- RIGHT: Promotions (slider + cards) with NEW badge -->
         <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
           <div class="flex items-center justify-between">
-            <h3 class="font-semibold">📰 <span data-i18n="flash_news"></span></h3>
-            <span class="text-xs px-2 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-200">Live</span>
+            <h3 class="font-semibold">📣 Promotions</h3>
+            <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">NEW</span>
           </div>
-          <div class="mt-3 ticker">
-            <div id="newsTrack" class="ticker-track">
-              <!-- news items will be duplicated for seamless loop -->
+
+          <!-- Slider -->
+          <div class="relative mt-3 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
+            <div id="promoSlides" class="flex transition-transform duration-500">
+              <!-- Slide 1 -->
+              <article class="min-w-full p-4 bg-emerald-50 dark:bg-emerald-900/20">
+                <span class="inline-flex items-center text-xs font-bold px-2 py-1 rounded-full bg-emerald-200 text-emerald-900 dark:bg-emerald-800 dark:text-emerald-100">🔥 Today</span>
+                <h4 class="mt-2 text-lg font-semibold">Ice Booking — ₹2,400 / ton</h4>
+                <p class="text-sm text-slate-600 dark:text-slate-300">Factory-grade ice. Fast loading.</p>
+              </article>
+              <!-- Slide 2 -->
+              <article class="min-w-full p-4 bg-sky-50 dark:bg-sky-900/20">
+                <span class="inline-flex items-center text-xs font-bold px-2 py-1 rounded-full bg-sky-200 text-sky-900 dark:bg-sky-800 dark:text-sky-100">🚚 Best Value</span>
+                <h4 class="mt-2 text-lg font-semibold">5T Van — ₹22 / km</h4>
+                <p class="text-sm text-slate-600 dark:text-slate-300">Reliable transport for harvest day.</p>
+              </article>
+              <!-- Slide 3 -->
+              <article class="min-w-full p-4 bg-amber-50 dark:bg-amber-900/20">
+                <span class="inline-flex items-center text-xs font-bold px-2 py-1 rounded-full bg-amber-200 text-amber-900 dark:bg-amber-800 dark:text-amber-100">🧬 Fresh PL</span>
+                <h4 class="mt-2 text-lg font-semibold">Seeds — Batch 1 Open</h4>
+                <p class="text-sm text-slate-600 dark:text-slate-300">Vannamei SPF PL. Bonus up to 30%.</p>
+              </article>
+            </div>
+            <!-- dots -->
+            <div id="promoDots" class="absolute bottom-2 inset-x-0 flex justify-center gap-2"></div>
+          </div>
+
+          <!-- Ad cards -->
+          <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 p-3">
+              <h4 class="font-semibold">🎯 Promote Your Hatchery</h4>
+              <p class="text-sm text-slate-600 dark:text-slate-300">Reach AP & TN farmers directly.</p>
+            </div>
+            <div class="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 p-3">
+              <h4 class="font-semibold">📦 Dealer Spotlight</h4>
+              <p class="text-sm text-slate-600 dark:text-slate-300">Feeds • Aerators • Medicines.</p>
             </div>
           </div>
-          <p class="text-xs text-slate-500 mt-2" id="newsUpdated">—</p>
         </div>
       </div>
     </section>
 
-    <!-- Tab: Harvest (merged form + grand total + single book) -->
+    <!-- Tab: Harvest (merged + ice unit tons/cans) -->
     <section id="tab-harvest" class="hidden space-y-4">
       <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
         <h3 class="font-semibold">🚛 <span data-i18n="harvest_form"></span></h3>
-        <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3">
-          <label class="text-sm"><span data-i18n="ice_tons"></span>
-            <input id="hIceTons" type="number" value="1" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+
+        <div class="mt-3 grid grid-cols-1 md:grid-cols-4 gap-3">
+          <label class="text-sm"><span data-i18n="ice_unit"></span>
+            <select id="hIceUnit" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+              <option value="ton" selected>Ton(s)</option>
+              <option value="can">Can(s)</option>
+            </select>
           </label>
-          <label class="text-sm"><span data-i18n="ice_rate"></span>
+          <label class="text-sm"><span id="hIceQtyLbl"></span>
+            <input id="hIceQty" type="number" value="1" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+          </label>
+          <label class="text-sm"><span id="hIceRateLbl"></span>
             <input id="hIceRate" type="number" value="1200" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
           </label>
           <div class="text-sm flex items-end"><span data-i18n="ice_total"></span>: <b class="ml-2" id="hIceTotal">₹ 1200</b></div>
@@ -158,7 +193,7 @@
       </div>
     </section>
 
-    <!-- Tab: Seeds (qty pieces, bonus %, total pieces, amount, single book) -->
+    <!-- Tab: Seeds (same as V6) -->
     <section id="tab-seeds" class="hidden space-y-4">
       <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
         <h3 class="font-semibold">🦐 <span data-i18n="seed_title"></span></h3>
@@ -247,9 +282,8 @@
         t_rates:"Rates", t_harvest:"Harvest", t_seeds:"Seeds", t_dealers:"Dealers", t_alerts:"Alerts",
         avg:"Avg (₹/kg)", best:"Best", low:"Lowest", spread:"30c–50c Spread",
         snapshot:"Live Snapshot", updated:"Updated", th_count:"Count", th_price:"Price (₹/kg)", th_change:"Change",
-        flash_news:"Flash News",
         harvest_form:"Harvest Booking",
-        ice_tons:"Ice (tons)", ice_rate:"Ice price/ton (₹)", ice_total:"Ice total",
+        ice_unit:"Ice unit", ice_total:"Ice total",
         van_type:"Van", van_rate:"₹/km", van_km:"Distance (km)", transport:"Transport",
         grand_total:"Grand Total",
         final_book:"Finalize Booking",
@@ -267,9 +301,8 @@
         t_rates:"రేట్స్", t_harvest:"హార్వెస్ట్", t_seeds:"సీడ్స్", t_dealers:"వెండర్లు", t_alerts:"అలర్ట్స్",
         avg:"సగటు (₹/kg)", best:"అత్యధిక", low:"కనిష్ట", spread:"30c–50c వ్యత్యాసం",
         snapshot:"లైవ్ స్నాప్‌షాట్", updated:"అప్‌డేట్", th_count:"కౌంట్", th_price:"ధర (₹/kg)", th_change:"మార్పు",
-        flash_news:"ఫ్లాష్ న్యూస్",
         harvest_form:"హార్వెస్ట్ బుకింగ్",
-        ice_tons:"ఐస్ (టన్నులు)", ice_rate:"ధర/టన్ (₹)", ice_total:"ఐస్ మొత్తం",
+        ice_unit:"ఐస్ యూనిట్", ice_total:"ఐస్ మొత్తం",
         van_type:"వాన్", van_rate:"₹/కిమీ", van_km:"దూరం (కిమీ)", transport:"ట్రాన్స్‌పోర్ట్",
         grand_total:"గ్రాండ్ టోటల్",
         final_book:"ఫైనల్ బుక్",
@@ -282,9 +315,7 @@
         alerts_title:"నీటి & వ్యాధి అలర్ట్స్"
       }
     };
-
     function t(key){ const lang=localStorage.getItem('lang')||'te'; return (dict[lang]&&dict[lang][key])||key; }
-
     function setTextByI18n() {
       const lang = localStorage.getItem('lang') || 'te';
       document.documentElement.lang = lang;
@@ -350,48 +381,74 @@
       }catch(e){ /* ignore */ }
     }
 
-    // ---------- Flash News ----------
-    async function loadNews(){
-      const track=document.getElementById('newsTrack');
-      const fallback = [
-        {tag:'Rates', text:'Today 50c trend steady across coastal AP'},
-        {tag:'Seed',  text:'Batch 1 PL bookings open this week'},
-        {tag:'Harvest', text:'Night DO risk, add aeration 8pm–3am'},
-        {tag:'Market', text:'Ice ₹1200/ton in Nellore'},
-      ];
-      let items=fallback;
-      try{
-        const res=await fetch('news.json',{cache:'no-store'});
-        if(res.ok){ items = await res.json(); }
-      }catch(e){ /* fallback */ }
-      // build two copies for seamless scroll
-      function chip(n){ return `<span class="badge px-2 py-1 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200">${n}</span>`; }
-      const row = items.map(n=>`<div class="flex items-center gap-2 pr-4"><span>${chip(n.tag)}</span><span>${n.text}</span></div>`).join('');
-      track.innerHTML = row + row;
-      document.getElementById('newsUpdated').textContent = new Intl.DateTimeFormat('en-IN',{dateStyle:'medium', timeStyle:'short'}).format(new Date());
+    // ---------- Promo slider ----------
+    const promoSlides = document.getElementById('promoSlides');
+    const promoDots = document.getElementById('promoDots');
+    const totalSlides = promoSlides ? promoSlides.children.length : 0;
+    let pIdx = 0, pTimer;
+    function promoRenderDots(){
+      if(!promoDots) return;
+      promoDots.innerHTML='';
+      for(let i=0;i<totalSlides;i++){
+        const d=document.createElement('button');
+        d.className='h-2 w-2 rounded-full border border-slate-400/70 bg-white/70 dark:bg-slate-800';
+        d.addEventListener('click',()=>{ promoGo(i,true); });
+        promoDots.appendChild(d);
+      }
+      promoDots.children[0]?.classList.add('bg-sky-400');
+    }
+    function promoGo(n, user=false){
+      if(!promoSlides) return;
+      pIdx = (n+totalSlides)%totalSlides;
+      promoSlides.style.transform = `translateX(-${pIdx*100}%)`;
+      [...promoDots.children].forEach((d,i)=>d.classList.toggle('bg-sky-400', i===pIdx));
+      if(user){ clearInterval(pTimer); pTimer=setInterval(()=>promoGo(pIdx+1),4500); }
+    }
+    function promoInit(){
+      if(!promoSlides) return;
+      promoRenderDots();
+      pTimer=setInterval(()=>promoGo(pIdx+1),4500);
     }
 
-    // ---------- Harvest (merged) ----------
+    // ---------- Harvest (tons/cans) ----------
     function bindHarvest(){
-      const tons = document.getElementById('hIceTons');
+      const unit = document.getElementById('hIceUnit');
+      const qty  = document.getElementById('hIceQty');
       const rate = document.getElementById('hIceRate');
+      const qtyLbl  = document.getElementById('hIceQtyLbl');
+      const rateLbl = document.getElementById('hIceRateLbl');
+      const iceT = document.getElementById('hIceTotal');
+
       const vtype= document.getElementById('hVanType');
       const vr   = document.getElementById('hVanRate');
       const km   = document.getElementById('hVanKm');
-      const iceT = document.getElementById('hIceTotal');
       const vanT = document.getElementById('hVanTotal');
       const grand= document.getElementById('hGrand');
 
+      function applyUnit(){
+        if(unit.value==='can'){
+          qtyLbl.textContent = (t('qty_pcs')||'Quantity (pcs)'); // reuse text
+          rateLbl.textContent = 'Price/can (₹)';
+          if(+rate.value===1200 || !rate.value) rate.value = 120; // default for cans
+        } else {
+          qtyLbl.textContent = 'Ice (tons)';
+          rateLbl.textContent = t('ice_rate') || 'Price/ton (₹)';
+          if(+rate.value===120 || !rate.value) rate.value = 1200; // default for tons
+        }
+        calc();
+      }
+
       function calc(){
-        const ice = (+tons.value||0) * (+rate.value||0);
+        const ice = (+qty.value||0) * (+rate.value||0);
         const van = (+vr.value||0) * (+km.value||0);
         iceT.textContent = `₹ ${ice.toFixed(0)}`;
         vanT.textContent = `₹ ${van.toFixed(0)}`;
         grand.textContent= `₹ ${(ice+van).toFixed(0)}`;
       }
-      [tons,rate,vr,km,vtype].forEach(el=>el.addEventListener('input',calc));
-      vtype.addEventListener('change',calc);
-      calc();
+
+      [qty,rate,vr,km,vtype].forEach(el=>el.addEventListener('input',calc));
+      unit.addEventListener('change',applyUnit);
+      applyUnit();
 
       document.getElementById('hBook').addEventListener('click',()=>{
         alert(`✅ ${t('harvest_form')}\n`+
@@ -401,7 +458,7 @@
       });
     }
 
-    // ---------- Seeds (pieces + bonus %) ----------
+    // ---------- Seeds (unchanged from V6) ----------
     let seeds=[];
     async function loadSeeds(){
       try{
@@ -416,11 +473,7 @@
       }
       initSeedUI();
     }
-    function bonusPercentByQty(qty){
-      // Your rule: show percent; example you gave: 100 → 30%.
-      // Here: ≥100 gets 30%, else 0%. Change easily if you need more slabs.
-      return (qty>=100)?30:0;
-    }
+    function bonusPercentByQty(qtyK){ return (qtyK>=100)?30:0; } // 100k pcs => 30%
     function initSeedUI(){
       const sState=document.getElementById('sState'), sDistrict=document.getElementById('sDistrict'), sHatch=document.getElementById('sHatchery'),
             sPrice=document.getElementById('sPrice'), sQty=document.getElementById('sQty'),
@@ -430,8 +483,7 @@
         const st=sState.value;
         const ds=[...new Set(seeds.filter(x=>x.state===st && x.district).map(x=>x.district))];
         sDistrict.innerHTML = ds.map(d=>`<option>${d}</option>`).join('');
-        sDistrict.parentElement.style.display = st==='Tamil Nadu'?'none':'';
-        fillHatch();
+        sDistrict.parentElement.style.display = st==='Tamil Nadu'?'none':''; fillHatch();
       }
       function fillHatch(){
         const st=sState.value, d=sDistrict.value||'';
@@ -443,7 +495,7 @@
       function calc(){
         const pricePerK = +sPrice.value||0; // per 1000
         const qtyPieces = +sQty.value||0;   // pieces
-        const bonusPct  = bonusPercentByQty(qtyPieces/1000); // interpret "100" as 100k if you prefer; else use qtyPieces directly.
+        const bonusPct  = bonusPercentByQty(qtyPieces/1000);
         sBonusPct.textContent = `${bonusPct}%`;
         const totalSeeds = Math.floor(qtyPieces + (qtyPieces * bonusPct/100));
         const amount = (qtyPieces/1000) * pricePerK;
@@ -503,7 +555,7 @@
       catch(e){ render(demo); }
     }
 
-    // ---------- Language buttons ----------
+    // ---------- Language ----------
     document.getElementById('langEN').addEventListener('click',()=>{localStorage.setItem('lang','en'); setTextByI18n();});
     document.getElementById('langTE').addEventListener('click',()=>{localStorage.setItem('lang','te'); setTextByI18n();});
 
@@ -512,7 +564,7 @@
       if(!localStorage.getItem('lang')) localStorage.setItem('lang','te'); // default Telugu
       setTextByI18n();
       loadRates();
-      loadNews();
+      promoInit();
       bindHarvest();
       loadSeeds();
       loadDealers();
