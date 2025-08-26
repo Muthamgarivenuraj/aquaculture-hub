@@ -17,8 +17,22 @@
     .ticker-track{display:flex;gap:24px;white-space:nowrap;animation:ticker 18s linear infinite}
     @keyframes ticker{from{transform:translateX(0)} to{transform:translateX(-50%)}}
     /* Blink effect */
-    @keyframes blink{0%,50%,100%{opacity:1}25%,75%{opacity:0}}
-    .blink{animation:blink 1.2s infinite}
+   @keyframes blink {
+  0%, 100% {
+    opacity: 1;
+    background-color: #38bdf8; /* sky-400 */
+    color: #0c4a6e;
+  }
+  50% {
+    opacity: 1;
+    background-color: #f87171; /* red-400 */
+    color: #7f1d1d;
+  }
+}
+.blink {
+  animation: blink 1.2s infinite;
+}
+
   </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100">
