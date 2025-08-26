@@ -3,247 +3,441 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aquaculture A–Z Hub • Dashboard (Color + Logo)</title>
-  <meta name="description" content="Colorful dashboard for prawns: live rates, harvesting, seeds, vendors, technicians, knowledge, and posts. Telugu/English support."/>
+  <title>Aquaculture A–Z • Pro Tabbed Dashboard (V5 – Full i18n)</title>
+  <meta name="description" content="Tabbed aquaculture dashboard: rates, harvest, seeds, dealers, alerts. Telugu & English toggle."/>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: { brand: { 50:'#ecfdf5', 100:'#d1fae5', 500:'#10b981', 600:'#059669', 700:'#047857' } },
-          boxShadow: { soft: '0 12px 30px rgba(2,6,23,.08)' }
-        }
-      }
-    }
+    tailwind.config = { darkMode:'class', theme:{ extend:{ boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'} } } }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <style>
     html{scroll-behavior:smooth}
-    /* Background gradient via CSS variables */
-    :root{--bg1:#f0f9ff;--bg2:#ecfdf5;--bg3:#fefce8}
-    body{background: linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 50%,var(--bg3) 100%);} 
-    .dark body{background: linear-gradient(135deg,#0f172a 0%,#082f49 50%,#14532d 100%);} 
+    body{background: linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#f0fdf4 100%);}
+    .dark body{background: linear-gradient(135deg,#0f172a 0%,#082f49 50%,#14532d 100%);}
+    .tab-btn[aria-selected="true"]{background:#059669;color:white}
   </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100">
   <!-- Top Bar -->
-  <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200/60 dark:border-slate-800">
+  <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
       <!-- Logo -->
       <div class="h-10 w-10 rounded-2xl overflow-hidden shadow-soft">
-        <!-- Inline SVG logo for crisp rendering -->
-        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" class="h-full w-full">
-          <defs>
-            <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#60a5fa"/>
-              <stop offset="100%" stop-color="#34d399"/>
-            </linearGradient>
-          </defs>
-          <rect rx="16" ry="16" width="64" height="64" fill="url(#g1)" />
-          <g fill="#ffffff" opacity="0.95">
-            <!-- stylized shrimp -->
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" class="h-full w-full" aria-hidden="true">
+          <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#34d399"/></linearGradient></defs>
+          <rect rx="16" ry="16" width="64" height="64" fill="url(#g1)"/>
+          <g fill="#fff" opacity="0.95">
             <path d="M46 20c-6-2-13 1-17 6-4 5-5 12-1 16 4 4 10 3 14-1 3-3 4-7 3-11-4 1-8 0-11-2 4-1 8-2 12-8z"/>
             <circle cx="42" cy="24" r="2"/>
-            <!-- waves -->
-            <path d="M12 42c5 3 10 3 15 0 5-3 10-3 15 0" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M12 48c5 3 10 3 15 0 5-3 10-3 15 0" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M12 42c5 3 10 3 15 0 5-3 10-3 15 0" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M12 48c5 3 10 3 15 0 5-3 10-3 15 0" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
           </g>
         </svg>
       </div>
       <div>
-        <h1 class="text-xl font-bold leading-tight">Aquaculture A–Z Hub</h1>
-        <p class="text-xs text-slate-500" id="subtitle">Andhra Pradesh</p>
+        <h1 class="text-xl font-bold leading-tight" data-i18n="app_title"></h1>
+        <p class="text-xs text-slate-500" id="subtitle"></p>
       </div>
       <div class="ml-auto flex items-center gap-2">
-        <!-- BG theme presets -->
-        <div class="hidden md:flex items-center gap-1 rounded-full bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-800">
-          <button data-bg="mint" class="px-2 py-1 text-xs rounded-full bg-white dark:bg-slate-800">Mint</button>
-          <button data-bg="ocean" class="px-2 py-1 text-xs rounded-full">Ocean</button>
-          <button data-bg="sunrise" class="px-2 py-1 text-xs rounded-full">Sunrise</button>
-        </div>
-        <!-- Lang Switch -->
+        <!-- Lang -->
         <div class="flex rounded-full bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-800">
-          <button id="langEN" class="px-3 py-1.5 text-sm rounded-full bg-white dark:bg-slate-800 shadow-soft">English</button>
-          <button id="langTE" class="px-3 py-1.5 text-sm rounded-full">తెలుగు</button>
+          <button id="langTE" class="px-3 py-1.5 text-sm rounded-full bg-white dark:bg-slate-800 shadow-soft">తెలుగు</button>
+          <button id="langEN" class="px-3 py-1.5 text-sm rounded-full">English</button>
         </div>
         <button id="themeToggle" class="rounded-full px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-800">🌙/☀️</button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto p-4 space-y-6">
-    <!-- Location + Search -->
-    <section class="rounded-3xl bg-gradient-to-r from-sky-50 to-emerald-50 dark:from-slate-900 dark:to-slate-800 p-4 md:p-5 shadow-soft border border-slate-100 dark:border-slate-800">
-      <div class="flex flex-col md:flex-row md:items-center gap-3">
-        <div class="flex items-center gap-2 w-full md:w-auto">
-          <label class="text-sm text-slate-500" data-i18n="district">District</label>
-          <select id="district" class="w-full md:w-64 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-3 py-2 text-sm">
-            <option>Nellore</option>
-            <option>Prakasam</option>
-            <option>Krishna</option>
-            <option>East Godavari</option>
-            <option>West Godavari</option>
-            <option>Guntur</option>
+  <main class="max-w-7xl mx-auto p-4 space-y-4">
+    <!-- Tabs -->
+    <div role="tablist" class="flex flex-wrap gap-2">
+      <button class="tab-btn rounded-xl px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800" role="tab" aria-selected="true" data-tab="rates">📈 <span class="ml-1" data-i18n="t_rates"></span></button>
+      <button class="tab-btn rounded-xl px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800" role="tab" data-tab="harvest">🚚 <span class="ml-1" data-i18n="t_harvest"></span></button>
+      <button class="tab-btn rounded-xl px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800" role="tab" data-tab="seeds">🦐 <span class="ml-1" data-i18n="t_seeds"></span></button>
+      <button class="tab-btn rounded-xl px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800" role="tab" data-tab="dealers">🏪 <span class="ml-1" data-i18n="t_dealers"></span></button>
+      <button class="tab-btn rounded-xl px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800" role="tab" data-tab="alerts">⚠️ <span class="ml-1" data-i18n="t_alerts"></span></button>
+    </div>
+
+    <!-- Tab: Rates -->
+    <section id="tab-rates" class="space-y-4">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-emerald-200/60 dark:border-emerald-900/40">
+          <p class="text-xs text-emerald-700 dark:text-emerald-200" data-i18n="avg"></p>
+          <h3 id="rAvg" class="text-2xl font-bold">—</h3>
+        </div>
+        <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-sky-200/60 dark:border-sky-900/40">
+          <p class="text-xs text-sky-700 dark:text-sky-200" data-i18n="best"></p>
+          <h3 id="rBest" class="text-2xl font-bold">—</h3>
+        </div>
+        <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-rose-200/60 dark:border-rose-900/40">
+          <p class="text-xs text-rose-700 dark:text-rose-200" data-i18n="low"></p>
+          <h3 id="rLow" class="text-2xl font-bold">—</h3>
+        </div>
+        <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-amber-200/60 dark:border-amber-900/40">
+          <p class="text-xs text-amber-700 dark:text-amber-200" data-i18n="spread"></p>
+          <h3 id="rSpread" class="text-2xl font-bold">—</h3>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
+          <div class="flex items-center justify-between"><h3 class="font-semibold" data-i18n="snapshot"></h3><p class="text-xs text-slate-500"><span data-i18n="updated"></span>: <span id="updatedAt">—</span></p></div>
+          <div class="mt-3 overflow-x-auto">
+            <table class="min-w-full text-sm" id="ratesTable">
+              <thead>
+                <tr class="border-b dark:border-slate-800 text-slate-500">
+                  <th class="text-left py-2 pr-4" data-i18n="th_count"></th>
+                  <th class="text-left py-2 pr-4" data-i18n="th_price"></th>
+                  <th class="text-left py-2 pr-4" data-i18n="th_change"></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
+          <div class="flex items-center justify-between">
+            <h3 class="font-semibold" data-i18n="chart_title"></h3>
+            <select id="rateSize" class="text-sm border rounded-md px-2 py-1 dark:bg-slate-950 dark:border-slate-800"><option>30</option><option selected>50</option><option>60</option><option>100</option></select>
+          </div>
+          <canvas id="rateChart" class="mt-4 h-64"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab: Harvest -->
+    <section id="tab-harvest" class="hidden space-y-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
+          <h3 class="font-semibold">🧊 <span data-i18n="ice_title"></span></h3>
+          <div class="mt-3 grid grid-cols-2 gap-3">
+            <label class="text-sm"><span data-i18n="ice_tons"></span> <input id="iceTons" type="number" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800" value="1"></label>
+            <label class="text-sm"><span data-i18n="ice_rate"></span> <input id="iceRate" type="number" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800" value="1200"></label>
+          </div>
+          <p class="mt-3 text-sm"><span data-i18n="total"></span>: <b id="iceTotal">₹ 1200</b></p>
+          <a id="iceWA" target="_blank" class="mt-3 inline-flex rounded-xl px-4 py-2 bg-emerald-600 text-white" data-i18n="wa_book"></a>
+        </div>
+        <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
+          <h3 class="font-semibold">🚛 <span data-i18n="van_title"></span></h3>
+          <div class="mt-3 grid grid-cols-2 gap-3">
+            <label class="text-sm"><span data-i18n="van_type"></span> <select id="vanType" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800"><option value="2">2T</option><option value="5">5T</option><option value="8">8T</option><option value="10" selected>10T</option></select></label>
+            <label class="text-sm"><span data-i18n="van_rate"></span> <input id="vanRate" type="number" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800" value="35"></label>
+            <label class="text-sm"><span data-i18n="van_km"></span> <input id="vanKm" type="number" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800" value="50"></label>
+          </div>
+          <p class="mt-3 text-sm"><span data-i18n="transport"></span>: <b id="vanTotal">₹ 1750</b></p>
+          <a id="vanWA" target="_blank" class="mt-3 inline-flex rounded-xl px-4 py-2 bg-emerald-600 text-white" data-i18n="wa_book"></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab: Seeds -->
+    <section id="tab-seeds" class="hidden space-y-4">
+      <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
+        <h3 class="font-semibold">🦐 <span data-i18n="seed_title"></span></h3>
+        <div class="mt-3 grid grid-cols-1 md:grid-cols-4 gap-3">
+          <label class="text-sm"><span data-i18n="state"></span>
+            <select id="sState" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+              <option>Andhra Pradesh</option><option>Tamil Nadu</option>
+            </select>
+          </label>
+          <label class="text-sm"><span data-i18n="district"></span>
+            <select id="sDistrict" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800"></select>
+          </label>
+          <label class="text-sm"><span data-i18n="hatchery"></span>
+            <select id="sHatchery" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800"></select>
+          </label>
+          <label class="text-sm"><span data-i18n="price_per"></span>
+            <input id="sPrice" type="number" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800" readonly>
+          </label>
+        </div>
+        <div class="mt-3 grid grid-cols-1 md:grid-cols-4 gap-3">
+          <label class="text-sm"><span data-i18n="production"></span> <select id="sBatch" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800"><option>Batch 1</option><option>Batch 2</option></select></label>
+          <label class="text-sm"><span data-i18n="booking_date"></span> <input id="sDate" type="date" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800"></label>
+          <label class="text-sm"><span data-i18n="qty_k"></span> <input id="sQty" type="number" value="100" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800"></label>
+          <div class="text-sm flex items-end"><span data-i18n="bonus"></span>: <b class="ml-2" id="sBonus">0</b></div>
+        </div>
+        <p class="mt-2 text-sm"><span data-i18n="total_seeds"></span>: <b id="sTotalSeeds">0</b> | <span data-i18n="amount"></span>: <b id="sAmount">₹ 0</b></p>
+        <a id="sWA" target="_blank" class="mt-3 inline-flex rounded-xl px-4 py-2 bg-emerald-600 text-white" data-i18n="wa_book"></a>
+      </div>
+    </section>
+
+    <!-- Tab: Dealers -->
+    <section id="tab-dealers" class="hidden space-y-4">
+      <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
+        <div class="flex items-center gap-2">
+          <input id="dSearch" class="flex-1 rounded-md border px-3 py-2 text-sm dark:bg-slate-950 dark:border-slate-800" data-i18n-placeholder="dealer_search_ph" />
+          <select id="dCategory" class="rounded-md border px-2 py-2 text-sm dark:bg-slate-950 dark:border-slate-800">
+            <option value="">{All}</option><option>Feeds</option><option>Seeds</option><option>Medicines</option><option>Lab</option><option>Supplies</option>
           </select>
         </div>
-        <div class="flex items-center gap-2 w-full md:w-auto md:ml-auto">
-          <div class="flex items-center rounded-full bg-slate-100 dark:bg-slate-900 px-3 py-2 w-full md:w-80">
-            <input id="q" class="bg-transparent outline-none text-sm w-full" placeholder="Search rates, seeds, vendors…" />
-          </div>
-          <a id="whTop" target="_blank" class="rounded-xl px-4 py-2 bg-emerald-600 text-white text-sm shadow-soft">WhatsApp</a>
+        <div class="mt-3 overflow-x-auto">
+          <table class="min-w-full text-sm" id="dealersTable">
+            <thead>
+              <tr class="border-b dark:border-slate-800 text-slate-500">
+                <th class="text-left py-2 pr-4" data-i18n="th_name"></th>
+                <th class="text-left py-2 pr-4" data-i18n="th_cat"></th>
+                <th class="text-left py-2 pr-4" data-i18n="th_dist"></th>
+                <th class="text-left py-2 pr-4" data-i18n="th_phone"></th>
+                <th class="text-left py-2 pr-4">WhatsApp</th>
+              </tr>
+            </thead><tbody></tbody>
+          </table>
         </div>
       </div>
     </section>
 
-    <!-- Feature Grid -->
-    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <a href="live-rates.html#prices" class="group rounded-3xl p-5 bg-gradient-to-tr from-sky-100 to-white dark:from-slate-800 dark:to-slate-900 shadow-soft border border-slate-100 dark:border-slate-800 hover:-translate-y-0.5 transition">
-        <div class="text-2xl">📈</div>
-        <h3 class="mt-2 text-lg font-semibold" data-i18n="live_rates">Live Rates</h3>
-        <p class="text-slate-500 text-sm" data-i18n="live_rates_sub">Shrimp, feed, diesel & ice</p>
-      </a>
-      <a href="live-rates.html#vendors" class="group rounded-3xl p-5 bg-gradient-to-tr from-emerald-100 to-white dark:from-slate-800 dark:to-slate-900 shadow-soft border border-slate-100 dark:border-slate-800">
-        <div class="text-2xl">🏪</div>
-        <h3 class="mt-2 text-lg font-semibold" data-i18n="vendors">Vendors</h3>
-        <p class="text-slate-500 text-sm" data-i18n="vendors_sub">Feeds · Seeds · Medicines · Labs</p>
-      </a>
-      <a href="live-rates.html#tech" class="group rounded-3xl p-5 bg-gradient-to-tr from-fuchsia-100 to-white dark:from-slate-800 dark:to-slate-900 shadow-soft border border-slate-100 dark:border-slate-800">
-        <div class="text-2xl">🧪</div>
-        <h3 class="mt-2 text-lg font-semibold" data-i18n="tech">Technicians & Labs</h3>
-        <p class="text-slate-500 text-sm" data-i18n="tech_sub">Directory & contact</p>
-      </a>
-      <a href="live-rates.html#knowledge" class="group rounded-3xl p-5 bg-gradient-to-tr from-amber-100 to-white dark:from-slate-800 dark:to-slate-900 shadow-soft border border-slate-100 dark:border-slate-800">
-        <div class="text-2xl">📚</div>
-        <h3 class="mt-2 text-lg font-semibold" data-i18n="kc">Knowledge Center</h3>
-        <p class="text-slate-500 text-sm" data-i18n="kc_sub">Prawn culture A–Z</p>
-      </a>
-      <a href="live-rates.html#news" class="group rounded-3xl p-5 bg-gradient-to-tr from-rose-100 to-white dark:from-slate-800 dark:to-slate-900 shadow-soft border border-slate-100 dark:border-slate-800">
-        <div class="text-2xl">📰</div>
-        <h3 class="mt-2 text-lg font-semibold" data-i18n="news">News & Schemes</h3>
-        <p class="text-slate-500 text-sm" data-i18n="news_sub">Updates & subsidies</p>
-      </a>
-      <a href="live-rates.html#post" class="group rounded-3xl p-5 bg-gradient-to-tr from-cyan-100 to-white dark:from-slate-800 dark:to-slate-900 shadow-soft border border-slate-100 dark:border-slate-800">
-        <div class="text-2xl">📨</div>
-        <h3 class="mt-2 text-lg font-semibold" data-i18n="post">Post a Requirement</h3>
-        <p class="text-slate-500 text-sm" data-i18n="post_sub">Get dealer callbacks</p>
-      </a>
-    </section>
-
-    <!-- Today Snapshot -->
-    <section class="rounded-3xl p-5 bg-gradient-to-tr from-white via-sky-50 to-emerald-50 dark:from-slate-900 dark:via-slate-950 dark:to-slate-800 shadow-soft border border-slate-100 dark:border-slate-800">
-      <div class="flex items-center justify-between flex-wrap gap-3">
-        <h2 class="font-semibold" data-i18n="today_rates">Today Snapshot</h2>
-        <p class="text-xs text-slate-500"><span data-i18n="updated">Updated</span>: <span id="updatedAt">—</span></p>
+    <!-- Tab: Alerts -->
+    <section id="tab-alerts" class="hidden space-y-4">
+      <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
+        <h3 class="font-semibold" data-i18n="alerts_title"></h3>
+        <ul id="alertsList" class="mt-3 grid gap-2"></ul>
       </div>
-      <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div class="rounded-2xl p-4 bg-gradient-to-br from-emerald-50 to-white dark:from-emerald-900/30 dark:to-slate-900 border border-emerald-200/70 dark:border-emerald-900/40">
-          <p class="text-xs text-emerald-700 dark:text-emerald-200" data-i18n="avg">Avg (₹/kg)</p>
-          <h4 id="avg" class="text-xl font-bold">—</h4>
-        </div>
-        <div class="rounded-2xl p-4 bg-gradient-to-br from-sky-50 to-white dark:from-sky-900/30 dark:to-slate-900 border border-sky-200/70 dark:border-sky-900/40">
-          <p class="text-xs text-sky-700 dark:text-sky-200" data-i18n="best">Best</p>
-          <h4 id="best" class="text-xl font-bold">—</h4>
-        </div>
-        <div class="rounded-2xl p-4 bg-gradient-to-br from-rose-50 to-white dark:from-rose-900/30 dark:to-slate-900 border border-rose-200/70 dark:border-rose-900/40">
-          <p class="text-xs text-rose-700 dark:text-rose-200" data-i18n="low">Lowest</p>
-          <h4 id="low" class="text-xl font-bold">—</h4>
-        </div>
-        <div class="rounded-2xl p-4 bg-gradient-to-br from-amber-50 to-white dark:from-amber-900/30 dark:to-slate-900 border border-amber-200/70 dark:border-amber-900/40">
-          <p class="text-xs text-amber-700 dark:text-amber-200" data-i18n="spread">30c–50c Spread</p>
-          <h4 id="spread" class="text-xl font-bold">—</h4>
-        </div>
-      </div>
-      <canvas id="spark" class="mt-4 h-36"></canvas>
-      <a href="live-rates.html#prices" class="mt-4 inline-flex items-center rounded-xl px-4 py-2 bg-emerald-600 text-white shadow-soft">Open full rates →</a>
     </section>
-
-    <footer class="py-6 text-center text-sm text-slate-600">© <span id="year"></span> Aquaculture A–Z Hub • AP‑first</footer>
   </main>
 
   <script>
-    // i18n
-    const dict = { 
-      en:{district:'District', live_rates:'Live Rates', live_rates_sub:'Shrimp, feed, diesel & ice', vendors:'Vendors', vendors_sub:'Feeds · Seeds · Medicines · Labs', tech:'Technicians & Labs', tech_sub:'Directory & contact', kc:'Knowledge Center', kc_sub:'Prawn culture A–Z', news:'News & Schemes', news_sub:'Updates & subsidies', post:'Post a Requirement', post_sub:'Get dealer callbacks', today_rates:'Today Snapshot', updated:'Updated', avg:'Avg (₹/kg)', best:'Best', low:'Lowest', spread:'30c–50c Spread'}, 
-      te:{district:'జిల్లా', live_rates:'లైవ్ రేట్స్', live_rates_sub:'చేపలు, ఫీడ్, డీజల్ & ఐస్', vendors:'వెండర్ల జాబితా', vendors_sub:'ఫీడ్స్ · సీడ్స్ · మెడిసిన్స్ · ల్యాబ్స్', tech:'టెక్నీషియన్స్ & ల్యాబ్స్', tech_sub:'డైరెక్టరీ & కాంటాక్ట్', kc:'నాలెడ్జ్ సెంటర్', kc_sub:'ప్రాన్స్ కల్చర్ A–Z', news:'న్యూస్ & స్కీమ్స్', news_sub:'అప్డేట్స్ & సబ్సిడీస్', post:'రక్వైర్మెంట్ పోస్ట్', post_sub:'డీలర్ల కాల్‌బ్యాక్‌లు', today_rates:'ఈరోజు స్నాప్‌షాట్', updated:'అప్‌డేట్', avg:'సగటు (₹/kg)', best:'అత్యధిక', low:'కనిష్ట', spread:'30c–50c వ్యత్యాసం'} 
+    // ---------- i18n ----------
+    const dict = {
+      en: {
+        app_title:"Aquaculture A–Z",
+        subtitle:"Andhra Pradesh",
+        t_rates:"Rates", t_harvest:"Harvest", t_seeds:"Seeds", t_dealers:"Dealers", t_alerts:"Alerts",
+        avg:"Avg (₹/kg)", best:"Best", low:"Lowest", spread:"30c–50c Spread",
+        snapshot:"Live Snapshot", updated:"Updated", th_count:"Count", th_price:"Price (₹/kg)", th_change:"Change",
+        chart_title:"₹/kg by Count",
+        ice_title:"Ice Booking", ice_tons:"Tons", ice_rate:"Price/ton (₹)",
+        total:"Total", wa_book:"Book on WhatsApp",
+        van_title:"Van Booking", van_type:"Van", van_rate:"₹/km", van_km:"Distance (km)", transport:"Transport",
+        seed_title:"Seed Booking", state:"State", district:"District", hatchery:"Hatchery", price_per:"Price/1000 (₹)",
+        production:"Production", booking_date:"Booking Date", qty_k:"Quantity (×1000 PL)", bonus:"Bonus",
+        total_seeds:"Total Seeds", amount:"Amount",
+        dealer_search_ph:"Search dealer/hatchery/lab…",
+        th_name:"Name", th_cat:"Category", th_dist:"District", th_phone:"Phone",
+        alerts_title:"Water & Disease Alerts"
+      },
+      te: {
+        app_title:"Aquaculture A–Z",
+        subtitle:"ఆంధ్ర ప్రదేశ్",
+        t_rates:"రేట్స్", t_harvest:"హార్వెస్ట్", t_seeds:"సీడ్స్", t_dealers:"వెండర్లు", t_alerts:"అలర్ట్స్",
+        avg:"సగటు (₹/kg)", best:"అత్యధిక", low:"కనిష్ట", spread:"30c–50c వ్యత్యాసం",
+        snapshot:"లైవ్ స్నాప్‌షాట్", updated:"అప్‌డేట్", th_count:"కౌంట్", th_price:"ధర (₹/kg)", th_change:"మార్పు",
+        chart_title:"కౌంట్ ప్రకారం ₹/kg",
+        ice_title:"ఐస్ బుకింగ్", ice_tons:"టన్నులు", ice_rate:"ధర/టన్ (₹)",
+        total:"మొత్తం", wa_book:"వాట్సాప్‌లో బుక్ చేయి",
+        van_title:"వాన్ బుకింగ్", van_type:"వాన్", van_rate:"₹/కిమీ", van_km:"దూరం (కిమీ)", transport:"ట్రాన్స్‌పోర్ట్",
+        seed_title:"సీడ్స్ బుకింగ్", state:"రాష్ట్రం", district:"జిల్లా", hatchery:"హ్యాచరీ", price_per:"ధర/1000 (₹)",
+        production:"ప్రొడక్షన్", booking_date:"బుకింగ్ తేదీ", qty_k:"పరిమాణం (×1000 PL)", bonus:"బోనస్",
+        total_seeds:"మొత్తం సీడ్స్", amount:"అమౌంట్",
+        dealer_search_ph:"డీలర్ / హ్యాచరీ / ల్యాబ్ సెర్చ్…",
+        th_name:"పేరు", th_cat:"కేటగిరీ", th_dist:"జిల్లా", th_phone:"ఫోన్",
+        alerts_title:"నీటి & వ్యాధి అలర్ట్స్"
+      }
     };
-    let lang='en';
-    function applyI18n(){
-      document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');el.textContent=dict[lang][k]||el.textContent});
-      document.getElementById('q').placeholder=lang==='en'? 'Search rates, seeds, vendors…' : 'రేట్స్, సీడ్స్, వెండర్ల కోసం సెర్చ్…';
-      document.getElementById('subtitle').textContent=lang==='en'? 'Andhra Pradesh':'ఆంధ్ర ప్రదేశ్';
-    }
-    document.getElementById('langEN').addEventListener('click',()=>{lang='en';applyI18n();});
-    document.getElementById('langTE').addEventListener('click',()=>{lang='te';applyI18n();});
+    const WA_NUMBER = '919999999999'; // TODO: replace with your number
 
-    // Theme toggle
-    const themeToggle=document.getElementById('themeToggle');
-    const saved=localStorage.getItem('theme');
-    if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
-    themeToggle.addEventListener('click',()=>{document.documentElement.classList.toggle('dark');localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');});
-
-    // WhatsApp CTA
-    function initWA(){
-      const num='919999999999'; // TODO replace
-      const text='Hi, need help with rates/harvesting/seeds.';
-      const link=`https://wa.me/${num}?text=${encodeURIComponent(text)}`;
-      document.getElementById('whTop').href=link;
+    function setTextByI18n() {
+      const lang = localStorage.getItem('lang') || 'te';
+      document.documentElement.lang = lang;
+      document.getElementById('subtitle').textContent = dict[lang].subtitle;
+      document.querySelectorAll('[data-i18n]').forEach(el=>{
+        const key = el.getAttribute('data-i18n');
+        el.textContent = dict[lang][key] ?? '';
+      });
+      // placeholders
+      const phInput = document.querySelector('[data-i18n-placeholder="dealer_search_ph"]');
+      if (phInput) phInput.placeholder = dict[lang].dealer_search_ph;
     }
 
-    // Background theme presets
-    const themes={
-      mint:{bg1:'#f0f9ff',bg2:'#ecfdf5',bg3:'#fefce8'},
-      ocean:{bg1:'#e0f2fe',bg2:'#e0f7fa',bg3:'#e0f2fe'},
-      sunrise:{bg1:'#fff7ed',bg2:'#fffbeb',bg3:'#ecfeff'}
+    // ---------- Theme ----------
+    const themeToggle = document.getElementById('themeToggle');
+    const savedTheme = localStorage.getItem('theme');
+    if(savedTheme==='dark'||(!savedTheme&&matchMedia('(prefers-color-scheme: dark)').matches)){
+      document.documentElement.classList.add('dark');
+    }
+    themeToggle.addEventListener('click',()=>{
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark')?'dark':'light');
+    });
+
+    // ---------- Tabs ----------
+    document.querySelectorAll('.tab-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        document.querySelectorAll('.tab-btn').forEach(b=>b.setAttribute('aria-selected','false'));
+        btn.setAttribute('aria-selected','true');
+        const tab=btn.dataset.tab;
+        document.querySelectorAll('main section[id^="tab-"]').forEach(s=>s.classList.add('hidden'));
+        document.getElementById(`tab-${tab}`).classList.remove('hidden');
+      });
+    });
+
+    // ---------- WhatsApp ----------
+    function waLink(text){ return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`; }
+
+    // ---------- Rates (CSV + KPIs + table) ----------
+    const demoSeries = {
+      days:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      series:{'30':[620,610,600,605,615,620,625],'50':[430,428,425,422,420,421,423],'60':[360,362,365,363,362,361,360],'100':[280,282,281,279,278,279,280]}
     };
-    function applyBg(name){
-      const t=themes[name]||themes.mint;
-      document.documentElement.style.setProperty('--bg1',t.bg1);
-      document.documentElement.style.setProperty('--bg2',t.bg2);
-      document.documentElement.style.setProperty('--bg3',t.bg3);
-      localStorage.setItem('bgTheme',name);
-    }
-    document.querySelectorAll('[data-bg]').forEach(btn=>btn.addEventListener('click',()=>applyBg(btn.dataset.bg)));
-
-    // CSV → KPIs + sparkline
     async function loadRates(){
       try{
-        const res=await fetch('rates.csv',{cache:'no-store'});
-        const csv=await res.text();
-        const rows=csv.trim().split(/
-?
-/).map(r=>r.split(','));
-        const h=rows[0].map(x=>x.trim().toLowerCase());
-        const iC=h.indexOf('count'), iP=h.indexOf('price');
-        const data=rows.slice(1).map(r=>({count:parseInt(r[iC]),price:parseFloat(r[iP])})).filter(x=>!isNaN(x.price));
+        const res = await fetch('rates.csv',{cache:'no-store'});
+        const csv = await res.text();
+        const rows = csv.trim().split(/\r?\n/).map(r=>r.split(','));
+        const h = rows[0].map(x=>x.trim().toLowerCase());
+        const iC=h.indexOf('count'), iP=h.indexOf('price'), iCh=h.indexOf('change');
+        const data = rows.slice(1).map(r=>({count:parseInt(r[iC]),price:parseFloat(r[iP]),change:iCh>-1?parseFloat(r[iCh]||0):null})).filter(x=>!isNaN(x.price));
         if(!data.length) return;
-        const avg=data.reduce((s,x)=>s+x.price,0)/data.length;
-        const best=Math.max(...data.map(x=>x.price));
-        const low=Math.min(...data.map(x=>x.price));
-        const c30=data.find(x=>x.count===30);
-        const c50=data.find(x=>x.count===50);
+        const avg = data.reduce((s,x)=>s+x.price,0)/data.length;
+        const best = Math.max(...data.map(x=>x.price));
+        const low  = Math.min(...data.map(x=>x.price));
+        const c30=data.find(x=>x.count===30), c50=data.find(x=>x.count===50);
         const spread=(c30&&c50)?(c30.price-c50.price):null;
-        document.getElementById('avg').textContent=`₹ ${avg.toFixed(0)}`;
-        document.getElementById('best').textContent=`₹ ${best.toFixed(0)}`;
-        document.getElementById('low').textContent=`₹ ${low.toFixed(0)}`;
-        document.getElementById('spread').textContent=spread==null?'—':`${spread>0?'▲':'▼'} ₹ ${Math.abs(spread).toFixed(0)}`;
-        document.getElementById('updatedAt').textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
-        const ordered=data.sort((a,b)=>b.count-a.count);
-        new Chart(document.getElementById('spark'),{
-          type:'line',
-          data:{labels:ordered.map(x=>x.count+'c'),datasets:[{label:'₹/kg',data:ordered.map(x=>x.price),tension:.35,fill:false}]},
-          options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}}}
+        rAvg.textContent = `₹ ${avg.toFixed(0)}`;
+        rBest.textContent = `₹ ${best.toFixed(0)}`;
+        rLow.textContent  = `₹ ${low.toFixed(0)}`;
+        rSpread.textContent = spread==null ? '—' : `${spread>0?'▲':'▼'} ₹ ${Math.abs(spread).toFixed(0)}`;
+        updatedAt.textContent = new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
+        const tbody = document.querySelector('#ratesTable tbody');
+        tbody.innerHTML='';
+        data.slice().sort((a,b)=>b.count-a.count).slice(0,10).forEach(r=>{
+          const tr=document.createElement('tr'); tr.className='border-b last:border-0 dark:border-slate-800';
+          const ch = r.change==null?'—':(r.change>0?`<span class="text-emerald-600">▲ ${r.change.toFixed(0)}</span>`:(r.change<0?`<span class="text-rose-600">▼ ${Math.abs(r.change).toFixed(0)}</span>`:'—'));
+          tr.innerHTML = `<td class='py-2 pr-4 font-medium'>${r.count}c</td><td class='py-2 pr-4'>₹ ${r.price.toFixed(0)}</td><td class='py-2 pr-4'>${ch}</td>`;
+          tbody.appendChild(tr);
         });
-      }catch(e){console.error('rates.csv failed', e)}
+      }catch(e){ console.warn('rates.csv not found, KPIs only from demo chart'); }
     }
 
-    // Init
-    document.getElementById('year').textContent = new Date().getFullYear();
-    applyI18n();
-    initWA();
-    applyBg(localStorage.getItem('bgTheme')||'mint');
-    loadRates();
+    // Chart
+    let rateChart;
+    function renderRateChart(size='50'){
+      const ctx=document.getElementById('rateChart');
+      if(rateChart) rateChart.destroy();
+      rateChart = new Chart(ctx,{
+        type:'line',
+        data:{labels:demoSeries.days,datasets:[{label:`${size}ct`,data:demoSeries.series[size]||[],tension:.35,fill:false}]},
+        options:{responsive:true,maintainAspectRatio:false}
+      });
+    }
+    document.getElementById('rateSize').addEventListener('change',e=>renderRateChart(e.target.value));
+
+    // ---------- Harvest ----------
+    function bindHarvest(){
+      function updIce(){
+        const t=+iceTons.value||0, p=+iceRate.value||0; const tot=t*p;
+        iceTotal.textContent=`₹ ${tot.toFixed(0)}`;
+        iceWA.href = waLink(`Ice Booking: ${t} tons @ ₹${p}/ton = ₹${tot}`);
+      }
+      function updVan(){
+        const type=vanType.value, rate=+vanRate.value||0, km=+vanKm.value||0; const tot=rate*km;
+        vanTotal.textContent=`₹ ${tot.toFixed(0)}`;
+        vanWA.href = waLink(`Van Booking: ${type}T, ${km}km @ ₹${rate}/km = ₹${tot}`);
+      }
+      iceTons.oninput=iceRate.oninput=updIce; updIce();
+      vanType.onchange=vanRate.oninput=vanKm.oninput=updVan; updVan();
+    }
+
+    // ---------- Seeds ----------
+    let seeds=[];
+    async function loadSeeds(){
+      try{
+        const res=await fetch('seeds.csv',{cache:'no-store'});
+        const csv=await res.text();
+        const rows=csv.trim().split(/\r?\n/).map(r=>r.split(','));
+        const h=rows[0].map(x=>x.trim().toLowerCase());
+        const iS=h.indexOf('state'), iD=h.indexOf('district'), iH=h.indexOf('hatchery'), iP=h.indexOf('price');
+        seeds=rows.slice(1).map(r=>({state:r[iS],district:r[iD],hatchery:r[iH],price:parseFloat(r[iP])})).filter(x=>x.hatchery);
+      }catch(e){
+        seeds=[{state:'Andhra Pradesh',district:'Nellore',hatchery:'Blue Aqua',price:350},{state:'Andhra Pradesh',district:'Krishna',hatchery:'Delta Hatchery',price:370},{state:'Tamil Nadu',district:'',hatchery:'Chennai Aqua',price:360}];
+      }
+      initSeedUI();
+    }
+    function initSeedUI(){
+      const sState=document.getElementById('sState'), sDistrict=document.getElementById('sDistrict'), sHatch=document.getElementById('sHatchery'),
+            sPrice=document.getElementById('sPrice'), sQty=document.getElementById('sQty'),
+            sBonus=document.getElementById('sBonus'), sTotal=document.getElementById('sTotalSeeds'), sAmt=document.getElementById('sAmount');
+      function fillDistrict(){
+        const st=sState.value;
+        const ds=[...new Set(seeds.filter(x=>x.state===st && x.district).map(x=>x.district))];
+        sDistrict.innerHTML = ds.map(d=>`<option>${d}</option>`).join('');
+        sDistrict.parentElement.style.display = st==='Tamil Nadu'?'none':'';
+        fillHatch();
+      }
+      function fillHatch(){
+        const st=sState.value, d=sDistrict.value||'';
+        const list=seeds.filter(x=>x.state===st && (st==='Tamil Nadu' || x.district===d));
+        sHatch.innerHTML = list.map(x=>`<option data-price='${x.price}'>${x.hatchery}</option>`).join('');
+        updPrice();
+      }
+      function updPrice(){ const opt=sHatch.selectedOptions[0]; sPrice.value = opt? opt.dataset.price : ''; calc(); wa(); }
+      function calc(){
+        const price=+sPrice.value||0, qty=+sQty.value||0;
+        const bonus = (qty===100)?30000:0;
+        const totalSeeds = qty*1000 + bonus;
+        const amount = qty*price;
+        sBonus.textContent = bonus.toLocaleString('en-IN');
+        sTotal.textContent = totalSeeds.toLocaleString('en-IN');
+        sAmt.textContent   = `₹ ${amount.toLocaleString('en-IN')}`;
+      }
+      function wa(){
+        const msg = `Seeds Booking: ${sState.value} ${sDistrict.value||''} | ${sHatch.value} @ ₹${sPrice.value}/1000 | Qty ${sQty.value}k | Bonus ${sBonus.textContent} | Total ${sTotal.textContent} | Amount ${sAmt.textContent}`;
+        document.getElementById('sWA').href = waLink(msg);
+      }
+      sState.onchange=fillDistrict; sDistrict.onchange=fillHatch; sHatch.onchange=()=>{updPrice();}; sQty.oninput=()=>{calc(); wa();};
+      fillDistrict(); calc(); wa();
+    }
+
+    // ---------- Dealers ----------
+    async function loadDealers(){
+      const demo=[{name:'Sri Venkateswara Feeds',cat:'Feeds',district:'Nellore',phone:'+91 98765 43210',wa:'+919876543210'},{name:'Blue Aqua Hatchery',cat:'Seeds',district:'Nellore',phone:'+91 91234 56780',wa:'+919123456780'},{name:'Godavari Aqua Care',cat:'Medicines',district:'East Godavari',phone:'+91 90000 11122',wa:'+919000011122'},{name:'Krishna Aqua Mart',cat:'Supplies',district:'Krishna',phone:'+91 90123 45678',wa:'+919012345678'}];
+      try{
+        const res=await fetch('dealers.csv',{cache:'no-store'});
+        if(res.ok){
+          const csv=await res.text();
+          const rows=csv.trim().split(/\r?\n/).map(r=>r.split(','));
+          const h=rows[0].map(x=>x.trim().toLowerCase());
+          const iN=h.indexOf('name'), iC=h.indexOf('category'), iD=h.indexOf('district'), iP=h.indexOf('phone'), iW=h.indexOf('whatsapp');
+          const data=rows.slice(1).map(r=>({name:r[iN],cat:r[iC],district:r[iD],phone:r[iP],wa:r[iW]}));
+          renderDealers(data);
+        } else renderDealers(demo);
+      }catch(e){ renderDealers(demo); }
+    }
+    function renderDealers(rows){
+      const q=document.getElementById('dSearch'), cat=document.getElementById('dCategory'), tbody=document.querySelector('#dealersTable tbody');
+      function draw(){
+        const term=(q.value||'').toLowerCase();
+        const filtered=rows.filter(r=>(!cat.value||r.cat===cat.value)&& (r.name.toLowerCase().includes(term)||r.district.toLowerCase().includes(term)||r.cat.toLowerCase().includes(term)));
+        tbody.innerHTML='';
+        filtered.forEach(d=>{
+          const tr=document.createElement('tr'); tr.className='border-b last:border-0 dark:border-slate-800';
+          tr.innerHTML=`<td class='py-2 pr-4'>${d.name}</td><td class='py-2 pr-4'>${d.cat}</td><td class='py-2 pr-4'>${d.district}</td><td class='py-2 pr-4'><a class='underline' href='tel:${d.phone}'>${d.phone}</a></td><td class='py-2 pr-4'><a class='px-2 py-1 rounded-md bg-emerald-600 text-white' target='_blank' href='https://wa.me/${d.wa}?text=${encodeURIComponent('Hi, I need aqua supplies.')}'>Chat</a></td>`;
+          tbody.appendChild(tr);
+        });
+      }
+      q.oninput=cat.onchange=draw; draw();
+    }
+
+    // ---------- Alerts ----------
+    async function loadAlerts(){
+      const list=document.getElementById('alertsList');
+      const demo=[{type:'DO Low', msg:'Night DO risk for ponds < 1.2m depth. Add extra aeration 8pm–3am.'},{type:'Vibriosis', msg:'Early signs in Krishna dt. Probiotic schedule recommended.'}];
+      function render(arr){ list.innerHTML=''; arr.forEach(a=>{ const li=document.createElement('li'); li.className='rounded-xl p-3 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'; li.innerHTML=`<b>${a.type}</b> – <span class='text-sm text-slate-600 dark:text-slate-300'>${a.msg}</span>`; list.appendChild(li); }); }
+      try{ const res=await fetch('alerts.json',{cache:'no-store'}); if(res.ok){ render(await res.json()); } else render(demo); }
+      catch(e){ render(demo); }
+    }
+
+    // ---------- Language buttons ----------
+    document.getElementById('langEN').addEventListener('click',()=>{localStorage.setItem('lang','en'); setTextByI18n();});
+    document.getElementById('langTE').addEventListener('click',()=>{localStorage.setItem('lang','te'); setTextByI18n();});
+
+    // ---------- INIT ----------
+    function init(){
+      if(!localStorage.getItem('lang')) localStorage.setItem('lang','te'); // default Telugu
+      setTextByI18n();
+      loadRates(); renderRateChart('50'); bindHarvest(); loadSeeds(); loadDealers(); loadAlerts();
+    }
+    init();
   </script>
 </body>
 </html>
