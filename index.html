@@ -120,8 +120,21 @@
     themeToggle.onclick=()=>{document.documentElement.classList.toggle('dark');localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');};
 
     // Rates
-    function loadRates(){const counts=[150,140,130,120,110,100,90,80,70,60,50];
-      const priceByCount=c=>{if(c>=110)return 240-((c-100)/10)*10;if(c===100)return 240;if(c===90)return 250;if(c===80)return 270;if(c===70)return 290;if(c===60)return 310;if(c===50)return 330;return 240;};
+    function loadRates(){
+  // Show counts from 100c down to 30c
+  const counts=[100,90,80,70,60,50,40,30];
+  const priceByCount=c=>{
+    if(c===100) return 240;
+    if(c===90)  return 250;
+    if(c===80)  return 260;
+    if(c===70)  return 280;
+    if(c===60)  return 310;
+    if(c===50)  return 330;
+    if(c===40)  return 350;
+    if(c===30)  return 370;
+    return 240;
+  };
+
       const tbody=document.querySelector('#ratesTable tbody');tbody.innerHTML='';
       counts.forEach(c=>{const tr=document.createElement('tr');tr.className='border-b last:border-0 dark:border-slate-800';
         tr.innerHTML=`<td class="py-2 pr-4 font-medium">${c}c</td><td class="py-2 pr-4">₹ ${priceByCount(c)}</td><td class="py-2 pr-4">—</td>`;tbody.appendChild(tr);});
