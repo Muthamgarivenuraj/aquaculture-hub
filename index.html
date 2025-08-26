@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aquaculture A–Z • V8.2 (Counts fix + bilingual news)</title>
+  <title>Aquaculture A–Z • V8.3 (Blink + bilingual news)</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config={darkMode:'class',theme:{extend:{boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'}}}}</script>
@@ -15,16 +15,10 @@
     /* Flash news ticker */
     .ticker{mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent)}
     .ticker-track{display:flex;gap:24px;white-space:nowrap;animation:ticker 18s linear infinite}
-@keyframes ticker{from{transform:translateX(0)} to{transform:translateX(-50%)}}
-
-/* add this after ticker */
-@keyframes blink {
-  0%, 50%, 100% { opacity: 1; }
-  25%, 75% { opacity: 0; }
-}
-.blink {
-  animation: blink 1.2s infinite;
-}
+    @keyframes ticker{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+    /* Blink effect */
+    @keyframes blink{0%,50%,100%{opacity:1}25%,75%{opacity:0}}
+    .blink{animation:blink 1.2s infinite}
   </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100">
@@ -277,7 +271,7 @@
         total_seeds:"Total Seeds",amount:"Amount",dealer_search_ph:"Search dealer/hatchery/lab…",
         th_name:"Name",th_cat:"Category",th_dist:"District",th_phone:"Phone",alerts_title:"Water & Disease Alerts"},
       te:{app_title:"Aquaculture A–Z",subtitle:"ఆంధ్ర ప్రదేశ్",
-        t_rates:"రేట్స్",t_harvest:"హార్వెస్ట్",t_seeds:"సీడ్స్",t_dealers:"వెండర్లు",t_alert్స్:"అలర్ట్స్",
+        t_rates:"రేట్స్",t_harvest:"హార్వెస్ట్",t_seeds:"సీడ్స్",t_dealers:"వెండర్లు",t_alerts:"అలర్ట్స్",
         snapshot:"లైవ్ స్నాప్‌షాట్",updated:"అప్‌డేట్",th_count:"కౌంట్",th_price:"ధర (₹/kg)",th_change:"మార్పు",
         flash_news:"ఫ్లాష్ న్యూస్",harvest_form:"హార్వెస్ట్ బుకింగ్",ice_unit:"ఐస్ యూనిట్",ice_total:"ఐస్ మొత్తం",
         van_type:"వాన్",van_rate:"₹/కిమీ",van_km:"దూరం (కిమీ)",transport:"ట్రాన్స్‌పోర్ట్",
@@ -305,13 +299,11 @@
     // Tabs
     document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab-btn').forEach(b=>b.setAttribute('aria-selected','false'));btn.setAttribute('aria-selected','true');const tab=btn.dataset.tab;document.querySelectorAll('main section[id^="tab-"]').forEach(s=>s.classList.add('hidden'));document.getElementById(`tab-${tab}`).classList.remove('hidden');}));
 
-    // ---------- Rates: fixed scale (your rule) ----------
+    // ---------- Rates: fixed scale ----------
     function loadRates(){
-      // Counts 150 → 50; prices by your scale:
-      // 110..150: -₹10 per +10c; 100 base ₹240; 90→+10; 80→+30; 70→+50; 60→+70; 50→+90
       const counts=[150,140,130,120,110,100,90,80,70,60,50];
       const priceByCount=c=>{
-        if(c>=110) return 240 - ((c-100)/10)*10;   // 110..150
+        if(c>=110) return 240 - ((c-100)/10)*10; // 110..150
         if(c===100) return 240;
         if(c===90)  return 250;
         if(c===80)  return 270;
@@ -321,7 +313,6 @@
         return 240;
       };
       const data=counts.map(c=>({count:c,price:priceByCount(c),change:null}));
-
       updatedAt.textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
       const tbody=document.querySelector('#ratesTable tbody'); tbody.innerHTML='';
       data.forEach(r=>{
@@ -333,7 +324,7 @@
       });
     }
 
-    // ---------- Flash News (bilingual) ----------
+    // ---------- Flash News (bilingual + blink) ----------
     const NEWS_FALLBACK={
       en:[{tag:'Rates',text:'50c trend steady across coastal AP'},{tag:'Seed',text:'Batch 1 PL bookings open this week'},{tag:'Harvest',text:'Night DO risk, add aeration 8pm–3am'},{tag:'Market',text:'Ice ₹1200/ton in Nellore'}],
       te:[{tag:'రేట్స్',text:'50 కౌంట్ ధర తీర ప్రాంతాల్లో స్థిరంగా ఉంది'},{tag:'సీడ్స్',text:'బ్యాచ్ 1 PL బుకింగ్స్ ఈ వారం ఓపెన్'},{tag:'హార్వెస్ట్',text:'రాత్రివేళ DO రిస్క్ — 8pm–3am ఎయరేషన్ పెంచండి'},{tag:'మార్కెట్',text:'నెల్లూరులో ఐస్ ₹1200/టన్'}]
@@ -342,20 +333,23 @@
       const track=document.getElementById('newsTrackTop'); if(!track) return;
       const lang=localStorage.getItem('lang')||'te';
       let items=NEWS_FALLBACK[lang];
-
-      // (optional) bilingual news.json support
+      // optional bilingual news.json
       try{
         const res=await fetch('news.json',{cache:'no-store'});
         if(res.ok){
           const json=await res.json();
           if(Array.isArray(json)){
-            items=json.map(it=>({tag:lang==='te'?(it.tag_te||it.tag||''): (it.tag_en||it.tag||''),text:lang==='te'?(it.text_te||it.text||''):(it.text_en||it.text||'')})).filter(x=>x.text);
-          }else if(json.en&&json.te){items=json[lang];}
+            items=json.map(it=>({tag:lang==='te'?(it.tag_te||it.tag||''):(it.tag_en||it.tag||''),text:lang==='te'?(it.text_te||it.text||''):(it.text_en||it.text||'')})).filter(x=>x.text);
+          } else if(json.en&&json.te){ items=json[lang]; }
         }
       }catch(e){}
-
-      const chip=n=>`<span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200 text-[11px]">${n}</span>`;
-      const row=items.map(n=>`<div class="flex items-center gap-2 pr-4">${chip(n.tag)}<span>${n.text}</span></div>`).join('');
+      // blink only for specific tags (add more if needed)
+      const shouldBlink = (tag)=> String(tag).includes('Rates') || String(tag).includes('రేట్స్');
+      const chip = (t,b=false)=>`<span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200 text-[11px] ${b?'blink':''}">${t}</span>`;
+      const row = items.map(n=>{
+        const blinkTag = shouldBlink(n.tag);
+        return `<div class="flex items-center gap-2 pr-4">${chip(n.tag,blinkTag)}<span>${n.text}</span></div>`;
+      }).join('');
       track.innerHTML=row+row;
       newsUpdatedTop.textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
     }
