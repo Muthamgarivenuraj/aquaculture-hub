@@ -4,8 +4,23 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Harvest • Aquaculture A–Z</title>
+
+  <!-- 🌙 Early theme boot (very important) -->
+  <script>
+    (function(){
+      try{
+        const t = localStorage.getItem('theme');
+        if (t==='dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      }catch(e){}
+    })();
+  </script>
+
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config={darkMode:'class',theme:{extend:{boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'}}}}</script>
+  <script>
+    tailwind.config = { darkMode:'class', theme:{ extend:{ boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'} } } }
+  </script>
   <style>
     html{scroll-behavior:smooth}
     body{background:linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#f0fdf4 100%)}
@@ -67,5 +82,27 @@
 
   <script>
     const dict={en:{harvest_form:"Harvest Booking",ice_unit:"Ice unit",ice_total:"Ice total",van_type:"Van",van_rate:"₹/km",van_km:"Distance (km)",transport:"Transport",grand_total:"Grand Total",final_book:"Finalize Booking"},
-               te:{harvest_form:"హార్వెస్ట్ బుకింగ్",ice_unit:"ఐస్ యూనిట్",ice_total:"ఐస్ మొత్తం",van_type:"వాన్",van_rate:"₹/కిమీ",van_km:"దూరం (కిమీ)",transport:"ట్రాన్స్‌పోర్ట్",grand_total:"గ్రాండ్ టోటల్",final_book:"ఫైనల్ బుక్"}};
-    function setLang(){const l=localStorage.getItem('lang')||'te';document.doc
+               te:{harvest_form:"హార్వెస్ట్ బుకింగ్",ice_unit:"ఐస్ యూనిట్",ice_total:"ఐస్ మొత్తం",వాన్:"వాన్",van_type:"వాన్",van_rate:"₹/కిమీ",van_km:"దూరం (కిమీ)",transport:"ట్రాన్స్‌పోర్ట్",grand_total:"గ్రాండ్ టోటల్",final_book:"ఫైనల్ బుక్"}};
+    function setLang(){const l=localStorage.getItem('lang')||'te';document.documentElement.lang=l;document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=dict[l][el.dataset.i18n]||el.textContent);}
+
+    // 🌙 Toggle
+    const themeToggle=document.getElementById('themeToggle');
+    themeToggle.onclick=()=>{document.documentElement.classList.toggle('dark');localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');};
+
+    // Lang buttons
+    langEN.onclick=()=>{localStorage.setItem('lang','en');setLang();applyUnit();};
+    langTE.onclick=()=>{localStorage.setItem('lang','te');setLang();applyUnit();};
+
+    // Logic
+    const unit=hIceUnit,qty=hIceQty,rate=hIceRate,qtyLbl=hIceQtyLbl,rateLbl=hIceRateLbl,iceT=hIceTotal;
+    const vtype=hVanType,vr=hVanRate,km=hVanKm,vanT=hVanTotal,grand=hGrand;
+    function applyUnit(){const l=localStorage.getItem('lang')||'te'; if(unit.value==='can'){qtyLbl.textContent=l==='te'?'పరిమాణం (పీసులు)':'Quantity (pcs)'; rateLbl.textContent=l==='te'?'ధర/క్యాన్ (₹)':'Price/can (₹)'; if(+rate.value===1200||!rate.value) rate.value=120;} else {qtyLbl.textContent='Ice (tons)'; rateLbl.textContent='Price/ton (₹)'; if(+rate.value===120||!rate.value) rate.value=1200;} calc();}
+    function calc(){const ice=(+qty.value||0)*(+rate.value||0); const van=(+vr.value||0)*(+km.value||0); iceT.textContent=`₹ ${ice.toFixed(0)}`; vanT.textContent=`₹ ${van.toFixed(0)}`; grand.textContent=`₹ ${(ice+van).toFixed(0)}`;}
+    [qty,rate,vr,km,vtype].forEach(el=>el.addEventListener('input',calc)); unit.addEventListener('change',applyUnit);
+
+    // INIT
+    setLang();
+    applyUnit();
+  </script>
+</body>
+</html>
