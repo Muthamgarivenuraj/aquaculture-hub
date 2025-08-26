@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aquaculture A–Z • V8.3 (Blink + bilingual news)</title>
+  <title>Aquaculture A–Z • V8.4 (Harvest-only blink, mobile-safe)</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config={darkMode:'class',theme:{extend:{boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'}}}}</script>
@@ -16,24 +16,12 @@
     .ticker{mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent)}
     .ticker-track{display:flex;gap:24px;white-space:nowrap;animation:ticker 18s linear infinite}
     @keyframes ticker{from{transform:translateX(0)} to{transform:translateX(-50%)}}
-    /* Blink effect */
- @keyframes blink {
-  0%, 100% {
-    opacity: 1;
-    background-color: #facc15; /* amber-400 */
-    color: #000;
-  }
-  50% {
-    opacity: 1;
-    background-color: #dc2626; /* red-600 */
-    color: #fff;
-  }
-}
-.blink {
-  animation: blink 1.2s infinite;
-}
-
-
+    /* Harvest-only Blink (amber -> red) */
+    @keyframes blink{
+      0%,100%{opacity:1;background-color:#facc15;color:#111827} /* amber-400, slate-900 text */
+      50%{opacity:1;background-color:#dc2626;color:#fff}      /* red-600 */
+    }
+    .blink{animation:blink 1.2s infinite}
   </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100">
@@ -194,7 +182,7 @@
 
     <!-- Seeds -->
     <section id="tab-seeds" class="hidden space-y-4">
-<div class="rounded-2xl p-4 shadow-soft border border-amber-300 dark:border-amber-800" style="background-color:#fef3c7;">
+      <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
         <h3 class="font-semibold">🦐 <span data-i18n="seed_title"></span></h3>
 
         <div class="mt-3 grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -286,7 +274,7 @@
         total_seeds:"Total Seeds",amount:"Amount",dealer_search_ph:"Search dealer/hatchery/lab…",
         th_name:"Name",th_cat:"Category",th_dist:"District",th_phone:"Phone",alerts_title:"Water & Disease Alerts"},
       te:{app_title:"Aquaculture A–Z",subtitle:"ఆంధ్ర ప్రదేశ్",
-        t_rates:"రేట్స్",t_harvest:"హార్వెస్ట్",t_seeds:"సీడ్స్",t_dealers:"వెండర్లు",t_alerts:"అలర్ట్స్",
+        t_rates:"రేట్స్",t_harvest:"హార్వెస్ట్",t_seeds:"సీడ్స్",t_dealers:"వెండర్లు",t_alert్స్:"అలర్ట్స్",
         snapshot:"లైవ్ స్నాప్‌షాట్",updated:"అప్‌డేట్",th_count:"కౌంట్",th_price:"ధర (₹/kg)",th_change:"మార్పు",
         flash_news:"ఫ్లాష్ న్యూస్",harvest_form:"హార్వెస్ట్ బుకింగ్",ice_unit:"ఐస్ యూనిట్",ice_total:"ఐస్ మొత్తం",
         van_type:"వాన్",van_rate:"₹/కిమీ",van_km:"దూరం (కిమీ)",transport:"ట్రాన్స్‌పోర్ట్",
@@ -339,15 +327,26 @@
       });
     }
 
-    // ---------- Flash News (bilingual + blink) ----------
+    // ---------- Flash News (bilingual + Harvest-only blink) ----------
     const NEWS_FALLBACK={
-      en:[{tag:'Rates',text:'50c trend steady across coastal AP'},{tag:'Seed',text:'Batch 1 PL bookings open this week'},{tag:'Harvest',text:'Night DO risk, add aeration 8pm–3am'},{tag:'Market',text:'Ice ₹1200/ton in Nellore'}],
-      te:[{tag:'రేట్స్',text:'50 కౌంట్ ధర తీర ప్రాంతాల్లో స్థిరంగా ఉంది'},{tag:'సీడ్స్',text:'బ్యాచ్ 1 PL బుకింగ్స్ ఈ వారం ఓపెన్'},{tag:'హార్వెస్ట్',text:'రాత్రివేళ DO రిస్క్ — 8pm–3am ఎయరేషన్ పెంచండి'},{tag:'మార్కెట్',text:'నెల్లూరులో ఐస్ ₹1200/టన్'}]
+      en:[
+        {tag:'Rates',text:'50c trend steady across coastal AP'},
+        {tag:'Seed',text:'Batch 1 PL bookings open this week'},
+        {tag:'Harvest',text:'Night DO risk, add aeration 8pm–3am'},
+        {tag:'Market',text:'Ice ₹1200/ton in Nellore'}
+      ],
+      te:[
+        {tag:'రేట్స్',text:'50 కౌంట్ ధర తీర ప్రాంతాల్లో స్థిరంగా ఉంది'},
+        {tag:'సీడ్స్',text:'బ్యాచ్ 1 PL బుకింగ్స్ ఈ వారం ఓపెన్'},
+        {tag:'హార్వెస్ట్',text:'రాత్రివేళ DO రిస్క్ — 8pm–3am ఎయరేషన్ పెంచండి'},
+        {tag:'మార్కెట్',text:'నెల్లూరులో ఐస్ ₹1200/టన్'}
+      ]
     };
     async function loadNewsTop(){
       const track=document.getElementById('newsTrackTop'); if(!track) return;
       const lang=localStorage.getItem('lang')||'te';
       let items=NEWS_FALLBACK[lang];
+
       // optional bilingual news.json
       try{
         const res=await fetch('news.json',{cache:'no-store'});
@@ -358,10 +357,14 @@
           } else if(json.en&&json.te){ items=json[lang]; }
         }
       }catch(e){}
-      // blink only for specific tags (add more if needed)
-const shouldBlink = (tag)=>
-  String(tag).includes('Rates') || String(tag).includes('రేట్స్') ||
-  String(tag).includes('Harvest') || String(tag).includes('హార్వెస్ట్');
+
+      // Robust match for Harvest / హార్వెస్ట్ (mobile-safe, trims & lowers & removes spaces)
+      const shouldBlink = (tag) => {
+        const s = String(tag||'').trim().toLowerCase().replace(/\s+/g,'');
+        const keys = ['harvest','హార్వెస్ట్','haarvest','హార్వేస్ట్']; // common variants
+        return keys.some(k => s.includes(k.replace(/\s+/g,'').toLowerCase()));
+      };
+
       const chip = (t,b=false)=>`<span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200 text-[11px] ${b?'blink':''}">${t}</span>`;
       const row = items.map(n=>{
         const blinkTag = shouldBlink(n.tag);
