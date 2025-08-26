@@ -3,21 +3,21 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Aquaculture A–Z • Home (i18n Promotions)</title>
+  <title>Aquaculture A–Z • Home (i18n Promotions + Mobile Nav)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config={darkMode:'class',theme:{extend:{boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'}}}}</script>
   <style>
     html{scroll-behavior:smooth}
     body{background:linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#f0fdf4 100%)}
     .dark body{background:linear-gradient(135deg,#0f172a 0%,#082f49 50%,#14532d 100%)}
-    .navbtn{border:1px solid rgb(226,232,240);padding:.5rem 1rem;border-radius:.75rem;background:#fff}
+    .navbtn{border:1px solid rgb(226,232,240);padding:.75rem;border-radius:.75rem;background:#fff;text-align:center;font-weight:500}
     .dark .navbtn{background:#0b1220;border-color:#1f2937}
-    /* Flash news ticker — mobile-friendly */
+    /* Flash news ticker */
     .ticker{overflow:hidden;mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent)}
     .ticker-track{display:flex;gap:24px;white-space:nowrap;min-width:max-content;animation:ticker 20s linear infinite}
     @keyframes ticker{from{transform:translateX(0)} to{transform:translateX(-50%)}}
     @media (max-width:640px){.ticker{mask-image:none;-webkit-mask-image:none}.ticker-track{gap:16px;animation-duration:28s}}
-    /* Harvest-only blink for tag chip */
+    /* Harvest blink */
     @keyframes blink{0%,100%{opacity:1;background-color:#facc15;color:#111827}50%{opacity:1;background-color:#dc2626;color:#fff}}
     .blink{animation:blink 1.2s infinite}
   </style>
@@ -53,7 +53,7 @@
 
     <!-- Rates + Promotions -->
     <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <!-- Rates Snapshot -->
+      <!-- Rates -->
       <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
         <div class="flex items-center justify-between">
           <h3 class="font-semibold" data-i18n="snapshot">Live Snapshot</h3>
@@ -72,28 +72,24 @@
         </div>
       </div>
 
-      <!-- Promotions (i18n) -->
+      <!-- Promotions -->
       <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
         <div class="flex items-center justify-between">
           <h3 class="font-semibold">📣 <span data-i18n="promotions_title">Promotions</span></h3>
           <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">NEW</span>
         </div>
-
         <div class="relative mt-3 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
           <div id="promoSlides" class="flex transition-transform duration-500">
-            <!-- Slide 1 -->
             <article class="min-w-full p-4 bg-emerald-50 dark:bg-emerald-900/20">
               <span class="inline-flex text-xs font-bold px-2 py-1 rounded-full bg-emerald-200 text-emerald-900 dark:bg-emerald-800 dark:text-emerald-100" data-i18n="promo_chip_today">Today</span>
               <h4 class="mt-2 text-lg font-semibold" data-i18n="promo_ice_title">Ice Booking — ₹2,400 / ton</h4>
               <p class="text-sm text-slate-600 dark:text-slate-300" data-i18n="promo_ice_text">Factory-grade ice. Fast loading.</p>
             </article>
-            <!-- Slide 2 -->
             <article class="min-w-full p-4 bg-sky-50 dark:bg-sky-900/20">
               <span class="inline-flex text-xs font-bold px-2 py-1 rounded-full bg-sky-200 text-sky-900 dark:bg-sky-800 dark:text-sky-100" data-i18n="promo_chip_value">Best Value</span>
               <h4 class="mt-2 text-lg font-semibold" data-i18n="promo_van_title">5T Van — ₹22 / km</h4>
               <p class="text-sm text-slate-600 dark:text-slate-300" data-i18n="promo_van_text">Reliable transport for harvest day.</p>
             </article>
-            <!-- Slide 3 -->
             <article class="min-w-full p-4 bg-amber-50 dark:bg-amber-900/20">
               <span class="inline-flex text-xs font-bold px-2 py-1 rounded-full bg-amber-200 text-amber-900 dark:bg-amber-800 dark:text-amber-100" data-i18n="promo_chip_fresh">Fresh PL</span>
               <h4 class="mt-2 text-lg font-semibold" data-i18n="promo_seed_title">Seeds — Batch 1 Open</h4>
@@ -102,163 +98,155 @@
           </div>
           <div id="promoDots" class="absolute bottom-2 inset-x-0 flex justify-center gap-2"></div>
         </div>
-
-        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div class="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 p-3">
-            <h4 class="font-semibold" data-i18n="promo_box_hatchery_title">Promote Your Hatchery</h4>
-            <p class="text-sm text-slate-600 dark:text-slate-300" data-i18n="promo_box_hatchery_text">Reach AP & TN farmers directly.</p>
-          </div>
-          <div class="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 p-3">
-            <h4 class="font-semibold" data-i18n="promo_box_dealer_title">Dealer Spotlight</h4>
-            <p class="text-sm text-slate-600 dark:text-slate-300" data-i18n="promo_box_dealer_text">Feeds • Aerators • Medicines.</p>
-          </div>
-        </div>
       </div>
     </section>
 
-    <!-- Quick Nav (mobile) -->
-    <section class="grid grid-cols-3 gap-2 sm:hidden">
-      <a href="harvest.html" class="navbtn text-center">🚚 <span data-i18n="t_harvest">Harvest</span></a>
-      <a href="seeds.html" class="navbtn text-center">🦐 <span data-i18n="t_seeds">Seeds</span></a>
-      <a href="dealers.html" class="navbtn text-center">🏪 <span data-i18n="t_dealers">Dealers</span></a>
+    <!-- Quick Nav (always visible now) -->
+    <section class="grid grid-cols-3 gap-2">
+      <a href="harvest.html" class="navbtn">🚚 <span data-i18n="t_harvest">Harvest</span></a>
+      <a href="seeds.html" class="navbtn">🦐 <span data-i18n="t_seeds">Seeds</span></a>
+      <a href="dealers.html" class="navbtn">🏪 <span data-i18n="t_dealers">Dealers</span></a>
     </section>
   </main>
 
   <script>
-    // ---------- i18n ----------
-    const dict={
-      en:{
-        app_title:"Aquaculture A–Z",
-        t_harvest:"Harvest", t_seeds:"Seeds", t_dealers:"Dealers",
-        flash_news:"Flash News", snapshot:"Live Snapshot", updated:"Updated",
-        th_count:"Count", th_price:"Price (₹/kg)", th_change:"Change",
-        // Promotions i18n
-        promotions_title:"Promotions",
-        promo_chip_today:"Today",
-        promo_ice_title:"Ice Booking — ₹1200 / ton",
-        promo_ice_text:"Factory-grade ice. Fast loading.",
-        promo_chip_value:"Best Value",
-        promo_van_title:"5T Van — ₹200 / km",
-        promo_van_text:"Reliable transport for harvest day.",
-        promo_chip_fresh:"Fresh PL",
-        promo_seed_title:"Seeds — Batch 1 Open",
-        promo_seed_text:"Vannamei SPF PL. Bonus up to 30%.",
-        promo_box_hatchery_title:"Promote Your Hatchery",
-        promo_box_hatchery_text:"Reach AP & TN farmers directly.",
-        promo_box_dealer_title:"Dealer Spotlight",
-        promo_box_dealer_text:"Feeds • Aerators • Medicines."
-      },
-      te:{
-        app_title:"Aquaculture A–Z",
-        t_harvest:"హార్వెస్ట్", t_seeds:"సీడ్స్", t_dealers:"వెండర్లు",
-        flash_news:"ఫ్లాష్ న్యూస్", snapshot:"లైవ్ స్నాప్‌షాట్", updated:"అప్‌డేట్",
-        th_count:"కౌంట్", th_price:"ధర (₹/kg)", th_change:"మార్పు",
-        // Promotions i18n
-        promotions_title:"ప్రోమోషన్స్",
-        promo_chip_today:"ఈ రోజు",
-        promo_ice_title:"ఐస్ బుకింగ్ — ₹1200 / టన్",
-        promo_ice_text:"ఫ్యాక్టరీ గ్రేడ్ ఐస్. ఫాస్ట్ లోడింగ్.",
-        promo_chip_value:"బెస్ట్ వాల్యూ",
-        promo_van_title:"5T వాన్ — ₹200 / కిమీ",
-        promo_van_text:"హార్వెస్ట్ రోజున నమ్మదగిన ట్రాన్స్‌పోర్ట్.",
-        promo_chip_fresh:"ఫ్రెష్ PL",
-        promo_seed_title:"సీడ్స్ — బ్యాచ్ 1 ఓపెన్",
-        promo_seed_text:"వాన్నామెయి SPF PL. 30% వరకూ బోనస్.",
-        promo_box_hatchery_title:"మీ హ్యాచరీని ప్రమోట్ చేయండి",
-        promo_box_hatchery_text:"AP & TN రైతులకు డైరెక్ట్ గా చేరండి.",
-        promo_box_dealer_title:"డీలర్ స్పాట్‌లైట్",
-        promo_box_dealer_text:"ఫీడ్స్ • ఏరేటర్స్ • మెడిసిన్స్."
-      }
-    };
-    function setLang(){
-      const lang=localStorage.getItem('lang')||'te';
-      document.documentElement.lang=lang;
-      document.querySelectorAll('[data-i18n]').forEach(el=>{
-        const k=el.getAttribute('data-i18n'); if(dict[lang][k]) el.textContent=dict[lang][k];
-      });
-    }
-    document.getElementById('langEN').onclick=()=>{localStorage.setItem('lang','en'); setLang(); loadNews();};
-    document.getElementById('langTE').onclick=()=>{localStorage.setItem('lang','te'); setLang(); loadNews();};
+    // --- dict ---
+    const dict={en:{app_title:"Aquaculture A–Z",t_harvest:"Harvest",t_seeds:"Seeds",t_dealers:"Dealers",flash_news:"Flash News",snapshot:"Live Snapshot",updated:"Updated",th_count:"Count",th_price:"Price (₹/kg)",th_change:"Change",promotions_title:"Promotions",promo_chip_today:"Today",promo_ice_title:"Ice Booking — ₹2,400 / ton",promo_ice_text:"Factory-grade ice. Fast loading.",promo_chip_value:"Best Value",promo_van_title:"5T Van — ₹22 / km",promo_van_text:"Reliable transport for harvest day.",promo_chip_fresh:"Fresh PL",promo_seed_title:"Seeds — Batch 1 Open",promo_seed_text:"Vannamei SPF PL. Bonus up to 30%."},te:{app_title:"Aquaculture A–Z",t_harvest:"హార్వెస్ట్",t_seeds:"సీడ్స్",t_dealers:"వెండర్లు",flash_news:"ఫ్లాష్ న్యూస్",snapshot:"లైవ్ స్నాప్‌షాట్",updated:"అప్‌డేట్",th_count:"కౌంట్",th_price:"ధర (₹/kg)",th_change:"మార్పు",promotions_title:"ప్రోమోషన్స్",promo_chip_today:"ఈ రోజు",promo_ice_title:"ఐస్ బుకింగ్ — ₹2,400 / టన్",promo_ice_text:"ఫ్యాక్టరీ గ్రేడ్ ఐస్. ఫాస్ట్ లోడింగ్.",promo_chip_value:"బెస్ట్ వాల్యూ",promo_van_title:"5T వాన్ — ₹22 / కిమీ",promo_van_text:"హార్వెస్ట్ రోజున నమ్మదగిన ట్రాన్స్‌పోర్ట్.",promo_chip_fresh:"ఫ్రెష్ PL",promo_seed_title:"సీడ్స్ — బ్యాచ్ 1 ఓపెన్",promo_seed_text:"వాన్నామెయి SPF PL. 30% వరకూ బోనస్."}};
+    function setLang(){const lang=localStorage.getItem('lang')||'te';document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(dict[lang][k]) el.textContent=dict[lang][k];});}
+    document.getElementById('langEN').onclick=()=>{localStorage.setItem('lang','en');setLang();loadNews();};
+    document.getElementById('langTE').onclick=()=>{localStorage.setItem('lang','te');setLang();loadNews();};
+    const themeToggle=document.getElementById('themeToggle');const savedTheme=localStorage.getItem('theme');if(savedTheme==='dark'||(!savedTheme&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');themeToggle.onclick=()=>{document.documentElement.classList.toggle('dark');localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');};
+    function loadRates(){const counts=[150,140,130,120,110,100,90,80,70,60,50];const priceByCount=c=>{if(c>=110)return 240-((c-100)/10)*10;if(c===100)return 240;if(c===90)return 250;if(c===80)return 270;if(c===70)return 290;if(c===60)return 310;if(c===50)return 330;return 240;};const tbody=document.querySelector('#ratesTable tbody');tbody.innerHTML='';counts.forEach(c=>{const tr=document.createElement('tr');tr.className='border-b last:border-0 dark:border-slate-800';tr.innerHTML=`<td class="py-2 pr-4 font-medium">${c}c</td><td class="py-2 pr-4">₹ ${priceByCount(c)}</td><td class="py-2 pr-4">—</td>`;tbody.appendChild(tr);});document.getElementById('updatedAt').textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());}
+    const NEWS_FALLBACK={en:[{tag:'Rates',text:'50c steady across coastal AP'},{tag:'Seed',text:'Batch 1 PL open this week'},{tag:'Harvest',text:'Night DO risk; add aeration 8pm–3am'},{tag:'Market',text:'Ice ₹1200/ton in Nellore'}],te:[{tag:'రేట్స్',text:'50 కౌంట్ ధర స్థిరంగా ఉంది'},{tag:'సీడ్స్',text:'బ్యాచ్ 1 PL ఈ వారం ఓపెన్'},{tag:'హార్వెస్ట్',text:'రాత్రి DO రిస్క్ — 8pm–3am ఎయరేషన్ పెంచండి'},{tag:'మార్కెట్',text:'నెల్లూరు ఐస్ ₹1200/టన్'}]};
+    function loadNews(){const track=document.getElementById('newsTrackTop');const lang=localStorage.getItem('lang')||'te';let items=NEWS_FALLBACK[lang];if(items.length<3){items=items.concat(NEWS_FALLBACK[lang]).slice(0,3);}const isHarvest=tag=>{const s=String(tag||'').trim().toLowerCase().replace(/\s+/g,'');return s.includes('harvest')||String(tag).includes('హార్వెస్ట్');};const chip=(t,b=false)=>`<span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200 text-[11px] ${b?'blink':''}">${t}</span>`;const row=items.map(n=>`<div class="flex items-center gap-2 pr-4">${chip(n.tag,isHarvest(n.tag))}<span>${n.text}</span></div>`).join('');track.innerHTML=row+row+row;document.getElementById('newsUpdatedTop').textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());}
+    const promoSlidesHandler=()=>{const slides=document.getElementById('promoSlides');const dots=document.getElementById('promoDots');if(!slides||!dots)return;const total=slides.children.length;let idx=0;dots.innerHTML='';for(let i=0;i<total;i++){const b=document.createElement('button');b.className='h-2 w-2 rounded-full border border-slate-400/70 bg-white/70 dark:bg-slate-800';b.onclick=()=>go(i,true);dots.appendChild(b);}dots.children[0]?.classList.add('bg-sky-400');let timer=setInterval(()=>go(idx+1),4500);function go(n,user=false){idx=(n+total)%total;slides.style.transform=`translateX(-${idx*100}%)`;[...dots.children].forEach((d,i)=>d.classList.toggle('bg-sky-400',i===idx));if(user){clearInterval(timer);timer=setInterval(()=>go(idx+1),4500);}}};
+    (function init(){if(!localStorage.getItem('lang'))localStorage.setItem('lang','te');setLang();loadRates();loadNews();promoSlidesHandler();})();
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Aquaculture A–Z • Home (i18n Promotions + Mobile Nav)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={darkMode:'class',theme:{extend:{boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'}}}}</script>
+  <style>
+    html{scroll-behavior:smooth}
+    body{background:linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#f0fdf4 100%)}
+    .dark body{background:linear-gradient(135deg,#0f172a 0%,#082f49 50%,#14532d 100%)}
+    .navbtn{border:1px solid rgb(226,232,240);padding:.75rem;border-radius:.75rem;background:#fff;text-align:center;font-weight:500}
+    .dark .navbtn{background:#0b1220;border-color:#1f2937}
+    /* Flash news ticker */
+    .ticker{overflow:hidden;mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent)}
+    .ticker-track{display:flex;gap:24px;white-space:nowrap;min-width:max-content;animation:ticker 20s linear infinite}
+    @keyframes ticker{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+    @media (max-width:640px){.ticker{mask-image:none;-webkit-mask-image:none}.ticker-track{gap:16px;animation-duration:28s}}
+    /* Harvest blink */
+    @keyframes blink{0%,100%{opacity:1;background-color:#facc15;color:#111827}50%{opacity:1;background-color:#dc2626;color:#fff}}
+    .blink{animation:blink 1.2s infinite}
+  </style>
+</head>
+<body class="text-slate-900 dark:text-slate-100">
+  <!-- Header -->
+  <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
+      <h1 class="text-xl font-bold flex-1" data-i18n="app_title">Aquaculture A–Z</h1>
+      <nav class="hidden sm:flex gap-2">
+        <a href="harvest.html" class="navbtn">🚚 <span data-i18n="t_harvest">Harvest</span></a>
+        <a href="seeds.html" class="navbtn">🦐 <span data-i18n="t_seeds">Seeds</span></a>
+        <a href="dealers.html" class="navbtn">🏪 <span data-i18n="t_dealers">Dealers</span></a>
+      </nav>
+      <div class="flex rounded-full bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-800">
+        <button id="langTE" class="px-3 py-1.5 text-sm rounded-full bg-white dark:bg-slate-800 shadow-soft">తెలుగు</button>
+        <button id="langEN" class="px-3 py-1.5 text-sm rounded-full">English</button>
+      </div>
+      <button id="themeToggle" class="rounded-full px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-800">🌙/☀️</button>
+    </div>
+  </header>
 
-    // ---------- Theme ----------
-    const themeToggle=document.getElementById('themeToggle');
-    const savedTheme=localStorage.getItem('theme');
-    if(savedTheme==='dark'||(!savedTheme&&matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
-    themeToggle.onclick=()=>{document.documentElement.classList.toggle('dark');localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');};
+  <main class="max-w-7xl mx-auto p-4 space-y-4">
+    <!-- Flash News -->
+    <section class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
+      <div class="flex items-center justify-between">
+        <h3 class="font-semibold">📰 <span data-i18n="flash_news">Flash News</span></h3>
+        <span class="text-xs px-2 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-200">Live</span>
+      </div>
+      <div class="mt-3 ticker"><div id="newsTrackTop" class="ticker-track"></div></div>
+      <p class="text-xs text-slate-500 mt-2"><span data-i18n="updated">Updated</span>: <span id="newsUpdatedTop">—</span></p>
+    </section>
 
-    // ---------- Rates (fixed scale 150..50) ----------
-    function loadRates(){
-      const counts=[150,140,130,120,110,100,90,80,70,60,50];
-      const priceByCount=c=>{
-        if(c>=110) return 240 - ((c-100)/10)*10; // 110..150 → 230..190
-        if(c===100) return 240;
-        if(c===90)  return 250;
-        if(c===80)  return 270;
-        if(c===70)  return 290;
-        if(c===60)  return 310;
-        if(c===50)  return 330;
-        return 240;
-      };
-      const tbody=document.querySelector('#ratesTable tbody'); tbody.innerHTML='';
-      counts.forEach(c=>{
-        const tr=document.createElement('tr'); tr.className='border-b last:border-0 dark:border-slate-800';
-        tr.innerHTML=`<td class="py-2 pr-4 font-medium">${c}c</td>
-                      <td class="py-2 pr-4">₹ ${priceByCount(c)}</td>
-                      <td class="py-2 pr-4">—</td>`;
-        tbody.appendChild(tr);
-      });
-      document.getElementById('updatedAt').textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
-    }
+    <!-- Rates + Promotions -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <!-- Rates -->
+      <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold" data-i18n="snapshot">Live Snapshot</h3>
+          <p class="text-xs text-slate-500"><span data-i18n="updated">Updated</span>: <span id="updatedAt">—</span></p>
+        </div>
+        <div class="mt-3 overflow-x-auto">
+          <table class="min-w-full text-sm" id="ratesTable">
+            <thead>
+              <tr class="border-b dark:border-slate-800 text-slate-500">
+                <th class="text-left py-2 pr-4" data-i18n="th_count">Count</th>
+                <th class="text-left py-2 pr-4" data-i18n="th_price">Price (₹/kg)</th>
+                <th class="text-left py-2 pr-4" data-i18n="th_change">Change</th>
+              </tr>
+            </thead><tbody></tbody>
+          </table>
+        </div>
+      </div>
 
-    // ---------- Flash News (Harvest tag blink) ----------
-    const NEWS_FALLBACK={
-      en:[
-        {tag:'Rates',text:'50c steady across coastal AP'},
-        {tag:'Seed',text:'Batch 1 PL open this week'},
-        {tag:'Harvest',text:'Night DO risk; add aeration 8pm–3am'},
-        {tag:'Market',text:'Ice ₹1200/ton in Nellore'}
-      ],
-      te:[
-        {tag:'రేట్స్',text:' కౌంట్ ధర స్థిరంగా ఉంది'},
-        {tag:'సీడ్స్',text:'బ్యాచ్ 12 PL ఈ వారం ఓపెన్'},
-        {tag:'హార్వెస్ట్',text:'రాత్రి DO రిస్క్ — 8pm–3am ఎయరేషన్ పెంచండి'},
-        {tag:'మార్కెట్',text:'నెల్లూరు ఐస్ ₹1200/టన్'}
-      ]
-    };
-    function loadNews(){
-      const track=document.getElementById('newsTrackTop'); const lang=localStorage.getItem('lang')||'te';
-      let items=NEWS_FALLBACK[lang];
-      if(items.length<3){items=items.concat(NEWS_FALLBACK[lang]).slice(0,3);}
-      const isHarvest=tag=>{
-        const s=String(tag||'').trim().toLowerCase().replace(/\s+/g,'');
-        return s.includes('harvest') || String(tag).includes('హార్వెస్ట్');
-      };
-      const chip=(t,b=false)=>`<span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200 text-[11px] ${b?'blink':''}">${t}</span>`;
-      const row=items.map(n=>`<div class="flex items-center gap-2 pr-4">${chip(n.tag,isHarvest(n.tag))}<span>${n.text}</span></div>`).join('');
-      track.innerHTML=row+row+row;
-      document.getElementById('newsUpdatedTop').textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
-    }
+      <!-- Promotions -->
+      <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold">📣 <span data-i18n="promotions_title">Promotions</span></h3>
+          <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">NEW</span>
+        </div>
+        <div class="relative mt-3 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
+          <div id="promoSlides" class="flex transition-transform duration-500">
+            <article class="min-w-full p-4 bg-emerald-50 dark:bg-emerald-900/20">
+              <span class="inline-flex text-xs font-bold px-2 py-1 rounded-full bg-emerald-200 text-emerald-900 dark:bg-emerald-800 dark:text-emerald-100" data-i18n="promo_chip_today">Today</span>
+              <h4 class="mt-2 text-lg font-semibold" data-i18n="promo_ice_title">Ice Booking — ₹2,400 / ton</h4>
+              <p class="text-sm text-slate-600 dark:text-slate-300" data-i18n="promo_ice_text">Factory-grade ice. Fast loading.</p>
+            </article>
+            <article class="min-w-full p-4 bg-sky-50 dark:bg-sky-900/20">
+              <span class="inline-flex text-xs font-bold px-2 py-1 rounded-full bg-sky-200 text-sky-900 dark:bg-sky-800 dark:text-sky-100" data-i18n="promo_chip_value">Best Value</span>
+              <h4 class="mt-2 text-lg font-semibold" data-i18n="promo_van_title">5T Van — ₹22 / km</h4>
+              <p class="text-sm text-slate-600 dark:text-slate-300" data-i18n="promo_van_text">Reliable transport for harvest day.</p>
+            </article>
+            <article class="min-w-full p-4 bg-amber-50 dark:bg-amber-900/20">
+              <span class="inline-flex text-xs font-bold px-2 py-1 rounded-full bg-amber-200 text-amber-900 dark:bg-amber-800 dark:text-amber-100" data-i18n="promo_chip_fresh">Fresh PL</span>
+              <h4 class="mt-2 text-lg font-semibold" data-i18n="promo_seed_title">Seeds — Batch 1 Open</h4>
+              <p class="text-sm text-slate-600 dark:text-slate-300" data-i18n="promo_seed_text">Vannamei SPF PL. Bonus up to 30%.</p>
+            </article>
+          </div>
+          <div id="promoDots" class="absolute bottom-2 inset-x-0 flex justify-center gap-2"></div>
+        </div>
+      </div>
+    </section>
 
-    // Promo slider (simple auto)
-    const promoSlidesHandler=()=>{
-      const slides=document.getElementById('promoSlides'); const dots=document.getElementById('promoDots');
-      if(!slides||!dots) return;
-      const total=slides.children.length; let idx=0; dots.innerHTML='';
-      for(let i=0;i<total;i++){const b=document.createElement('button'); b.className='h-2 w-2 rounded-full border border-slate-400/70 bg-white/70 dark:bg-slate-800'; b.onclick=()=>go(i,true); dots.appendChild(b);}
-      dots.children[0]?.classList.add('bg-sky-400');
-      let timer=setInterval(()=>go(idx+1),4500);
-      function go(n,user=false){idx=(n+total)%total; slides.style.transform=`translateX(-${idx*100}%)`; [...dots.children].forEach((d,i)=>d.classList.toggle('bg-sky-400',i===idx)); if(user){clearInterval(timer); timer=setInterval(()=>go(idx+1),4500);}}
-    };
+    <!-- Quick Nav (always visible now) -->
+    <section class="grid grid-cols-3 gap-2">
+      <a href="harvest.html" class="navbtn">🚚 <span data-i18n="t_harvest">Harvest</span></a>
+      <a href="seeds.html" class="navbtn">🦐 <span data-i18n="t_seeds">Seeds</span></a>
+      <a href="dealers.html" class="navbtn">🏪 <span data-i18n="t_dealers">Dealers</span></a>
+    </section>
+  </main>
 
-    // INIT
-    (function init(){
-      if(!localStorage.getItem('lang')) localStorage.setItem('lang','te');
-      setLang();
-      loadRates();
-      loadNews();
-      promoSlidesHandler();
-      // Theme already applied above
-    })();
+  <script>
+    // --- dict ---
+    const dict={en:{app_title:"Aquaculture A–Z",t_harvest:"Harvest",t_seeds:"Seeds",t_dealers:"Dealers",flash_news:"Flash News",snapshot:"Live Snapshot",updated:"Updated",th_count:"Count",th_price:"Price (₹/kg)",th_change:"Change",promotions_title:"Promotions",promo_chip_today:"Today",promo_ice_title:"Ice Booking — ₹2,400 / ton",promo_ice_text:"Factory-grade ice. Fast loading.",promo_chip_value:"Best Value",promo_van_title:"5T Van — ₹22 / km",promo_van_text:"Reliable transport for harvest day.",promo_chip_fresh:"Fresh PL",promo_seed_title:"Seeds — Batch 1 Open",promo_seed_text:"Vannamei SPF PL. Bonus up to 30%."},te:{app_title:"Aquaculture A–Z",t_harvest:"హార్వెస్ట్",t_seeds:"సీడ్స్",t_dealers:"వెండర్లు",flash_news:"ఫ్లాష్ న్యూస్",snapshot:"లైవ్ స్నాప్‌షాట్",updated:"అప్‌డేట్",th_count:"కౌంట్",th_price:"ధర (₹/kg)",th_change:"మార్పు",promotions_title:"ప్రోమోషన్స్",promo_chip_today:"ఈ రోజు",promo_ice_title:"ఐస్ బుకింగ్ — ₹2,400 / టన్",promo_ice_text:"ఫ్యాక్టరీ గ్రేడ్ ఐస్. ఫాస్ట్ లోడింగ్.",promo_chip_value:"బెస్ట్ వాల్యూ",promo_van_title:"5T వాన్ — ₹22 / కిమీ",promo_van_text:"హార్వెస్ట్ రోజున నమ్మదగిన ట్రాన్స్‌పోర్ట్.",promo_chip_fresh:"ఫ్రెష్ PL",promo_seed_title:"సీడ్స్ — బ్యాచ్ 1 ఓపెన్",promo_seed_text:"వాన్నామెయి SPF PL. 30% వరకూ బోనస్."}};
+    function setLang(){const lang=localStorage.getItem('lang')||'te';document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(dict[lang][k]) el.textContent=dict[lang][k];});}
+    document.getElementById('langEN').onclick=()=>{localStorage.setItem('lang','en');setLang();loadNews();};
+    document.getElementById('langTE').onclick=()=>{localStorage.setItem('lang','te');setLang();loadNews();};
+    const themeToggle=document.getElementById('themeToggle');const savedTheme=localStorage.getItem('theme');if(savedTheme==='dark'||(!savedTheme&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');themeToggle.onclick=()=>{document.documentElement.classList.toggle('dark');localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');};
+    function loadRates(){const counts=[150,140,130,120,110,100,90,80,70,60,50];const priceByCount=c=>{if(c>=110)return 240-((c-100)/10)*10;if(c===100)return 240;if(c===90)return 250;if(c===80)return 270;if(c===70)return 290;if(c===60)return 310;if(c===50)return 330;return 240;};const tbody=document.querySelector('#ratesTable tbody');tbody.innerHTML='';counts.forEach(c=>{const tr=document.createElement('tr');tr.className='border-b last:border-0 dark:border-slate-800';tr.innerHTML=`<td class="py-2 pr-4 font-medium">${c}c</td><td class="py-2 pr-4">₹ ${priceByCount(c)}</td><td class="py-2 pr-4">—</td>`;tbody.appendChild(tr);});document.getElementById('updatedAt').textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());}
+    const NEWS_FALLBACK={en:[{tag:'Rates',text:'50c steady across coastal AP'},{tag:'Seed',text:'Batch 1 PL open this week'},{tag:'Harvest',text:'Night DO risk; add aeration 8pm–3am'},{tag:'Market',text:'Ice ₹1200/ton in Nellore'}],te:[{tag:'రేట్స్',text:'50 కౌంట్ ధర స్థిరంగా ఉంది'},{tag:'సీడ్స్',text:'బ్యాచ్ 1 PL ఈ వారం ఓపెన్'},{tag:'హార్వెస్ట్',text:'రాత్రి DO రిస్క్ — 8pm–3am ఎయరేషన్ పెంచండి'},{tag:'మార్కెట్',text:'నెల్లూరు ఐస్ ₹1200/టన్'}]};
+    function loadNews(){const track=document.getElementById('newsTrackTop');const lang=localStorage.getItem('lang')||'te';let items=NEWS_FALLBACK[lang];if(items.length<3){items=items.concat(NEWS_FALLBACK[lang]).slice(0,3);}const isHarvest=tag=>{const s=String(tag||'').trim().toLowerCase().replace(/\s+/g,'');return s.includes('harvest')||String(tag).includes('హార్వెస్ట్');};const chip=(t,b=false)=>`<span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200 text-[11px] ${b?'blink':''}">${t}</span>`;const row=items.map(n=>`<div class="flex items-center gap-2 pr-4">${chip(n.tag,isHarvest(n.tag))}<span>${n.text}</span></div>`).join('');track.innerHTML=row+row+row;document.getElementById('newsUpdatedTop').textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());}
+    const promoSlidesHandler=()=>{const slides=document.getElementById('promoSlides');const dots=document.getElementById('promoDots');if(!slides||!dots)return;const total=slides.children.length;let idx=0;dots.innerHTML='';for(let i=0;i<total;i++){const b=document.createElement('button');b.className='h-2 w-2 rounded-full border border-slate-400/70 bg-white/70 dark:bg-slate-800';b.onclick=()=>go(i,true);dots.appendChild(b);}dots.children[0]?.classList.add('bg-sky-400');let timer=setInterval(()=>go(idx+1),4500);function go(n,user=false){idx=(n+total)%total;slides.style.transform=`translateX(-${idx*100}%)`;[...dots.children].forEach((d,i)=>d.classList.toggle('bg-sky-400',i===idx));if(user){clearInterval(timer);timer=setInterval(()=>go(idx+1),4500);}}};
+    (function init(){if(!localStorage.getItem('lang'))localStorage.setItem('lang','te');setLang();loadRates();loadNews();promoSlidesHandler();})();
   </script>
 </body>
 </html>
