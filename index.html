@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aquaculture A–Z • Pro Tabbed Dashboard (V8)</title>
+  <title>Aquaculture A–Z • Pro Tabbed Dashboard (V8.1 – Bilingual Flash News)</title>
   <meta name="description" content="Tabbed aquaculture dashboard: rates, harvest, seeds, dealers, alerts. Telugu & English toggle."/>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -66,7 +66,7 @@
 
     <!-- Tab: Rates -->
     <section id="tab-rates" class="space-y-4">
-      <!-- Flash News (replaces KPI cards) -->
+      <!-- Flash News (top) -->
       <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
         <div class="flex items-center justify-between">
           <h3 class="font-semibold">📰 <span data-i18n="flash_news">Flash News</span></h3>
@@ -308,6 +308,7 @@
       }
     };
     function t(key){ const lang=localStorage.getItem('lang')||'te'; return (dict[lang]&&dict[lang][key])||key; }
+
     function setTextByI18n() {
       const lang = localStorage.getItem('lang') || 'te';
       document.documentElement.lang = lang;
@@ -342,46 +343,94 @@
       });
     });
 
-    // ---------- Rates (CSV + table) ----------
+    // ---------- Rates table (CSV if present; else demo) ----------
     async function loadRates(){
+      let data = [];
       try{
         const res = await fetch('rates.csv',{cache:'no-store'});
-        const csv = await res.text();
-        const rows = csv.trim().split(/\r?\n/).map(r=>r.split(','));
-        const h = rows[0].map(x=>x.trim().toLowerCase());
-        const iC=h.indexOf('count'), iP=h.indexOf('price'), iCh=h.indexOf('change');
-        const data = rows.slice(1).map(r=>({count:parseInt(r[iC]),price:parseFloat(r[iP]),change:iCh>-1?parseFloat(r[iCh]||0):null})).filter(x=>!isNaN(x.price));
-        if(!data.length) return;
-        updatedAt.textContent = new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
-        const tbody = document.querySelector('#ratesTable tbody');
-        tbody.innerHTML='';
-        data.slice().sort((a,b)=>b.count-a.count).slice(0,12).forEach(r=>{
-          const tr=document.createElement('tr'); tr.className='border-b last:border-0 dark:border-slate-800';
-          const ch = r.change==null?'—':(r.change>0?`<span class="text-emerald-600">▲ ${r.change.toFixed(0)}</span>`:(r.change<0?`<span class="text-rose-600">▼ ${Math.abs(r.change).toFixed(0)}</span>`:'—'));
-          tr.innerHTML = `<td class='py-2 pr-4 font-medium'>${isNaN(r.count)?'—':r.count+'c'}</td><td class='py-2 pr-4'>₹ ${r.price.toFixed(0)}</td><td class='py-2 pr-4'>${ch}</td>`;
-          tbody.appendChild(tr);
-        });
-      }catch(e){ /* ignore */ }
+        if(res.ok){
+          const csv = await res.text();
+          const rows = csv.trim().split(/\r?\n/).map(r=>r.split(','));
+          const h = rows[0].map(x=>x.trim().toLowerCase());
+          const iC=h.indexOf('count'), iP=h.indexOf('price'), iCh=h.indexOf('change');
+          data = rows.slice(1).map(r=>({count:parseInt(r[iC]),price:parseFloat(r[iP]),change:iCh>-1?parseFloat(r[iCh]||0):null})).filter(x=>!isNaN(x.price));
+        }
+      }catch(e){ /* ignore, will fallback */ }
+      // fallback demo if no CSV
+      if(!data.length){
+        const counts=[150,140,130,120,110,100,90,80,70,60,50];
+        const priceByCount=c=>{
+          if(c>=110) return 240 - ((c-100)/10)*10;       // 110..150 => -₹10 per +10c
+          if(c>=80)  return 240 + ((100-c)/10)*10;       // 80..100  => +₹10 per -10c
+          if(c>=50)  return 270 + ((80-c)/10)*20;        // 50..70/60 => +₹20 per -10c from 80
+          return 240;
+        };
+        data = counts.map(c=>({count:c, price:priceByCount(c), change:null}));
+      }
+      updatedAt.textContent = new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
+      const tbody = document.querySelector('#ratesTable tbody');
+      tbody.innerHTML='';
+      data.forEach(r=>{
+        const tr=document.createElement('tr'); tr.className='border-b last:border-0 dark:border-slate-800';
+        tr.innerHTML = `<td class='py-2 pr-4 font-medium'>${isNaN(r.count)?'—':r.count+'c'}</td>
+                        <td class='py-2 pr-4'>₹ ${r.price.toFixed(0)}</td>
+                        <td class='py-2 pr-4'>—</td>`;
+        tbody.appendChild(tr);
+      });
     }
 
-    // ---------- Flash News (top) ----------
-    async function loadNewsTop(){
-      const track=document.getElementById('newsTrackTop');
-      if(!track) return;
-      const fallback = [
+    // ---------- Flash News (BILINGUAL) ----------
+    // Built-in bilingual fallback items
+    const NEWS_FALLBACK = {
+      en: [
         {tag:'Rates',  text:'50c trend steady across coastal AP'},
         {tag:'Seed',   text:'Batch 1 PL bookings open this week'},
         {tag:'Harvest',text:'Night DO risk, add aeration 8pm–3am'},
         {tag:'Market', text:'Ice ₹1200/ton in Nellore'},
-      ];
-      let items=fallback;
+      ],
+      te: [
+        {tag:'రేట్స్', text:'50 కౌంట్ ధర తీర ప్రాంతాల్లో స్థిరంగా ఉంది'},
+        {tag:'సీడ్స్', text:'బ్యాచ్ 1 PL బుకింగ్స్ ఈ వారం ఓపెన్'},
+        {tag:'హార్వెస్ట్', text:'రాత్రివేళ DO రిస్క్ — 8pm–3am ఎయరేషన్ పెంచండి'},
+        {tag:'మార్కెట్', text:'నెల్లూరులో ఐస్ ₹1200/టన్'},
+      ]
+    };
+
+    // Try to load news.json with multilingual support.
+    // Supported formats:
+    //  A) { "en":[{tag,text}], "te":[{tag,text}] }
+    //  B) [ { tag_en, tag_te, text_en, text_te }, ... ]
+    async function loadNewsTop(){
+      const track=document.getElementById('newsTrackTop');
+      if(!track) return;
+      const lang = localStorage.getItem('lang') || 'te';
+
+      let items = NEWS_FALLBACK[lang];
+
       try{
-        const res=await fetch('news.json',{cache:'no-store'});
-        if(res.ok){ items = await res.json(); }
-      }catch(e){}
+        const res = await fetch('news.json',{cache:'no-store'});
+        if(res.ok){
+          const json = await res.json();
+          if(Array.isArray(json)){ // Format B
+            items = json.map(it => ({
+              tag:  lang==='te' ? (it.tag_te||it.tag||'')  : (it.tag_en||it.tag||''),
+              text: lang==='te' ? (it.text_te||it.text||'') : (it.text_en||it.text||'')
+            })).filter(x=>x.text);
+          } else if(json.en && json.te){ // Format A
+            items = (json[lang]||NEWS_FALLBACK[lang]).filter(x=>x && x.text);
+          } else if(Array.isArray(json) && lang==='te'){
+            // if only English provided as plain array, stick to fallback Telugu
+            items = NEWS_FALLBACK.te;
+          } else if(Array.isArray(json) && lang==='en'){
+            items = json;
+          }
+        }
+      }catch(e){ /* use fallback */ }
+
       const chip = n => `<span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200 text-[11px]">${n}</span>`;
       const row = items.map(n=>`<div class="flex items-center gap-2 pr-4">${chip(n.tag)}<span>${n.text}</span></div>`).join('');
       track.innerHTML = row + row;  // duplicate for seamless loop
+
       const el = document.getElementById('newsUpdatedTop');
       if(el) el.textContent = new Intl.DateTimeFormat('en-IN',{dateStyle:'medium', timeStyle:'short'}).format(new Date());
     }
@@ -437,7 +486,7 @@
           if(+rate.value===1200 || !rate.value) rate.value = 120; // default cans
         } else {
           qtyLbl.textContent = 'Ice (tons)';
-          rateLbl.textContent = t('price_per_ton') || 'Price/ton (₹)';
+          rateLbl.textContent = 'Price/ton (₹)';
           if(+rate.value===120 || !rate.value) rate.value = 1200; // default tons
         }
         calc();
@@ -551,30 +600,30 @@
       q.oninput=cat.onchange=draw; draw();
     }
 
-    // ---------- Alerts ----------
-    async function loadAlerts(){
-      const list=document.getElementById('alertsList');
-      const demo=[{type:'DO Low', msg:'Night DO risk for ponds < 1.2m depth. Add extra aeration 8pm–3am.'},{type:'Vibriosis', msg:'Early signs in Krishna dt. Probiotic schedule recommended.'}];
-      function render(arr){ list.innerHTML=''; arr.forEach(a=>{ const li=document.createElement('li'); li.className='rounded-xl p-3 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'; li.innerHTML=`<b>${a.type}</b> – <span class='text-sm text-slate-600 dark:text-slate-300'>${a.msg}</span>`; list.appendChild(li); }); }
-      try{ const res=await fetch('alerts.json',{cache:'no-store'}); if(res.ok){ render(await res.json()); } else render(demo); }
-      catch(e){ render(demo); }
-    }
-
-    // ---------- Language ----------
-    document.getElementById('langEN').addEventListener('click',()=>{localStorage.setItem('lang','en'); setTextByI18n();});
-    document.getElementById('langTE').addEventListener('click',()=>{localStorage.setItem('lang','te'); setTextByI18n();});
+    // ---------- Language toggle ----------
+    const langENBtn = document.getElementById('langEN');
+    const langTEBtn = document.getElementById('langTE');
+    langENBtn.addEventListener('click',()=>{localStorage.setItem('lang','en'); setTextByI18n(); loadNewsTop();});
+    langTEBtn.addEventListener('click',()=>{localStorage.setItem('lang','te'); setTextByI18n(); loadNewsTop();});
 
     // ---------- INIT ----------
     function init(){
       if(!localStorage.getItem('lang')) localStorage.setItem('lang','te'); // default Telugu
       setTextByI18n();
       loadRates();
-      loadNewsTop();
+      loadNewsTop();     // <- important: renders in selected language
       promoInit();
       bindHarvest();
       loadSeeds();
       loadDealers();
-      loadAlerts();
+      // alerts (demo)
+      (async ()=>{
+        const list=document.getElementById('alertsList');
+        const demo=[{type:'DO Low', msg:'Night DO risk for ponds < 1.2m depth. Add extra aeration 8pm–3am.'},{type:'Vibriosis', msg:'Early signs in Krishna dt. Probiotic schedule recommended.'}];
+        function render(arr){ list.innerHTML=''; arr.forEach(a=>{ const li=document.createElement('li'); li.className='rounded-xl p-3 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'; li.innerHTML=`<b>${a.type}</b> – <span class='text-sm text-slate-600 dark:text-slate-300'>${a.msg}</span>`; list.appendChild(li); }); }
+        try{ const res=await fetch('alerts.json',{cache:'no-store'}); if(res.ok){ render(await res.json()); } else render(demo); }
+        catch(e){ render(demo); }
+      })();
     }
     init();
   </script>
