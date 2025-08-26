@@ -3,19 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aquaculture A–Z • Pro Tabbed Dashboard (V8.1 – Bilingual Flash News)</title>
-  <meta name="description" content="Tabbed aquaculture dashboard: rates, harvest, seeds, dealers, alerts. Telugu & English toggle."/>
+  <title>Aquaculture A–Z • V8.2 (Counts fix + bilingual news)</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = { darkMode:'class', theme:{ extend:{ boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'} } } }
-  </script>
+  <script>tailwind.config={darkMode:'class',theme:{extend:{boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'}}}}</script>
   <style>
     html{scroll-behavior:smooth}
-    body{background: linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#f0fdf4 100%);}
-    .dark body{background: linear-gradient(135deg,#0f172a 0%,#082f49 50%,#14532d 100%);}
-    .tab-btn[aria-selected="true"]{background:#059669;color:white}
-    .badge{font-size:.7rem}
+    body{background:linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#f0fdf4 100%)}
+    .dark body{background:linear-gradient(135deg,#0f172a 0%,#082f49 50%,#14532d 100%)}
+    .tab-btn[aria-selected="true"]{background:#059669;color:#fff}
     /* Flash news ticker */
     .ticker{mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent)}
     .ticker-track{display:flex;gap:24px;white-space:nowrap;animation:ticker 18s linear infinite}
@@ -23,15 +19,14 @@
   </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100">
-  <!-- Top Bar -->
+  <!-- Header -->
   <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
-      <!-- Logo -->
       <div class="h-10 w-10 rounded-2xl overflow-hidden shadow-soft">
-        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" class="h-full w-full" aria-hidden="true">
+        <svg viewBox="0 0 64 64" class="h-full w-full" aria-hidden="true">
           <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#34d399"/></linearGradient></defs>
           <rect rx="16" ry="16" width="64" height="64" fill="url(#g1)"/>
-          <g fill="#fff" opacity="0.95">
+          <g fill="#fff" opacity=".95">
             <path d="M46 20c-6-2-13 1-17 6-4 5-5 12-1 16 4 4 10 3 14-1 3-3 4-7 3-11-4 1-8 0-11-2 4-1 8-2 12-8z"/>
             <circle cx="42" cy="24" r="2"/>
             <path d="M12 42c5 3 10 3 15 0 5-3 10-3 15 0" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
@@ -40,11 +35,10 @@
         </svg>
       </div>
       <div>
-        <h1 class="text-xl font-bold leading-tight" data-i18n="app_title"></h1>
+        <h1 class="text-xl font-bold" data-i18n="app_title"></h1>
         <p class="text-xs text-slate-500" id="subtitle"></p>
       </div>
       <div class="ml-auto flex items-center gap-2">
-        <!-- Lang -->
         <div class="flex rounded-full bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-800">
           <button id="langTE" class="px-3 py-1.5 text-sm rounded-full bg-white dark:bg-slate-800 shadow-soft">తెలుగు</button>
           <button id="langEN" class="px-3 py-1.5 text-sm rounded-full">English</button>
@@ -64,22 +58,20 @@
       <button class="tab-btn rounded-xl px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800" role="tab" data-tab="alerts">⚠️ <span class="ml-1" data-i18n="t_alerts"></span></button>
     </div>
 
-    <!-- Tab: Rates -->
+    <!-- Rates -->
     <section id="tab-rates" class="space-y-4">
-      <!-- Flash News (top) -->
+      <!-- Flash News -->
       <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
         <div class="flex items-center justify-between">
           <h3 class="font-semibold">📰 <span data-i18n="flash_news">Flash News</span></h3>
           <span class="text-xs px-2 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-200">Live</span>
         </div>
-        <div class="mt-3 ticker">
-          <div id="newsTrackTop" class="ticker-track"></div>
-        </div>
+        <div class="mt-3 ticker"><div id="newsTrackTop" class="ticker-track"></div></div>
         <p class="text-xs text-slate-500 mt-2" id="newsUpdatedTop">—</p>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <!-- Left: Live snapshot table -->
+        <!-- Snapshot -->
         <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
           <div class="flex items-center justify-between">
             <h3 class="font-semibold" data-i18n="snapshot"></h3>
@@ -99,35 +91,32 @@
           </div>
         </div>
 
-        <!-- Right: Promotions (slider + cards) -->
+        <!-- Promotions -->
         <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
           <div class="flex items-center justify-between">
             <h3 class="font-semibold">📣 Promotions</h3>
             <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">NEW</span>
           </div>
-
-          <!-- Slider -->
           <div class="relative mt-3 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
             <div id="promoSlides" class="flex transition-transform duration-500">
               <article class="min-w-full p-4 bg-emerald-50 dark:bg-emerald-900/20">
-                <span class="inline-flex items-center text-xs font-bold px-2 py-1 rounded-full bg-emerald-200 text-emerald-900 dark:bg-emerald-800 dark:text-emerald-100">🔥 Today</span>
+                <span class="inline-flex text-xs font-bold px-2 py-1 rounded-full bg-emerald-200 text-emerald-900 dark:bg-emerald-800 dark:text-emerald-100">🔥 Today</span>
                 <h4 class="mt-2 text-lg font-semibold">Ice Booking — ₹2,400 / ton</h4>
                 <p class="text-sm text-slate-600 dark:text-slate-300">Factory-grade ice. Fast loading.</p>
               </article>
               <article class="min-w-full p-4 bg-sky-50 dark:bg-sky-900/20">
-                <span class="inline-flex items-center text-xs font-bold px-2 py-1 rounded-full bg-sky-200 text-sky-900 dark:bg-sky-800 dark:text-sky-100">🚚 Best Value</span>
+                <span class="inline-flex text-xs font-bold px-2 py-1 rounded-full bg-sky-200 text-sky-900 dark:bg-sky-800 dark:text-sky-100">🚚 Best Value</span>
                 <h4 class="mt-2 text-lg font-semibold">5T Van — ₹22 / km</h4>
                 <p class="text-sm text-slate-600 dark:text-slate-300">Reliable transport for harvest day.</p>
               </article>
               <article class="min-w-full p-4 bg-amber-50 dark:bg-amber-900/20">
-                <span class="inline-flex items-center text-xs font-bold px-2 py-1 rounded-full bg-amber-200 text-amber-900 dark:bg-amber-800 dark:text-amber-100">🧬 Fresh PL</span>
+                <span class="inline-flex text-xs font-bold px-2 py-1 rounded-full bg-amber-200 text-amber-900 dark:bg-amber-800 dark:text-amber-100">🧬 Fresh PL</span>
                 <h4 class="mt-2 text-lg font-semibold">Seeds — Batch 1 Open</h4>
                 <p class="text-sm text-slate-600 dark:text-slate-300">Vannamei SPF PL. Bonus up to 30%.</p>
               </article>
             </div>
             <div id="promoDots" class="absolute bottom-2 inset-x-0 flex justify-center gap-2"></div>
           </div>
-
           <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div class="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 p-3">
               <h4 class="font-semibold">🎯 Promote Your Hatchery</h4>
@@ -142,7 +131,7 @@
       </div>
     </section>
 
-    <!-- Tab: Harvest (merged + ice unit tons/cans) -->
+    <!-- Harvest -->
     <section id="tab-harvest" class="hidden space-y-4">
       <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
         <h3 class="font-semibold">🚛 <span data-i18n="harvest_form"></span></h3>
@@ -185,7 +174,7 @@
       </div>
     </section>
 
-    <!-- Tab: Seeds -->
+    <!-- Seeds -->
     <section id="tab-seeds" class="hidden space-y-4">
       <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
         <h3 class="font-semibold">🦐 <span data-i18n="seed_title"></span></h3>
@@ -231,7 +220,7 @@
       </div>
     </section>
 
-    <!-- Tab: Dealers -->
+    <!-- Dealers -->
     <section id="tab-dealers" class="hidden space-y-4">
       <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
         <div class="flex items-center gap-2">
@@ -256,7 +245,7 @@
       </div>
     </section>
 
-    <!-- Tab: Alerts -->
+    <!-- Alerts -->
     <section id="tab-alerts" class="hidden space-y-4">
       <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
         <h3 class="font-semibold" data-i18n="alerts_title"></h3>
@@ -267,363 +256,183 @@
 
   <script>
     // ---------- i18n ----------
-    const dict = {
-      en: {
-        app_title:"Aquaculture A–Z",
-        subtitle:"Andhra Pradesh",
-        t_rates:"Rates", t_harvest:"Harvest", t_seeds:"Seeds", t_dealers:"Dealers", t_alerts:"Alerts",
-        snapshot:"Live Snapshot", updated:"Updated", th_count:"Count", th_price:"Price (₹/kg)", th_change:"Change",
-        flash_news:"Flash News",
-        harvest_form:"Harvest Booking",
-        ice_unit:"Ice unit", ice_total:"Ice total",
-        van_type:"Van", van_rate:"₹/km", van_km:"Distance (km)", transport:"Transport",
-        grand_total:"Grand Total",
-        final_book:"Finalize Booking",
-        seed_title:"Seed Booking", state:"State", district:"District", hatchery:"Hatchery", price_per:"Price/1000 (₹)",
-        production:"Production", booking_date:"Booking Date",
-        qty_pcs:"Quantity (pcs)", bonus_percent:"Bonus %",
-        total_seeds:"Total Seeds", amount:"Amount",
-        dealer_search_ph:"Search dealer/hatchery/lab…",
-        th_name:"Name", th_cat:"Category", th_dist:"District", th_phone:"Phone",
-        alerts_title:"Water & Disease Alerts"
-      },
-      te: {
-        app_title:"Aquaculture A–Z",
-        subtitle:"ఆంధ్ర ప్రదేశ్",
-        t_rates:"రేట్స్", t_harvest:"హార్వెస్ట్", t_seeds:"సీడ్స్", t_dealers:"వెండర్లు", t_alerts:"అలర్ట్స్",
-        snapshot:"లైవ్ స్నాప్‌షాట్", updated:"అప్‌డేట్", th_count:"కౌంట్", th_price:"ధర (₹/kg)", th_change:"మార్పు",
-        flash_news:"ఫ్లాష్ న్యూస్",
-        harvest_form:"హార్వెస్ట్ బుకింగ్",
-        ice_unit:"ఐస్ యూనిట్", ice_total:"ఐస్ మొత్తం",
-        van_type:"వాన్", van_rate:"₹/కిమీ", van_km:"దూరం (కిమీ)", transport:"ట్రాన్స్‌పోర్ట్",
-        grand_total:"గ్రాండ్ టోటల్",
-        final_book:"ఫైనల్ బుక్",
-        seed_title:"సీడ్స్ బుకింగ్", state:"రాష్ట్రం", district:"జిల్లా", hatchery:"హ్యాచరీ", price_per:"ధర/1000 (₹)",
-        production:"ప్రొడక్షన్", booking_date:"బుకింగ్ తేదీ",
-        qty_pcs:"పరిమాణం (పీసులు)", bonus_percent:"బోనస్ %",
-        total_seeds:"మొత్తం సీడ్స్", amount:"అమౌంట్",
-        dealer_search_ph:"డీలర్ / హ్యాచరీ / ల్యాబ్ సెర్చ్…",
-        th_name:"పేరు", th_cat:"కేటగిరీ", th_dist:"జిల్లా", th_phone:"ఫోన్",
-        alerts_title:"నీటి & వ్యాధి అలర్ట్స్"
-      }
+    const dict={
+      en:{app_title:"Aquaculture A–Z",subtitle:"Andhra Pradesh",
+        t_rates:"Rates",t_harvest:"Harvest",t_seeds:"Seeds",t_dealers:"Dealers",t_alerts:"Alerts",
+        snapshot:"Live Snapshot",updated:"Updated",th_count:"Count",th_price:"Price (₹/kg)",th_change:"Change",
+        flash_news:"Flash News",harvest_form:"Harvest Booking",ice_unit:"Ice unit",ice_total:"Ice total",
+        van_type:"Van",van_rate:"₹/km",van_km:"Distance (km)",transport:"Transport",
+        grand_total:"Grand Total",final_book:"Finalize Booking",
+        seed_title:"Seed Booking",state:"State",district:"District",hatchery:"Hatchery",price_per:"Price/1000 (₹)",
+        production:"Production",booking_date:"Booking Date",qty_pcs:"Quantity (pcs)",bonus_percent:"Bonus %",
+        total_seeds:"Total Seeds",amount:"Amount",dealer_search_ph:"Search dealer/hatchery/lab…",
+        th_name:"Name",th_cat:"Category",th_dist:"District",th_phone:"Phone",alerts_title:"Water & Disease Alerts"},
+      te:{app_title:"Aquaculture A–Z",subtitle:"ఆంధ్ర ప్రదేశ్",
+        t_rates:"రేట్స్",t_harvest:"హార్వెస్ట్",t_seeds:"సీడ్స్",t_dealers:"వెండర్లు",t_alert్స్:"అలర్ట్స్",
+        snapshot:"లైవ్ స్నాప్‌షాట్",updated:"అప్‌డేట్",th_count:"కౌంట్",th_price:"ధర (₹/kg)",th_change:"మార్పు",
+        flash_news:"ఫ్లాష్ న్యూస్",harvest_form:"హార్వెస్ట్ బుకింగ్",ice_unit:"ఐస్ యూనిట్",ice_total:"ఐస్ మొత్తం",
+        van_type:"వాన్",van_rate:"₹/కిమీ",van_km:"దూరం (కిమీ)",transport:"ట్రాన్స్‌పోర్ట్",
+        grand_total:"గ్రాండ్ టోటల్",final_book:"ఫైనల్ బుక్",
+        seed_title:"సీడ్స్ బుకింగ్",state:"రాష్ట్రం",district:"జిల్లా",hatchery:"హ్యాచరీ",price_per:"ధర/1000 (₹)",
+        production:"ప్రొడక్షన్",booking_date:"బుకింగ్ తేదీ",qty_pcs:"పరిమాణం (పీసులు)",bonus_percent:"బోనస్ %",
+        total_seeds:"మొత్తం సీడ్స్",amount:"అమౌంట్",dealer_search_ph:"డీలర్ / హ్యాచరీ / ల్యాబ్ సెర్చ్…",
+        th_name:"పేరు",th_cat:"కేటగిరీ",th_dist:"జిల్లా",th_phone:"ఫోన్",alerts_title:"నీటి & వ్యాధి అలర్ట్స్"}
     };
-    function t(key){ const lang=localStorage.getItem('lang')||'te'; return (dict[lang]&&dict[lang][key])||key; }
-
-    function setTextByI18n() {
-      const lang = localStorage.getItem('lang') || 'te';
-      document.documentElement.lang = lang;
-      document.getElementById('subtitle').textContent = dict[lang].subtitle;
-      document.querySelectorAll('[data-i18n]').forEach(el=>{
-        const key = el.getAttribute('data-i18n');
-        el.textContent = dict[lang][key] ?? '';
-      });
-      const phInput = document.querySelector('[data-i18n-placeholder="dealer_search_ph"]');
-      if (phInput) phInput.placeholder = dict[lang].dealer_search_ph;
+    function t(k){const l=localStorage.getItem('lang')||'te';return (dict[l]&&dict[l][k])||k;}
+    function setTextByI18n(){
+      const lang=localStorage.getItem('lang')||'te';
+      document.documentElement.lang=lang;
+      subtitle.textContent=dict[lang].subtitle;
+      document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');el.textContent=dict[lang][k]||'';});
+      const ph=document.querySelector('[data-i18n-placeholder="dealer_search_ph"]'); if(ph) ph.placeholder=dict[lang].dealer_search_ph;
     }
 
-    // ---------- Theme ----------
-    const themeToggle = document.getElementById('themeToggle');
-    const savedTheme = localStorage.getItem('theme');
-    if(savedTheme==='dark'||(!savedTheme&&matchMedia('(prefers-color-scheme: dark)').matches)){
-      document.documentElement.classList.add('dark');
-    }
-    themeToggle.addEventListener('click',()=>{
-      document.documentElement.classList.toggle('dark');
-      localStorage.setItem('theme', document.documentElement.classList.contains('dark')?'dark':'light');
-    });
+    // Theme
+    const themeToggle=document.getElementById('themeToggle');
+    const savedTheme=localStorage.getItem('theme');
+    if(savedTheme==='dark'||(!savedTheme&&matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
+    themeToggle.addEventListener('click',()=>{document.documentElement.classList.toggle('dark');localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');});
 
-    // ---------- Tabs ----------
-    document.querySelectorAll('.tab-btn').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        document.querySelectorAll('.tab-btn').forEach(b=>b.setAttribute('aria-selected','false'));
-        btn.setAttribute('aria-selected','true');
-        const tab=btn.dataset.tab;
-        document.querySelectorAll('main section[id^="tab-"]').forEach(s=>s.classList.add('hidden'));
-        document.getElementById(`tab-${tab}`).classList.remove('hidden');
-      });
-    });
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab-btn').forEach(b=>b.setAttribute('aria-selected','false'));btn.setAttribute('aria-selected','true');const tab=btn.dataset.tab;document.querySelectorAll('main section[id^="tab-"]').forEach(s=>s.classList.add('hidden'));document.getElementById(`tab-${tab}`).classList.remove('hidden');}));
 
-    // ---------- Rates table (CSV if present; else demo) ----------
-    async function loadRates(){
-      let data = [];
-      try{
-        const res = await fetch('rates.csv',{cache:'no-store'});
-        if(res.ok){
-          const csv = await res.text();
-          const rows = csv.trim().split(/\r?\n/).map(r=>r.split(','));
-          const h = rows[0].map(x=>x.trim().toLowerCase());
-          const iC=h.indexOf('count'), iP=h.indexOf('price'), iCh=h.indexOf('change');
-          data = rows.slice(1).map(r=>({count:parseInt(r[iC]),price:parseFloat(r[iP]),change:iCh>-1?parseFloat(r[iCh]||0):null})).filter(x=>!isNaN(x.price));
-        }
-      }catch(e){ /* ignore, will fallback */ }
-      // fallback demo if no CSV
-      if(!data.length){
-        const counts=[150,140,130,120,110,100,90,80,70,60,50];
-        const priceByCount=c=>{
-          if(c>=110) return 240 - ((c-100)/10)*10;       // 110..150 => -₹10 per +10c
-          if(c>=80)  return 240 + ((100-c)/10)*10;       // 80..100  => +₹10 per -10c
-          if(c>=50)  return 270 + ((80-c)/10)*20;        // 50..70/60 => +₹20 per -10c from 80
-          return 240;
-        };
-        data = counts.map(c=>({count:c, price:priceByCount(c), change:null}));
-      }
-      updatedAt.textContent = new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
-      const tbody = document.querySelector('#ratesTable tbody');
-      tbody.innerHTML='';
+    // ---------- Rates: fixed scale (your rule) ----------
+    function loadRates(){
+      // Counts 150 → 50; prices by your scale:
+      // 110..150: -₹10 per +10c; 100 base ₹240; 90→+10; 80→+30; 70→+50; 60→+70; 50→+90
+      const counts=[150,140,130,120,110,100,90,80,70,60,50];
+      const priceByCount=c=>{
+        if(c>=110) return 240 - ((c-100)/10)*10;   // 110..150
+        if(c===100) return 240;
+        if(c===90)  return 250;
+        if(c===80)  return 270;
+        if(c===70)  return 290;
+        if(c===60)  return 310;
+        if(c===50)  return 330;
+        return 240;
+      };
+      const data=counts.map(c=>({count:c,price:priceByCount(c),change:null}));
+
+      updatedAt.textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
+      const tbody=document.querySelector('#ratesTable tbody'); tbody.innerHTML='';
       data.forEach(r=>{
         const tr=document.createElement('tr'); tr.className='border-b last:border-0 dark:border-slate-800';
-        tr.innerHTML = `<td class='py-2 pr-4 font-medium'>${isNaN(r.count)?'—':r.count+'c'}</td>
-                        <td class='py-2 pr-4'>₹ ${r.price.toFixed(0)}</td>
-                        <td class='py-2 pr-4'>—</td>`;
+        tr.innerHTML=`<td class="py-2 pr-4 font-medium">${r.count}c</td>
+                      <td class="py-2 pr-4">₹ ${r.price.toFixed(0)}</td>
+                      <td class="py-2 pr-4">—</td>`;
         tbody.appendChild(tr);
       });
     }
 
-    // ---------- Flash News (BILINGUAL) ----------
-    // Built-in bilingual fallback items
-    const NEWS_FALLBACK = {
-      en: [
-        {tag:'Rates',  text:'50c trend steady across coastal AP'},
-        {tag:'Seed',   text:'Batch 1 PL bookings open this week'},
-        {tag:'Harvest',text:'Night DO risk, add aeration 8pm–3am'},
-        {tag:'Market', text:'Ice ₹1200/ton in Nellore'},
-      ],
-      te: [
-        {tag:'రేట్స్', text:'50 కౌంట్ ధర తీర ప్రాంతాల్లో స్థిరంగా ఉంది'},
-        {tag:'సీడ్స్', text:'బ్యాచ్ 1 PL బుకింగ్స్ ఈ వారం ఓపెన్'},
-        {tag:'హార్వెస్ట్', text:'రాత్రివేళ DO రిస్క్ — 8pm–3am ఎయరేషన్ పెంచండి'},
-        {tag:'మార్కెట్', text:'నెల్లూరులో ఐస్ ₹1200/టన్'},
-      ]
+    // ---------- Flash News (bilingual) ----------
+    const NEWS_FALLBACK={
+      en:[{tag:'Rates',text:'50c trend steady across coastal AP'},{tag:'Seed',text:'Batch 1 PL bookings open this week'},{tag:'Harvest',text:'Night DO risk, add aeration 8pm–3am'},{tag:'Market',text:'Ice ₹1200/ton in Nellore'}],
+      te:[{tag:'రేట్స్',text:'50 కౌంట్ ధర తీర ప్రాంతాల్లో స్థిరంగా ఉంది'},{tag:'సీడ్స్',text:'బ్యాచ్ 1 PL బుకింగ్స్ ఈ వారం ఓపెన్'},{tag:'హార్వెస్ట్',text:'రాత్రివేళ DO రిస్క్ — 8pm–3am ఎయరేషన్ పెంచండి'},{tag:'మార్కెట్',text:'నెల్లూరులో ఐస్ ₹1200/టన్'}]
     };
-
-    // Try to load news.json with multilingual support.
-    // Supported formats:
-    //  A) { "en":[{tag,text}], "te":[{tag,text}] }
-    //  B) [ { tag_en, tag_te, text_en, text_te }, ... ]
     async function loadNewsTop(){
-      const track=document.getElementById('newsTrackTop');
-      if(!track) return;
-      const lang = localStorage.getItem('lang') || 'te';
+      const track=document.getElementById('newsTrackTop'); if(!track) return;
+      const lang=localStorage.getItem('lang')||'te';
+      let items=NEWS_FALLBACK[lang];
 
-      let items = NEWS_FALLBACK[lang];
-
+      // (optional) bilingual news.json support
       try{
-        const res = await fetch('news.json',{cache:'no-store'});
+        const res=await fetch('news.json',{cache:'no-store'});
         if(res.ok){
-          const json = await res.json();
-          if(Array.isArray(json)){ // Format B
-            items = json.map(it => ({
-              tag:  lang==='te' ? (it.tag_te||it.tag||'')  : (it.tag_en||it.tag||''),
-              text: lang==='te' ? (it.text_te||it.text||'') : (it.text_en||it.text||'')
-            })).filter(x=>x.text);
-          } else if(json.en && json.te){ // Format A
-            items = (json[lang]||NEWS_FALLBACK[lang]).filter(x=>x && x.text);
-          } else if(Array.isArray(json) && lang==='te'){
-            // if only English provided as plain array, stick to fallback Telugu
-            items = NEWS_FALLBACK.te;
-          } else if(Array.isArray(json) && lang==='en'){
-            items = json;
-          }
+          const json=await res.json();
+          if(Array.isArray(json)){
+            items=json.map(it=>({tag:lang==='te'?(it.tag_te||it.tag||''): (it.tag_en||it.tag||''),text:lang==='te'?(it.text_te||it.text||''):(it.text_en||it.text||'')})).filter(x=>x.text);
+          }else if(json.en&&json.te){items=json[lang];}
         }
-      }catch(e){ /* use fallback */ }
+      }catch(e){}
 
-      const chip = n => `<span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200 text-[11px]">${n}</span>`;
-      const row = items.map(n=>`<div class="flex items-center gap-2 pr-4">${chip(n.tag)}<span>${n.text}</span></div>`).join('');
-      track.innerHTML = row + row;  // duplicate for seamless loop
-
-      const el = document.getElementById('newsUpdatedTop');
-      if(el) el.textContent = new Intl.DateTimeFormat('en-IN',{dateStyle:'medium', timeStyle:'short'}).format(new Date());
+      const chip=n=>`<span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200 text-[11px]">${n}</span>`;
+      const row=items.map(n=>`<div class="flex items-center gap-2 pr-4">${chip(n.tag)}<span>${n.text}</span></div>`).join('');
+      track.innerHTML=row+row;
+      newsUpdatedTop.textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
     }
 
-    // ---------- Promo slider (right panel) ----------
-    const promoSlides = document.getElementById('promoSlides');
-    const promoDots = document.getElementById('promoDots');
-    const totalSlides = promoSlides ? promoSlides.children.length : 0;
-    let pIdx = 0, pTimer;
-    function promoRenderDots(){
-      if(!promoDots) return;
-      promoDots.innerHTML='';
-      for(let i=0;i<totalSlides;i++){
-        const d=document.createElement('button');
-        d.className='h-2 w-2 rounded-full border border-slate-400/70 bg-white/70 dark:bg-slate-800';
-        d.addEventListener('click',()=>{ promoGo(i,true); });
-        promoDots.appendChild(d);
-      }
-      promoDots.children[0]?.classList.add('bg-sky-400');
-    }
-    function promoGo(n, user=false){
-      if(!promoSlides) return;
-      pIdx = (n+totalSlides)%totalSlides;
-      promoSlides.style.transform = `translateX(-${pIdx*100}%)`;
-      [...promoDots.children].forEach((d,i)=>d.classList.toggle('bg-sky-400', i===pIdx));
-      if(user){ clearInterval(pTimer); pTimer=setInterval(()=>promoGo(pIdx+1),4500); }
-    }
-    function promoInit(){
-      if(!promoSlides) return;
-      promoRenderDots();
-      pTimer=setInterval(()=>promoGo(pIdx+1),4500);
-    }
+    // Promo slider
+    const promoSlides=document.getElementById('promoSlides'),promoDots=document.getElementById('promoDots');
+    const totalSlides=promoSlides?promoSlides.children.length:0; let pIdx=0,pTimer;
+    function promoRenderDots(){if(!promoDots) return; promoDots.innerHTML=''; for(let i=0;i<totalSlides;i++){const d=document.createElement('button'); d.className='h-2 w-2 rounded-full border border-slate-400/70 bg-white/70 dark:bg-slate-800'; d.addEventListener('click',()=>{promoGo(i,true)}); promoDots.appendChild(d);} promoDots.children[0]?.classList.add('bg-sky-400');}
+    function promoGo(n,user=false){if(!promoSlides) return; pIdx=(n+totalSlides)%totalSlides; promoSlides.style.transform=`translateX(-${pIdx*100}%)`; [...promoDots.children].forEach((d,i)=>d.classList.toggle('bg-sky-400',i===pIdx)); if(user){clearInterval(pTimer); pTimer=setInterval(()=>promoGo(pIdx+1),4500);}}
+    function promoInit(){if(!promoSlides) return; promoRenderDots(); pTimer=setInterval(()=>promoGo(pIdx+1),4500);}
 
-    // ---------- Harvest (tons/cans) ----------
+    // Harvest logic
     function bindHarvest(){
-      const unit = document.getElementById('hIceUnit');
-      const qty  = document.getElementById('hIceQty');
-      const rate = document.getElementById('hIceRate');
-      const qtyLbl  = document.getElementById('hIceQtyLbl');
-      const rateLbl = document.getElementById('hIceRateLbl');
-      const iceT = document.getElementById('hIceTotal');
-
-      const vtype= document.getElementById('hVanType');
-      const vr   = document.getElementById('hVanRate');
-      const km   = document.getElementById('hVanKm');
-      const vanT = document.getElementById('hVanTotal');
-      const grand= document.getElementById('hGrand');
-
-      function applyUnit(){
-        if(unit.value==='can'){
-          qtyLbl.textContent = t('qty_pcs') || 'Quantity (pcs)';
-          rateLbl.textContent = 'Price/can (₹)';
-          if(+rate.value===1200 || !rate.value) rate.value = 120; // default cans
-        } else {
-          qtyLbl.textContent = 'Ice (tons)';
-          rateLbl.textContent = 'Price/ton (₹)';
-          if(+rate.value===120 || !rate.value) rate.value = 1200; // default tons
-        }
-        calc();
-      }
-
-      function calc(){
-        const ice = (+qty.value||0) * (+rate.value||0);
-        const van = (+vr.value||0) * (+km.value||0);
-        iceT.textContent = `₹ ${ice.toFixed(0)}`;
-        vanT.textContent = `₹ ${van.toFixed(0)}`;
-        grand.textContent= `₹ ${(ice+van).toFixed(0)}`;
-      }
-
-      [qty,rate,vr,km,vtype].forEach(el=>el.addEventListener('input',calc));
-      unit.addEventListener('change',applyUnit);
-      applyUnit();
-
-      document.getElementById('hBook').addEventListener('click',()=>{
-        alert(`✅ ${t('harvest_form')}\n`+
-              `• ${t('ice_total')}: ${iceT.textContent}\n`+
-              `• ${t('transport')}: ${vanT.textContent}\n`+
-              `• ${t('grand_total')}: ${grand.textContent}`);
-      });
+      const unit=hIceUnit,qty=hIceQty,rate=hIceRate,qtyLbl=hIceQtyLbl,rateLbl=hIceRateLbl,iceT=hIceTotal;
+      const vtype=hVanType,vr=hVanRate,km=hVanKm,vanT=hVanTotal,grand=hGrand;
+      function applyUnit(){ if(unit.value==='can'){qtyLbl.textContent=t('qty_pcs'); rateLbl.textContent='Price/can (₹)'; if(+rate.value===1200||!rate.value) rate.value=120;} else {qtyLbl.textContent='Ice (tons)'; rateLbl.textContent='Price/ton (₹)'; if(+rate.value===120||!rate.value) rate.value=1200;} calc(); }
+      function calc(){const ice=(+qty.value||0)*(+rate.value||0); const van=(+vr.value||0)*(+km.value||0); iceT.textContent=`₹ ${ice.toFixed(0)}`; vanT.textContent=`₹ ${van.toFixed(0)}`; grand.textContent=`₹ ${(ice+van).toFixed(0)}`;}
+      [qty,rate,vr,km,vtype].forEach(el=>el.addEventListener('input',calc)); unit.addEventListener('change',applyUnit); applyUnit();
+      hBook.addEventListener('click',()=>{alert(`✅ ${t('harvest_form')}\n• ${t('ice_total')}: ${iceT.textContent}\n• ${t('transport')}: ${vanT.textContent}\n• ${t('grand_total')}: ${grand.textContent}`);});
     }
 
-    // ---------- Seeds (pieces + bonus %) ----------
+    // Seeds (pieces + % bonus)
     let seeds=[];
     async function loadSeeds(){
       try{
         const res=await fetch('seeds.csv',{cache:'no-store'});
-        const csv=await res.text();
-        const rows=csv.trim().split(/\r?\n/).map(r=>r.split(','));
-        const h=rows[0].map(x=>x.trim().toLowerCase());
-        const iS=h.indexOf('state'), iD=h.indexOf('district'), iH=h.indexOf('hatchery'), iP=h.indexOf('price');
-        seeds=rows.slice(1).map(r=>({state:r[iS],district:r[iD],hatchery:r[iH],price:parseFloat(r[iP])})).filter(x=>x.hatchery);
-      }catch(e){
-        seeds=[{state:'Andhra Pradesh',district:'Nellore',hatchery:'Blue Aqua',price:350},{state:'Andhra Pradesh',district:'Krishna',hatchery:'Delta Hatchery',price:370},{state:'Tamil Nadu',district:'',hatchery:'Chennai Aqua',price:360}];
-      }
+        if(res.ok){
+          const csv=await res.text(); const rows=csv.trim().split(/\r?\n/).map(r=>r.split(','));
+          const h=rows[0].map(x=>x.trim().toLowerCase()); const iS=h.indexOf('state'),iD=h.indexOf('district'),iH=h.indexOf('hatchery'),iP=h.indexOf('price');
+          seeds=rows.slice(1).map(r=>({state:r[iS],district:r[iD],hatchery:r[iH],price:parseFloat(r[iP])})).filter(x=>x.hatchery);
+        }
+      }catch(e){}
+      if(!seeds.length) seeds=[{state:'Andhra Pradesh',district:'Nellore',hatchery:'Blue Aqua',price:350},{state:'Andhra Pradesh',district:'Krishna',hatchery:'Delta Hatchery',price:370},{state:'Tamil Nadu',district:'',hatchery:'Chennai Aqua',price:360}];
       initSeedUI();
     }
-    function bonusPercentByQty(qtyK){ return (qtyK>=100)?30:0; } // 100k pcs => 30%
+    const bonusPercentByQty=qtyK=>qtyK>=100?30:0;
     function initSeedUI(){
-      const sState=document.getElementById('sState'), sDistrict=document.getElementById('sDistrict'), sHatch=document.getElementById('sHatchery'),
-            sPrice=document.getElementById('sPrice'), sQty=document.getElementById('sQty'),
-            sBonusPct=document.getElementById('sBonusPct'), sTotal=document.getElementById('sTotalSeeds'), sAmt=document.getElementById('sAmount');
-
-      function fillDistrict(){
-        const st=sState.value;
-        const ds=[...new Set(seeds.filter(x=>x.state===st && x.district).map(x=>x.district))];
-        sDistrict.innerHTML = ds.map(d=>`<option>${d}</option>`).join('');
-        sDistrict.parentElement.style.display = st==='Tamil Nadu'?'none':''; fillHatch();
-      }
-      function fillHatch(){
-        const st=sState.value, d=sDistrict.value||'';
-        const list=seeds.filter(x=>x.state===st && (st==='Tamil Nadu' || x.district===d));
-        sHatch.innerHTML = list.map(x=>`<option data-price='${x.price}'>${x.hatchery}</option>`).join('');
-        updPrice();
-      }
-      function updPrice(){ const opt=sHatch.selectedOptions[0]; sPrice.value = opt? opt.dataset.price : ''; calc(); }
-      function calc(){
-        const pricePerK = +sPrice.value||0; // per 1000
-        const qtyPieces = +sQty.value||0;   // pieces
-        const bonusPct  = bonusPercentByQty(qtyPieces/1000);
-        sBonusPct.textContent = `${bonusPct}%`;
-        const totalSeeds = Math.floor(qtyPieces + (qtyPieces * bonusPct/100));
-        const amount = (qtyPieces/1000) * pricePerK;
-        sTotal.textContent = totalSeeds.toLocaleString('en-IN');
-        sAmt.textContent   = `₹ ${Math.round(amount).toLocaleString('en-IN')}`;
-      }
-      sState.onchange=fillDistrict; sDistrict.onchange=fillHatch; sHatch.onchange=()=>{updPrice();}; sQty.oninput=calc;
-      fillDistrict(); calc();
-
-      document.getElementById('sBook').addEventListener('click',()=>{
-        alert(`✅ ${t('seed_title')}\n`+
-              `• ${t('state')}: ${sState.value} ${sDistrict.value||''}\n`+
-              `• ${t('hatchery')}: ${sHatch.value} @ ₹${sPrice.value}/1000\n`+
-              `• ${t('qty_pcs')}: ${(+sQty.value||0).toLocaleString('en-IN')}\n`+
-              `• ${t('bonus_percent')}: ${sBonusPct.textContent}\n`+
-              `• ${t('total_seeds')}: ${document.getElementById('sTotalSeeds').textContent}\n`+
-              `• ${t('amount')}: ${document.getElementById('sAmount').textContent}`);
-      });
+      const sState=document.getElementById('sState'),sDistrict=document.getElementById('sDistrict'),sHatch=document.getElementById('sHatchery'),sPrice=document.getElementById('sPrice'),sQty=document.getElementById('sQty'),sBonusPct=document.getElementById('sBonusPct'),sTotal=document.getElementById('sTotalSeeds'),sAmt=document.getElementById('sAmount');
+      function fillDistrict(){const st=sState.value; const ds=[...new Set(seeds.filter(x=>x.state===st&&x.district).map(x=>x.district))]; sDistrict.innerHTML=ds.map(d=>`<option>${d}</option>`).join(''); sDistrict.parentElement.style.display=st==='Tamil Nadu'?'none':''; fillHatch();}
+      function fillHatch(){const st=sState.value,d=sDistrict.value||''; const list=seeds.filter(x=>x.state===st&&(st==='Tamil Nadu'||x.district===d)); sHatch.innerHTML=list.map(x=>`<option data-price='${x.price}'>${x.hatchery}</option>`).join(''); updPrice();}
+      function updPrice(){const opt=sHatch.selectedOptions[0]; sPrice.value=opt?opt.dataset.price:''; calc();}
+      function calc(){const pricePerK=+sPrice.value||0, qtyPieces=+sQty.value||0; const bonusPct=bonusPercentByQty(qtyPieces/1000); sBonusPct.textContent=`${bonusPct}%`; const totalSeeds=Math.floor(qtyPieces+(qtyPieces*bonusPct/100)); const amount=(qtyPieces/1000)*pricePerK; sTotal.textContent=totalSeeds.toLocaleString('en-IN'); sAmt.textContent=`₹ ${Math.round(amount).toLocaleString('en-IN')}`;}
+      sState.onchange=fillDistrict; sDistrict.onchange=fillHatch; sHatch.onchange=()=>{updPrice()}; sQty.oninput=calc; fillDistrict(); calc();
+      document.getElementById('sBook').addEventListener('click',()=>{alert(`✅ ${t('seed_title')}\n• ${t('state')}: ${sState.value} ${sDistrict.value||''}\n• ${t('hatchery')}: ${sHatch.value} @ ₹${sPrice.value}/1000\n• ${t('qty_pcs')}: ${(+sQty.value||0).toLocaleString('en-IN')}\n• ${t('bonus_percent')}: ${sBonusPct.textContent}\n• ${t('total_seeds')}: ${sTotal.textContent}\n• ${t('amount')}: ${sAmt.textContent}`);});
     }
 
-    // ---------- Dealers ----------
+    // Dealers
     async function loadDealers(){
       const demo=[{name:'Sri Venkateswara Feeds',cat:'Feeds',district:'Nellore',phone:'+91 98765 43210',wa:'+919876543210'},{name:'Blue Aqua Hatchery',cat:'Seeds',district:'Nellore',phone:'+91 91234 56780',wa:'+919123456780'},{name:'Godavari Aqua Care',cat:'Medicines',district:'East Godavari',phone:'+91 90000 11122',wa:'+919000011122'},{name:'Krishna Aqua Mart',cat:'Supplies',district:'Krishna',phone:'+91 90123 45678',wa:'+919012345678'}];
       try{
         const res=await fetch('dealers.csv',{cache:'no-store'});
         if(res.ok){
-          const csv=await res.text();
-          const rows=csv.trim().split(/\r?\n/).map(r=>r.split(','));
-          const h=rows[0].map(x=>x.trim().toLowerCase());
-          const iN=h.indexOf('name'), iC=h.indexOf('category'), iD=h.indexOf('district'), iP=h.indexOf('phone'), iW=h.indexOf('whatsapp');
-          const data=rows.slice(1).map(r=>({name:r[iN],cat:r[iC],district:r[iD],phone:r[iP],wa:r[iW]}));
-          renderDealers(data);
-        } else renderDealers(demo);
-      }catch(e){ renderDealers(demo); }
+          const csv=await res.text(); const rows=csv.trim().split(/\r?\n/).map(r=>r.split(','));
+          const h=rows[0].map(x=>x.trim().toLowerCase()); const iN=h.indexOf('name'),iC=h.indexOf('category'),iD=h.indexOf('district'),iP=h.indexOf('phone'),iW=h.indexOf('whatsapp');
+          const data=rows.slice(1).map(r=>({name:r[iN],cat:r[iC],district:r[iD],phone:r[iP],wa:r[iW]})); renderDealers(data);
+        }else renderDealers(demo);
+      }catch(e){renderDealers(demo);}
     }
     function renderDealers(rows){
-      const q=document.getElementById('dSearch'), cat=document.getElementById('dCategory'), tbody=document.querySelector('#dealersTable tbody');
-      function draw(){
-        const term=(q.value||'').toLowerCase();
-        const filtered=rows.filter(r=>(!cat.value||r.cat===cat.value)&& (r.name.toLowerCase().includes(term)||r.district.toLowerCase().includes(term)||r.cat.toLowerCase().includes(term)));
-        tbody.innerHTML='';
-        filtered.forEach(d=>{
-          const tr=document.createElement('tr'); tr.className='border-b last:border-0 dark:border-slate-800';
-          tr.innerHTML=`<td class='py-2 pr-4'>${d.name}</td><td class='py-2 pr-4'>${d.cat}</td><td class='py-2 pr-4'>${d.district}</td><td class='py-2 pr-4'><a class='underline' href='tel:${d.phone}'>${d.phone}</a></td><td class='py-2 pr-4'><a class='px-2 py-1 rounded-md bg-emerald-600 text-white' target='_blank' href='https://wa.me/${d.wa}?text=${encodeURIComponent('Hi, I need aqua supplies.')}'>Chat</a></td>`;
-          tbody.appendChild(tr);
-        });
-      }
+      const q=dSearch,cat=dCategory,tbody=document.querySelector('#dealersTable tbody');
+      function draw(){const term=(q.value||'').toLowerCase(); const filtered=rows.filter(r=>(!cat.value||r.cat===cat.value)&&(r.name.toLowerCase().includes(term)||r.district.toLowerCase().includes(term)||r.cat.toLowerCase().includes(term))); tbody.innerHTML=''; filtered.forEach(d=>{const tr=document.createElement('tr'); tr.className='border-b last:border-0 dark:border-slate-800'; tr.innerHTML=`<td class='py-2 pr-4'>${d.name}</td><td class='py-2 pr-4'>${d.cat}</td><td class='py-2 pr-4'>${d.district}</td><td class='py-2 pr-4'><a class='underline' href='tel:${d.phone}'>${d.phone}</a></td><td class='py-2 pr-4'><a class='px-2 py-1 rounded-md bg-emerald-600 text-white' target='_blank' href='https://wa.me/${d.wa}?text=${encodeURIComponent('Hi, I need aqua supplies.')}'>Chat</a></td>`; tbody.appendChild(tr);});}
       q.oninput=cat.onchange=draw; draw();
     }
 
-    // ---------- Language toggle ----------
-    const langENBtn = document.getElementById('langEN');
-    const langTEBtn = document.getElementById('langTE');
-    langENBtn.addEventListener('click',()=>{localStorage.setItem('lang','en'); setTextByI18n(); loadNewsTop();});
-    langTEBtn.addEventListener('click',()=>{localStorage.setItem('lang','te'); setTextByI18n(); loadNewsTop();});
+    // Alerts (demo)
+    async function loadAlerts(){
+      const list=document.getElementById('alertsList'); const demo=[{type:'DO Low',msg:'Night DO risk for ponds < 1.2m depth. Add extra aeration 8pm–3am.'},{type:'Vibriosis',msg:'Early signs in Krishna dt. Probiotic schedule recommended.'}];
+      function render(arr){list.innerHTML='';arr.forEach(a=>{const li=document.createElement('li'); li.className='rounded-xl p-3 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'; li.innerHTML=`<b>${a.type}</b> – <span class='text-sm text-slate-600 dark:text-slate-300'>${a.msg}</span>`; list.appendChild(li);});}
+      try{const res=await fetch('alerts.json',{cache:'no-store'}); if(res.ok){render(await res.json());} else render(demo);}catch(e){render(demo);}
+    }
 
-    // ---------- INIT ----------
+    // Language buttons
+    langEN.addEventListener('click',()=>{localStorage.setItem('lang','en'); setTextByI18n(); loadNewsTop();});
+    langTE.addEventListener('click',()=>{localStorage.setItem('lang','te'); setTextByI18n(); loadNewsTop();});
+
+    // INIT
     function init(){
-      if(!localStorage.getItem('lang')) localStorage.setItem('lang','te'); // default Telugu
+      if(!localStorage.getItem('lang')) localStorage.setItem('lang','te');
       setTextByI18n();
       loadRates();
-      loadNewsTop();     // <- important: renders in selected language
+      loadNewsTop();
       promoInit();
       bindHarvest();
       loadSeeds();
       loadDealers();
-      // alerts (demo)
-      (async ()=>{
-        const list=document.getElementById('alertsList');
-        const demo=[{type:'DO Low', msg:'Night DO risk for ponds < 1.2m depth. Add extra aeration 8pm–3am.'},{type:'Vibriosis', msg:'Early signs in Krishna dt. Probiotic schedule recommended.'}];
-        function render(arr){ list.innerHTML=''; arr.forEach(a=>{ const li=document.createElement('li'); li.className='rounded-xl p-3 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'; li.innerHTML=`<b>${a.type}</b> – <span class='text-sm text-slate-600 dark:text-slate-300'>${a.msg}</span>`; list.appendChild(li); }); }
-        try{ const res=await fetch('alerts.json',{cache:'no-store'}); if(res.ok){ render(await res.json()); } else render(demo); }
-        catch(e){ render(demo); }
-      })();
+      loadAlerts();
     }
     init();
   </script>
