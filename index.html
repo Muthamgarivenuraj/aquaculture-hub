@@ -3,19 +3,23 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aquaculture A–Z • Pro Tabbed Dashboard (V5 – Full i18n)</title>
+  <title>Aquaculture A–Z • Pro Tabbed Dashboard (V6)</title>
   <meta name="description" content="Tabbed aquaculture dashboard: rates, harvest, seeds, dealers, alerts. Telugu & English toggle."/>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = { darkMode:'class', theme:{ extend:{ boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'} } } }
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <style>
     html{scroll-behavior:smooth}
     body{background: linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#f0fdf4 100%);}
     .dark body{background: linear-gradient(135deg,#0f172a 0%,#082f49 50%,#14532d 100%);}
     .tab-btn[aria-selected="true"]{background:#059669;color:white}
+    /* Flash news ticker */
+    .ticker{mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent)}
+    .ticker-track{display:flex;gap:24px;white-space:nowrap;animation:ticker 20s linear infinite}
+    @keyframes ticker{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+    .badge{font-size:.7rem}
   </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100">
@@ -82,7 +86,7 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <!-- Left: Live snapshot table (unchanged) -->
+        <!-- Left: Live snapshot table -->
         <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
           <div class="flex items-center justify-between">
             <h3 class="font-semibold" data-i18n="snapshot"></h3>
@@ -102,91 +106,63 @@
           </div>
         </div>
 
-        <!-- RIGHT PANEL REPLACED WITH PROMOTIONS/ADS ✅ -->
+        <!-- RIGHT: Flash News (scrolling) -->
         <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
           <div class="flex items-center justify-between">
-            <h3 class="font-semibold">📣 Promotions</h3>
-            <!-- optional tag -->
-            <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">Sponsored</span>
+            <h3 class="font-semibold">📰 <span data-i18n="flash_news"></span></h3>
+            <span class="text-xs px-2 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-200">Live</span>
           </div>
-
-          <!-- Slider -->
-          <div class="relative mt-3 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
-            <div id="promoSlides" class="flex transition-transform duration-500">
-              <!-- Slide 1 -->
-              <article class="min-w-full p-4 bg-emerald-50 dark:bg-emerald-900/20">
-                <span class="inline-flex items-center text-xs font-bold px-2 py-1 rounded-full bg-emerald-200 text-emerald-900 dark:bg-emerald-800 dark:text-emerald-100">🔥 Today</span>
-                <h4 class="mt-2 text-lg font-semibold">Ice Booking — ₹2,400 / ton</h4>
-                <p class="text-sm text-slate-600 dark:text-slate-300">Factory-grade ice. Fast loading. Limited slots.</p>
-                <a target="_blank" id="waIce" class="mt-3 inline-flex rounded-lg px-3 py-2 bg-emerald-600 text-white">Book via WhatsApp</a>
-              </article>
-              <!-- Slide 2 -->
-              <article class="min-w-full p-4 bg-sky-50 dark:bg-sky-900/20">
-                <span class="inline-flex items-center text-xs font-bold px-2 py-1 rounded-full bg-sky-200 text-sky-900 dark:bg-sky-800 dark:text-sky-100">🚚 Best Value</span>
-                <h4 class="mt-2 text-lg font-semibold">5T Van — ₹22 / km</h4>
-                <p class="text-sm text-slate-600 dark:text-slate-300">Reliable transport for harvest day.</p>
-                <a target="_blank" id="waVan" class="mt-3 inline-flex rounded-lg px-3 py-2 bg-emerald-600 text-white">Book via WhatsApp</a>
-              </article>
-              <!-- Slide 3 -->
-              <article class="min-w-full p-4 bg-amber-50 dark:bg-amber-900/20">
-                <span class="inline-flex items-center text-xs font-bold px-2 py-1 rounded-full bg-amber-200 text-amber-900 dark:bg-amber-800 dark:text-amber-100">🧬 Fresh PL</span>
-                <h4 class="mt-2 text-lg font-semibold">Seeds — Batch 1 Open</h4>
-                <p class="text-sm text-slate-600 dark:text-slate-300">Vannamei SPF PL. Bonus up to 30% for 1 lakh.</p>
-                <a target="_blank" id="waSeeds" class="mt-3 inline-flex rounded-lg px-3 py-2 bg-emerald-600 text-white">Book via WhatsApp</a>
-              </article>
-            </div>
-            <!-- dots -->
-            <div id="promoDots" class="absolute bottom-2 inset-x-0 flex justify-center gap-2"></div>
-          </div>
-
-          <!-- Side ad cards -->
-          <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div class="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 p-3">
-              <h4 class="font-semibold">🎯 Promote Your Hatchery</h4>
-              <p class="text-sm text-slate-600 dark:text-slate-300">Reach AP & TN farmers directly.</p>
-              <a class="inline-block mt-2 px-3 py-1.5 rounded-md bg-sky-600 text-white"
-                 href="mailto:you@example.com?subject=Promo%20Spot%20Enquiry">Contact</a>
-            </div>
-            <div class="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 p-3">
-              <h4 class="font-semibold">📦 Dealer Spotlight</h4>
-              <p class="text-sm text-slate-600 dark:text-slate-300">Feeds • Aerators • Medicines — weekly deals.</p>
-              <a class="inline-block mt-2 px-3 py-1.5 rounded-md bg-sky-600 text-white"
-                 target="_blank" id="waDealer">List on WhatsApp</a>
+          <div class="mt-3 ticker">
+            <div id="newsTrack" class="ticker-track">
+              <!-- news items will be duplicated for seamless loop -->
             </div>
           </div>
+          <p class="text-xs text-slate-500 mt-2" id="newsUpdated">—</p>
         </div>
       </div>
     </section>
 
-    <!-- Tab: Harvest -->
+    <!-- Tab: Harvest (merged form + grand total + single book) -->
     <section id="tab-harvest" class="hidden space-y-4">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
-          <h3 class="font-semibold">🧊 <span data-i18n="ice_title"></span></h3>
-          <div class="mt-3 grid grid-cols-2 gap-3">
-            <label class="text-sm"><span data-i18n="ice_tons"></span> <input id="iceTons" type="number" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800" value="1"></label>
-            <label class="text-sm"><span data-i18n="ice_rate"></span> <input id="iceRate" type="number" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800" value="1200"></label>
-          </div>
-          <p class="mt-3 text-sm"><span data-i18n="total"></span>: <b id="iceTotal">₹ 1200</b></p>
-          <a id="iceWA" target="_blank" class="mt-3 inline-flex rounded-xl px-4 py-2 bg-emerald-600 text-white" data-i18n="wa_book"></a>
+      <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
+        <h3 class="font-semibold">🚛 <span data-i18n="harvest_form"></span></h3>
+        <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3">
+          <label class="text-sm"><span data-i18n="ice_tons"></span>
+            <input id="hIceTons" type="number" value="1" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+          </label>
+          <label class="text-sm"><span data-i18n="ice_rate"></span>
+            <input id="hIceRate" type="number" value="1200" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+          </label>
+          <div class="text-sm flex items-end"><span data-i18n="ice_total"></span>: <b class="ml-2" id="hIceTotal">₹ 1200</b></div>
         </div>
-        <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
-          <h3 class="font-semibold">🚛 <span data-i18n="van_title"></span></h3>
-          <div class="mt-3 grid grid-cols-2 gap-3">
-            <label class="text-sm"><span data-i18n="van_type"></span> <select id="vanType" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800"><option value="2">2T</option><option value="5">5T</option><option value="8">8T</option><option value="10" selected>10T</option></select></label>
-            <label class="text-sm"><span data-i18n="van_rate"></span> <input id="vanRate" type="number" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800" value="35"></label>
-            <label class="text-sm"><span data-i18n="van_km"></span> <input id="vanKm" type="number" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800" value="50"></label>
-          </div>
-          <p class="mt-3 text-sm"><span data-i18n="transport"></span>: <b id="vanTotal">₹ 1750</b></p>
-          <a id="vanWA" target="_blank" class="mt-3 inline-flex rounded-xl px-4 py-2 bg-emerald-600 text-white" data-i18n="wa_book"></a>
+
+        <div class="mt-3 grid grid-cols-1 md:grid-cols-4 gap-3">
+          <label class="text-sm"><span data-i18n="van_type"></span>
+            <select id="hVanType" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+              <option value="2">2T</option><option value="5">5T</option><option value="8">8T</option><option value="10" selected>10T</option>
+            </select>
+          </label>
+          <label class="text-sm"><span data-i18n="van_rate"></span>
+            <input id="hVanRate" type="number" value="35" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+          </label>
+          <label class="text-sm"><span data-i18n="van_km"></span>
+            <input id="hVanKm" type="number" value="50" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+          </label>
+          <div class="text-sm flex items-end"><span data-i18n="transport"></span>: <b class="ml-2" id="hVanTotal">₹ 1750</b></div>
+        </div>
+
+        <div class="mt-4 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 flex items-center justify-between">
+          <div class="text-sm font-medium">🧮 <span data-i18n="grand_total"></span>: <b id="hGrand">₹ 2950</b></div>
+          <button id="hBook" class="rounded-xl px-4 py-2 bg-emerald-600 text-white" data-i18n="final_book"></button>
         </div>
       </div>
     </section>
 
-    <!-- Tab: Seeds -->
+    <!-- Tab: Seeds (qty pieces, bonus %, total pieces, amount, single book) -->
     <section id="tab-seeds" class="hidden space-y-4">
       <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
         <h3 class="font-semibold">🦐 <span data-i18n="seed_title"></span></h3>
+
         <div class="mt-3 grid grid-cols-1 md:grid-cols-4 gap-3">
           <label class="text-sm"><span data-i18n="state"></span>
             <select id="sState" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
@@ -203,14 +179,28 @@
             <input id="sPrice" type="number" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800" readonly>
           </label>
         </div>
+
         <div class="mt-3 grid grid-cols-1 md:grid-cols-4 gap-3">
-          <label class="text-sm"><span data-i18n="production"></span> <select id="sBatch" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800"><option>Batch 1</option><option>Batch 2</option></select></label>
-          <label class="text-sm"><span data-i18n="booking_date"></span> <input id="sDate" type="date" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800"></label>
-          <label class="text-sm"><span data-i18n="qty_k"></span> <input id="sQty" type="number" value="100" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800"></label>
-          <div class="text-sm flex items-end"><span data-i18n="bonus"></span>: <b class="ml-2" id="sBonus">0</b></div>
+          <label class="text-sm"><span data-i18n="production"></span>
+            <select id="sBatch" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800"><option>Batch 1</option><option>Batch 2</option></select>
+          </label>
+          <label class="text-sm"><span data-i18n="booking_date"></span>
+            <input id="sDate" type="date" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+          </label>
+          <label class="text-sm"><span data-i18n="qty_pcs"></span>
+            <input id="sQty" type="number" value="100000" class="mt-1 w-full rounded-md border px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+          </label>
+          <div class="text-sm flex items-end"><span data-i18n="bonus_percent"></span>: <b class="ml-2" id="sBonusPct">0%</b></div>
         </div>
-        <p class="mt-2 text-sm"><span data-i18n="total_seeds"></span>: <b id="sTotalSeeds">0</b> | <span data-i18n="amount"></span>: <b id="sAmount">₹ 0</b></p>
-        <a id="sWA" target="_blank" class="mt-3 inline-flex rounded-xl px-4 py-2 bg-emerald-600 text-white" data-i18n="wa_book"></a>
+
+        <p class="mt-2 text-sm">
+          <span data-i18n="total_seeds"></span>: <b id="sTotalSeeds">0</b> |
+          <span data-i18n="amount"></span>: <b id="sAmount">₹ 0</b>
+        </p>
+
+        <div class="mt-3 flex items-center justify-end">
+          <button id="sBook" class="rounded-xl px-4 py-2 bg-emerald-600 text-white" data-i18n="final_book"></button>
+        </div>
       </div>
     </section>
 
@@ -257,12 +247,15 @@
         t_rates:"Rates", t_harvest:"Harvest", t_seeds:"Seeds", t_dealers:"Dealers", t_alerts:"Alerts",
         avg:"Avg (₹/kg)", best:"Best", low:"Lowest", spread:"30c–50c Spread",
         snapshot:"Live Snapshot", updated:"Updated", th_count:"Count", th_price:"Price (₹/kg)", th_change:"Change",
-        chart_title:"₹/kg by Count",
-        ice_title:"Ice Booking", ice_tons:"Tons", ice_rate:"Price/ton (₹)",
-        total:"Total", wa_book:"Book on WhatsApp",
-        van_title:"Van Booking", van_type:"Van", van_rate:"₹/km", van_km:"Distance (km)", transport:"Transport",
+        flash_news:"Flash News",
+        harvest_form:"Harvest Booking",
+        ice_tons:"Ice (tons)", ice_rate:"Ice price/ton (₹)", ice_total:"Ice total",
+        van_type:"Van", van_rate:"₹/km", van_km:"Distance (km)", transport:"Transport",
+        grand_total:"Grand Total",
+        final_book:"Finalize Booking",
         seed_title:"Seed Booking", state:"State", district:"District", hatchery:"Hatchery", price_per:"Price/1000 (₹)",
-        production:"Production", booking_date:"Booking Date", qty_k:"Quantity (×1000 PL)", bonus:"Bonus",
+        production:"Production", booking_date:"Booking Date",
+        qty_pcs:"Quantity (pcs)", bonus_percent:"Bonus %",
         total_seeds:"Total Seeds", amount:"Amount",
         dealer_search_ph:"Search dealer/hatchery/lab…",
         th_name:"Name", th_cat:"Category", th_dist:"District", th_phone:"Phone",
@@ -274,19 +267,23 @@
         t_rates:"రేట్స్", t_harvest:"హార్వెస్ట్", t_seeds:"సీడ్స్", t_dealers:"వెండర్లు", t_alerts:"అలర్ట్స్",
         avg:"సగటు (₹/kg)", best:"అత్యధిక", low:"కనిష్ట", spread:"30c–50c వ్యత్యాసం",
         snapshot:"లైవ్ స్నాప్‌షాట్", updated:"అప్‌డేట్", th_count:"కౌంట్", th_price:"ధర (₹/kg)", th_change:"మార్పు",
-        chart_title:"కౌంట్ ప్రకారం ₹/kg",
-        ice_title:"ఐస్ బుకింగ్", ice_tons:"టన్నులు", ice_rate:"ధర/టన్ (₹)",
-        total:"మొత్తం", wa_book:"వాట్సాప్‌లో బుక్ చేయి",
-        van_title:"వాన్ బుకింగ్", van_type:"వాన్", van_rate:"₹/కిమీ", van_km:"దూరం (కిమీ)", transport:"ట్రాన్స్‌పోర్ట్",
+        flash_news:"ఫ్లాష్ న్యూస్",
+        harvest_form:"హార్వెస్ట్ బుకింగ్",
+        ice_tons:"ఐస్ (టన్నులు)", ice_rate:"ధర/టన్ (₹)", ice_total:"ఐస్ మొత్తం",
+        van_type:"వాన్", van_rate:"₹/కిమీ", van_km:"దూరం (కిమీ)", transport:"ట్రాన్స్‌పోర్ట్",
+        grand_total:"గ్రాండ్ టోటల్",
+        final_book:"ఫైనల్ బుక్",
         seed_title:"సీడ్స్ బుకింగ్", state:"రాష్ట్రం", district:"జిల్లా", hatchery:"హ్యాచరీ", price_per:"ధర/1000 (₹)",
-        production:"ప్రొడక్షన్", booking_date:"బుకింగ్ తేదీ", qty_k:"పరిమాణం (×1000 PL)", bonus:"బోనస్",
+        production:"ప్రొడక్షన్", booking_date:"బుకింగ్ తేదీ",
+        qty_pcs:"పరిమాణం (పీసులు)", bonus_percent:"బోనస్ %",
         total_seeds:"మొత్తం సీడ్స్", amount:"అమౌంట్",
         dealer_search_ph:"డీలర్ / హ్యాచరీ / ల్యాబ్ సెర్చ్…",
         th_name:"పేరు", th_cat:"కేటగిరీ", th_dist:"జిల్లా", th_phone:"ఫోన్",
         alerts_title:"నీటి & వ్యాధి అలర్ట్స్"
       }
     };
-    const WA_NUMBER = '919999999999'; // TODO: replace with your number
+
+    function t(key){ const lang=localStorage.getItem('lang')||'te'; return (dict[lang]&&dict[lang][key])||key; }
 
     function setTextByI18n() {
       const lang = localStorage.getItem('lang') || 'te';
@@ -322,14 +319,7 @@
       });
     });
 
-    // ---------- WhatsApp ----------
-    function waLink(text){ return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`; }
-
     // ---------- Rates (CSV + KPIs + table) ----------
-    const demoSeries = {
-      days:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-      series:{'30':[620,610,600,605,615,620,625],'50':[430,428,425,422,420,421,423],'60':[360,362,365,363,362,361,360],'100':[280,282,281,279,278,279,280]}
-    };
     async function loadRates(){
       try{
         const res = await fetch('rates.csv',{cache:'no-store'});
@@ -357,75 +347,61 @@
           tr.innerHTML = `<td class='py-2 pr-4 font-medium'>${r.count}c</td><td class='py-2 pr-4'>₹ ${r.price.toFixed(0)}</td><td class='py-2 pr-4'>${ch}</td>`;
           tbody.appendChild(tr);
         });
-      }catch(e){ console.warn('rates.csv not found, KPIs only from demo chart'); }
+      }catch(e){ /* ignore */ }
     }
 
-    // (Chart support kept but safely skipped if canvas not present)
-    let rateChart;
-    function renderRateChart(size='50'){
-      const ctx=document.getElementById('rateChart');
-      if(!ctx) return; // no chart now (ads replaced the panel)
-      if(rateChart) rateChart.destroy();
-      rateChart = new Chart(ctx,{
-        type:'line',
-        data:{labels:demoSeries.days,datasets:[{label:`${size}ct`,data:demoSeries.series[size]||[],tension:.35,fill:false}]},
-        options:{responsive:true,maintainAspectRatio:false}
+    // ---------- Flash News ----------
+    async function loadNews(){
+      const track=document.getElementById('newsTrack');
+      const fallback = [
+        {tag:'Rates', text:'Today 50c trend steady across coastal AP'},
+        {tag:'Seed',  text:'Batch 1 PL bookings open this week'},
+        {tag:'Harvest', text:'Night DO risk, add aeration 8pm–3am'},
+        {tag:'Market', text:'Ice ₹1200/ton in Nellore'},
+      ];
+      let items=fallback;
+      try{
+        const res=await fetch('news.json',{cache:'no-store'});
+        if(res.ok){ items = await res.json(); }
+      }catch(e){ /* fallback */ }
+      // build two copies for seamless scroll
+      function chip(n){ return `<span class="badge px-2 py-1 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200">${n}</span>`; }
+      const row = items.map(n=>`<div class="flex items-center gap-2 pr-4"><span>${chip(n.tag)}</span><span>${n.text}</span></div>`).join('');
+      track.innerHTML = row + row;
+      document.getElementById('newsUpdated').textContent = new Intl.DateTimeFormat('en-IN',{dateStyle:'medium', timeStyle:'short'}).format(new Date());
+    }
+
+    // ---------- Harvest (merged) ----------
+    function bindHarvest(){
+      const tons = document.getElementById('hIceTons');
+      const rate = document.getElementById('hIceRate');
+      const vtype= document.getElementById('hVanType');
+      const vr   = document.getElementById('hVanRate');
+      const km   = document.getElementById('hVanKm');
+      const iceT = document.getElementById('hIceTotal');
+      const vanT = document.getElementById('hVanTotal');
+      const grand= document.getElementById('hGrand');
+
+      function calc(){
+        const ice = (+tons.value||0) * (+rate.value||0);
+        const van = (+vr.value||0) * (+km.value||0);
+        iceT.textContent = `₹ ${ice.toFixed(0)}`;
+        vanT.textContent = `₹ ${van.toFixed(0)}`;
+        grand.textContent= `₹ ${(ice+van).toFixed(0)}`;
+      }
+      [tons,rate,vr,km,vtype].forEach(el=>el.addEventListener('input',calc));
+      vtype.addEventListener('change',calc);
+      calc();
+
+      document.getElementById('hBook').addEventListener('click',()=>{
+        alert(`✅ ${t('harvest_form')}\n`+
+              `• ${t('ice_total')}: ${iceT.textContent}\n`+
+              `• ${t('transport')}: ${vanT.textContent}\n`+
+              `• ${t('grand_total')}: ${grand.textContent}`);
       });
     }
-    const rateSizeEl = document.getElementById('rateSize');
-    if(rateSizeEl) rateSizeEl.addEventListener('change',e=>renderRateChart(e.target.value));
 
-    // ---------- Promo slider (Rates right panel) ----------
-    const promoSlides = document.getElementById('promoSlides');
-    const promoDots = document.getElementById('promoDots');
-    const totalSlides = promoSlides ? promoSlides.children.length : 0;
-    let pIdx = 0, pTimer;
-    function promoRenderDots(){
-      if(!promoDots) return;
-      promoDots.innerHTML='';
-      for(let i=0;i<totalSlides;i++){
-        const d=document.createElement('button');
-        d.className='h-2 w-2 rounded-full border border-slate-400/70 bg-white/70 dark:bg-slate-800';
-        d.addEventListener('click',()=>{ promoGo(i,true); });
-        promoDots.appendChild(d);
-      }
-      promoDots.children[0]?.classList.add('bg-sky-400');
-    }
-    function promoGo(n, user=false){
-      if(!promoSlides) return;
-      pIdx = (n+totalSlides)%totalSlides;
-      promoSlides.style.transform = `translateX(-${pIdx*100}%)`;
-      [...promoDots.children].forEach((d,i)=>d.classList.toggle('bg-sky-400', i===pIdx));
-      if(user){ clearInterval(pTimer); pTimer=setInterval(()=>promoGo(pIdx+1),4500); }
-    }
-    function promoInit(){
-      if(!promoSlides) return;
-      promoRenderDots();
-      pTimer=setInterval(()=>promoGo(pIdx+1),4500);
-      // WA links
-      document.getElementById('waIce').href   = waLink('Ice Booking: ₹2400/ton — Need X tons at [District], [Date]');
-      document.getElementById('waVan').href   = waLink('Van Booking: 5T @ ₹22/km — Pickup [Location], Date [dd-mm]');
-      document.getElementById('waSeeds').href = waLink('Seeds Booking: Batch 1 Vannamei SPF PL — Qty [xxxxx] PL (bonus eligible)');
-      document.getElementById('waDealer').href= waLink('Dealer Spotlight Promo Enquiry');
-    }
-
-    // ---------- Harvest ----------
-    function bindHarvest(){
-      function updIce(){
-        const t=+iceTons.value||0, p=+iceRate.value||0; const tot=t*p;
-        iceTotal.textContent=`₹ ${tot.toFixed(0)}`;
-        iceWA.href = waLink(`Ice Booking: ${t} tons @ ₹${p}/ton = ₹${tot}`);
-      }
-      function updVan(){
-        const type=vanType.value, rate=+vanRate.value||0, km=+vanKm.value||0; const tot=rate*km;
-        vanTotal.textContent=`₹ ${tot.toFixed(0)}`;
-        vanWA.href = waLink(`Van Booking: ${type}T, ${km}km @ ₹${rate}/km = ₹${tot}`);
-      }
-      iceTons.oninput=iceRate.oninput=updIce; updIce();
-      vanType.onchange=vanRate.oninput=vanKm.oninput=updVan; updVan();
-    }
-
-    // ---------- Seeds ----------
+    // ---------- Seeds (pieces + bonus %) ----------
     let seeds=[];
     async function loadSeeds(){
       try{
@@ -440,10 +416,16 @@
       }
       initSeedUI();
     }
+    function bonusPercentByQty(qty){
+      // Your rule: show percent; example you gave: 100 → 30%.
+      // Here: ≥100 gets 30%, else 0%. Change easily if you need more slabs.
+      return (qty>=100)?30:0;
+    }
     function initSeedUI(){
       const sState=document.getElementById('sState'), sDistrict=document.getElementById('sDistrict'), sHatch=document.getElementById('sHatchery'),
             sPrice=document.getElementById('sPrice'), sQty=document.getElementById('sQty'),
-            sBonus=document.getElementById('sBonus'), sTotal=document.getElementById('sTotalSeeds'), sAmt=document.getElementById('sAmount');
+            sBonusPct=document.getElementById('sBonusPct'), sTotal=document.getElementById('sTotalSeeds'), sAmt=document.getElementById('sAmount');
+
       function fillDistrict(){
         const st=sState.value;
         const ds=[...new Set(seeds.filter(x=>x.state===st && x.district).map(x=>x.district))];
@@ -457,22 +439,29 @@
         sHatch.innerHTML = list.map(x=>`<option data-price='${x.price}'>${x.hatchery}</option>`).join('');
         updPrice();
       }
-      function updPrice(){ const opt=sHatch.selectedOptions[0]; sPrice.value = opt? opt.dataset.price : ''; calc(); wa(); }
+      function updPrice(){ const opt=sHatch.selectedOptions[0]; sPrice.value = opt? opt.dataset.price : ''; calc(); }
       function calc(){
-        const price=+sPrice.value||0, qty=+sQty.value||0;
-        const bonus = (qty===100)?30000:0;
-        const totalSeeds = qty*1000 + bonus;
-        const amount = qty*price;
-        sBonus.textContent = bonus.toLocaleString('en-IN');
+        const pricePerK = +sPrice.value||0; // per 1000
+        const qtyPieces = +sQty.value||0;   // pieces
+        const bonusPct  = bonusPercentByQty(qtyPieces/1000); // interpret "100" as 100k if you prefer; else use qtyPieces directly.
+        sBonusPct.textContent = `${bonusPct}%`;
+        const totalSeeds = Math.floor(qtyPieces + (qtyPieces * bonusPct/100));
+        const amount = (qtyPieces/1000) * pricePerK;
         sTotal.textContent = totalSeeds.toLocaleString('en-IN');
-        sAmt.textContent   = `₹ ${amount.toLocaleString('en-IN')}`;
+        sAmt.textContent   = `₹ ${Math.round(amount).toLocaleString('en-IN')}`;
       }
-      function wa(){
-        const msg = `Seeds Booking: ${sState.value} ${sDistrict.value||''} | ${sHatch.value} @ ₹${sPrice.value}/1000 | Qty ${sQty.value}k | Bonus ${sBonus.textContent} | Total ${sTotal.textContent} | Amount ${sAmt.textContent}`;
-        document.getElementById('sWA').href = waLink(msg);
-      }
-      sState.onchange=fillDistrict; sDistrict.onchange=fillHatch; sHatch.onchange=()=>{updPrice();}; sQty.oninput=()=>{calc(); wa();};
-      fillDistrict(); calc(); wa();
+      sState.onchange=fillDistrict; sDistrict.onchange=fillHatch; sHatch.onchange=()=>{updPrice();}; sQty.oninput=calc;
+      fillDistrict(); calc();
+
+      document.getElementById('sBook').addEventListener('click',()=>{
+        alert(`✅ ${t('seed_title')}\n`+
+              `• ${t('state')}: ${sState.value} ${sDistrict.value||''}\n`+
+              `• ${t('hatchery')}: ${sHatch.value} @ ₹${sPrice.value}/1000\n`+
+              `• ${t('qty_pcs')}: ${(+sQty.value||0).toLocaleString('en-IN')}\n`+
+              `• ${t('bonus_percent')}: ${sBonusPct.textContent}\n`+
+              `• ${t('total_seeds')}: ${document.getElementById('sTotalSeeds').textContent}\n`+
+              `• ${t('amount')}: ${document.getElementById('sAmount').textContent}`);
+      });
     }
 
     // ---------- Dealers ----------
@@ -522,7 +511,12 @@
     function init(){
       if(!localStorage.getItem('lang')) localStorage.setItem('lang','te'); // default Telugu
       setTextByI18n();
-      loadRates(); renderRateChart('50'); bindHarvest(); loadSeeds(); loadDealers(); loadAlerts(); promoInit();
+      loadRates();
+      loadNews();
+      bindHarvest();
+      loadSeeds();
+      loadDealers();
+      loadAlerts();
     }
     init();
   </script>
