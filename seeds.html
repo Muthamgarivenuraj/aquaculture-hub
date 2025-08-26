@@ -4,8 +4,23 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Seeds • Aquaculture A–Z</title>
+
+  <!-- 🌙 Early theme boot -->
+  <script>
+    (function(){
+      try{
+        const t = localStorage.getItem('theme');
+        if (t==='dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      }catch(e){}
+    })();
+  </script>
+
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config={darkMode:'class',theme:{extend:{boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'}}}}</script>
+  <script>
+    tailwind.config = { darkMode:'class', theme:{ extend:{ boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'} } } }
+  </script>
   <style>
     html{scroll-behavior:smooth}
     body{background:linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#f0fdf4 100%)}
@@ -71,10 +86,8 @@
                te:{seed_title:"సీడ్స్ బుకింగ్",state:"రాష్ట్రం",district:"జిల్లా",hatchery:"హ్యాచరీ",price_per:"ధర/1000 (₹)",production:"ప్రొడక్షన్",booking_date:"బుకింగ్ తేదీ",qty_pcs:"పరిమాణం (పీసులు)",bonus_percent:"బోనస్ %",total_seeds:"మొత్తం సీడ్స్",amount:"అమౌంట్",final_book:"ఫైనల్ బుక్"}};
     function setLang(){const l=localStorage.getItem('lang')||'te';document.documentElement.lang=l;document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=dict[l][el.dataset.i18n]||el.textContent);}
 
-    // Theme
+    // 🌙 Toggle
     const themeToggle=document.getElementById('themeToggle');
-    const savedTheme=localStorage.getItem('theme');
-    if(savedTheme==='dark'||(!savedTheme&&matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
     themeToggle.onclick=()=>{document.documentElement.classList.toggle('dark');localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');};
 
     // Lang buttons
@@ -91,13 +104,13 @@
     function fillDistrict(){const st=sState.value; const ds=[...new Set(seeds.filter(x=>x.state===st&&x.district).map(x=>x.district))]; sDistrict.innerHTML=ds.map(d=>`<option>${d}</option>`).join(''); sDistrict.parentElement.style.display=st==='Tamil Nadu'?'none':''; fillHatch();}
     function fillHatch(){const st=sState.value,d=sDistrict.value||''; const list=seeds.filter(x=>x.state===st&&(st==='Tamil Nadu'||x.district===d)); sHatch.innerHTML=list.map(x=>`<option data-price='${x.price}'>${x.hatchery}</option>`).join(''); updPrice();}
     function updPrice(){const opt=sHatch.selectedOptions[0]; sPrice.value=opt?opt.dataset.price:''; calc();}
-    const bonusPercentByQty=qtyK=>qtyK>=100?30:0; // 100k+ pcs = 30% bonus
+    const bonusPercentByQty=qtyK=>qtyK>=100?30:0; // 100k+ pcs → 30% bonus
     function calc(){const pricePerK=+sPrice.value||0, qtyPieces=+sQty.value||0; const bonusPct=bonusPercentByQty(qtyPieces/1000); sBonusPct.textContent=`${bonusPct}%`; const totalSeeds=Math.floor(qtyPieces+(qtyPieces*bonusPct/100)); const amount=(qtyPieces/1000)*pricePerK; sTotal.textContent=totalSeeds.toLocaleString('en-IN'); sAmt.textContent=`₹ ${Math.round(amount).toLocaleString('en-IN')}`;}
     sState.onchange=fillDistrict; sDistrict.onchange=fillHatch; sHatch.onchange=updPrice; sQty.oninput=calc;
 
+    // INIT
     setLang(); fillDistrict(); calc();
-    sBook.onclick=()=>{alert(`✅ ${dict[localStorage.getItem('lang')||'te'].seed_title}\n• ${dict[localStorage.getItem('lang')||'te'].state}: ${sState.value} ${sDistrict.value||''}\n• ${dict[localStorage.getItem('lang')||'te'].hatchery}: ${sHatch.value} @ ₹${sPrice.value}/1000\n• ${dict[localStorage.getItem('lang')||'te].qty_pcs}: ${(+sQty.value||0).toLocaleString('en-IN')}\n• ${dict[localStorage.getItem('lang')||'te'].bonus_percent}: ${sBonusPct.textContent}\n• ${dict[localStorage.getItem('lang')||'te'].total_seeds}: ${sTotal.textContent}\n• ${dict[localStorage.getItem('lang')||'te'].amount}: ${sAmt.textContent}`);};
+    sBook.onclick=()=>{alert(`✅ ${dict[localStorage.getItem('lang')||'te'].seed_title}\n• ${dict[localStorage.getItem('lang')||'te'].state}: ${sState.value} ${sDistrict.value||''}\n• ${dict[localStorage.getItem('lang')||'te'].hatchery}: ${sHatch.value} @ ₹${sPrice.value}/1000\n• ${dict[localStorage.getItem('lang')||'te'].qty_pcs}: ${(+sQty.value||0).toLocaleString('en-IN')}\n• ${dict[localStorage.getItem('lang')||'te'].bonus_percent}: ${sBonusPct.textContent}\n• ${dict[localStorage.getItem('lang')||'te'].total_seeds}: ${sTotal.textContent}\n• ${dict[localStorage.getItem('lang')||'te'].amount}: ${sAmt.textContent}`);};
   </script>
 </body>
 </html>
-
