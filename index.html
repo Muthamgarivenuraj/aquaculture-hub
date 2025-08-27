@@ -202,6 +202,65 @@
   </main>
 
   <script>
+
+    (function(){
+  const box = document.querySelector('.ahPromoMedia');
+  if(!box) return;
+
+  const track = box.querySelector('.ahTrack');
+  const slides= [...box.querySelectorAll('.ahSlide')];
+  const prev  = box.querySelector('.ahPrev');
+  const next  = box.querySelector('.ahNext');
+  const mute  = box.querySelector('.ahMute');
+  const dots  = box.querySelector('.ahDots');
+
+  let i=0, auto=null, muted=true, userInteracted=false;
+
+  // dots
+  slides.forEach((_,idx)=>{
+    const b=document.createElement('button');
+    b.setAttribute('role','tab'); b.setAttribute('aria-label','Slide '+(idx+1));
+    b.addEventListener('click',()=>go(idx,true));
+    dots.appendChild(b);
+  });
+
+  function update(){
+    track.style.transform = `translateX(-${i*100}%)`;
+    slides.forEach((s,idx)=>{
+      const v=s.querySelector('video');
+      if(v){
+        v.muted = muted;
+        if(idx===i){ v.play().catch(()=>{}); } else { v.pause(); v.currentTime=0; }
+      }
+    });
+    [...dots.children].forEach((d,idx)=> d.setAttribute('aria-selected', idx===i ? 'true':'false'));
+    mute.textContent = muted ? '🔇' : '🔊';
+    mute.setAttribute('aria-pressed', (!muted).toString());
+  }
+
+  function go(n, stopAuto=false){
+    i=(n+slides.length)%slides.length;
+    update();
+    if(stopAuto){ userInteracted=true; restartAuto(); }
+  }
+
+  prev.addEventListener('click', ()=>go(i-1,true));
+  next.addEventListener('click', ()=>go(i+1,true));
+  mute.addEventListener('click', ()=>{ muted=!muted; update(); });
+
+  // autoplay with respect for reduced motion
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function start(){ if(!reduce) auto=setInterval(()=>{ if(!userInteracted) go(i+1); }, 6000); }
+  function stop(){ if(auto){ clearInterval(auto); auto=null; } }
+  function restart(){ stop(); start(); }
+
+  // pause when off-screen
+  const io = new IntersectionObserver((es)=> es.forEach(e=> e.isIntersecting? start(): stop()), {threshold:.2});
+  io.observe(box);
+
+  // kick off
+  update();
+})();
     // i18n
     const dict={en:{app_title:"Aquaculture A–Z",t_harvest:"Harvest",t_seeds:"Seeds",t_dealers:"Dealers",flash_news:"Flash News",snapshot:"Live Snapshot",updated:"Updated",th_count:"Count",th_price:"Price (₹/kg)",th_change:"Change",promotions_title:"Promotions",promo_chip_today:"Today",promo_ice_title:"Ice Booking — ₹2,400 / ton",promo_ice_text:"Factory-grade ice. Fast loading.",promo_chip_value:"Best Value",promo_van_title:"5T Van — ₹22 / km",promo_van_text:"Reliable transport for harvest day.",promo_chip_fresh:"Fresh PL",promo_seed_title:"Seeds — Batch 1 Open",promo_seed_text:"Vannamei SPF PL. Bonus up to 30%."},te:{app_title:"Aquaculture A–Z",t_harvest:"హార్వెస్ట్",t_seeds:"సీడ్స్",t_dealers:"వెండర్లు",flash_news:"ఫ్లాష్ న్యూస్",snapshot:"లైవ్ స్నాప్‌షాట్",updated:"అప్‌డేట్",th_count:"కౌంట్",th_price:"ధర (₹/kg)",th_change:"మార్పు",promotions_title:"ప్రోమోషన్స్",promo_chip_today:"ఈ రోజు",promo_ice_title:"ఐస్ బుకింగ్ — ₹2,400 / టన్",promo_ice_text:"ఫ్యాక్టరీ గ్రేడ్ ఐస్. ఫాస్ట్ లోడింగ్.",promo_chip_value:"బెస్ట్ వాల్యూ",promo_van_title:"5T వాన్ — ₹22 / కిమీ",promo_van_text:"హార్వెస్ట్ రోజున నమ్మదగిన ట్రాన్స్‌పోర్ట్.",promo_chip_fresh:"ఫ్రెష్ PL",promo_seed_title:"సీడ్స్ — బ్యాచ్ 1 ఓపెన్",promo_seed_text:"వాన్నామెయి SPF PL. 30% వరకూ బోనస్."}};
     function setLang(){const lang=localStorage.getItem('lang')||'te';document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(dict[lang][k]) el.textContent=dict[lang][k];});}
