@@ -1,103 +1,88 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Vendors — Aquaculture A–Z Hub (AP)</title>
-  <meta name="description" content="Find aquaculture dealers in Andhra Pradesh by category and location." />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root{--bg:#f6f8fb;--card:#fff;--text:#0b1220;--muted:#5f6b85;--brand:#1e66f5;--border:#e5e7ef}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
-    .container{max-width:1080px;margin:0 auto;padding:16px}
-    header{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 0}
-    .brand{display:flex;gap:10px;align-items:center}
-    .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#1e66f5,#7aa0ff)}
-    .title{font-size:1.25rem;font-weight:800;margin:0}
-    .back{display:inline-flex;gap:8px;align-items:center;text-decoration:none;color:var(--text);font-weight:700;border:1px solid var(--border);padding:8px 12px;border-radius:10px;background:#fff}
-    .lang{display:flex;gap:6px}
-    .pill{border:1px solid var(--border);background:var(--card);padding:8px 12px;border-radius:999px;cursor:pointer}
-    .pill.active{background:var(--text);color:#fff;border-color:var(--text)}
-    .panel{background:linear-gradient(180deg,#eef3ff,transparent);border:1px solid var(--border);border-radius:20px;padding:16px}
-    .row{display:grid;grid-template-columns:1fr;gap:10px}
-    @media(min-width:720px){.row{grid-template-columns:1fr 1fr}}
-    .select{position:relative}
-    select, input, textarea{width:100%;appearance:none;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:#fff;font-weight:600}
-    .select svg{position:absolute;right:12px;top:50%;transform:translateY(-50%)}
-    .grid{display:grid;grid-template-columns:1fr;gap:12px}
-    @media(min-width:680px){.grid{grid-template-columns:repeat(2,1fr)}}
-    @media(min-width:980px){.grid{grid-template-columns:repeat(3,1fr)}}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:14px}
-    .card h3{margin:0 0 6px;font-size:1.05rem}
-    .muted{color:var(--muted)}
-    .tag{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:#fff;font-weight:600}
-    .actions{display:flex;gap:8px;flex-wrap:wrap}
-    .btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;text-decoration:none;color:var(--text)}
-    .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
-    table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border);background:#fff;border-radius:14px;overflow:hidden}
-    th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border)}
-    th{background:#f3f6ff;font-weight:800}
-    tr:last-child td{border-bottom:none}
-    footer{margin:28px 0 10px;color:var(--muted);font-size:.85rem;text-align:center}
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <div class="brand"><div class="logo"></div><div><p class="title">Vendors</p><small class="muted">Feeds · Seeds · Medicines · Labs</small></div></div>
-      <a class="back" href="index.html">← Home</a>
-    </header>
-
-    <section class="panel">
-      <div class="row">
-        <div class="select"><select id="district"><option value="">Select District</option><option>Nellore</option><option>West Godavari</option><option>East Godavari</option><option>Krishna</option><option>Prakasam</option></select></div>
-        <div class="select"><select id="mandal"><option>All Mandals</option><option>Kavali</option><option>Kovur</option><option>Vidavalur</option></select></div>
-      </div>
-
-      <div class="actions" style="margin-top:10px">
-        <button class="btn primary" data-cat="feeds">Feeds</button>
-        <button class="btn" data-cat="seeds">Seeds</button>
-        <button class="btn" data-cat="meds">Medicines</button>
-        <button class="btn" data-cat="labs">Labs</button>
-        <button class="btn" data-cat="aerators">Aerators</button>
-      </div>
-
-      <div id="list" class="grid" style="margin-top:12px"></div>
-    </section>
-
-    <footer>© 2025 Aquaculture A–Z Hub • Vendors</footer>
+<!-- Top controls -->
+<div class="flex flex-wrap items-center gap-2 mb-3">
+  <!-- Toggle buttons -->
+  <div class="inline-flex rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800">
+    <button id="btnVendors" class="px-4 py-2 text-sm bg-emerald-600 text-white">Vendors</button>
+    <button id="btnCulture" class="px-4 py-2 text-sm bg-white dark:bg-slate-900">Prawn Culture</button>
   </div>
-<script>
-const data = [
-  { id:1, name:"Sri Sai Aqua Feeds", cat:"feeds", district:"Nellore", mandal:"Kavali", priceNote:"Avanti, CP", phone:"+91 9876543210" },
-  { id:2, name:"Blue Ocean Seeds", cat:"seeds", district:"Nellore", mandal:"Kovur", priceNote:"PL10–PL12", phone:"+91 9876501234" },
-  { id:3, name:"AquaCare Medicines", cat:"meds", district:"West Godavari", mandal:"Palacole", priceNote:"Probiotics, Lime", phone:"+91 9800001111" },
-  { id:4, name:"Kakinada Aqua Lab", cat:"labs", district:"East Godavari", mandal:"Kakinada", priceNote:"PCR/Water/Soil", phone:"+91 9700002222" },
-  { id:5, name:"PowerAir Aerators", cat:"aerators", district:"Nellore", mandal:"Vidavalur", priceNote:"3HP/5HP", phone:"+91 9600003333" }
-];
-let active="feeds";
-function render(){
-  const d = document.getElementById('district').value;
-  const m = document.getElementById('mandal').value;
-  const filtered = data.filter(x => (active?x.cat===active:true) && (d?x.district===d:true) && (m && m!=="All Mandals"?x.mandal===m:true));
-  document.getElementById('list').innerHTML = filtered.map(v => `
-    <div class="card">
-      <h3>${v.name}</h3>
-      <p class="muted">${v.district} · ${v.mandal} · ${v.priceNote}</p>
-      <div class="actions" style="margin-top:8px">
-        <a class="btn" href="vendor-profile.html?id=${v.id}">View</a>
-        <a class="btn primary" href="https://wa.me/919999999999?text=Hello%20${encodeURIComponent(v.name)}">WhatsApp</a>
-      </div>
-    </div>
-  `).join('') || '<div class="card"><p>No vendors found.</p></div>';
-}
-document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-cat]').forEach(x=>x.classList.remove('primary'));b.classList.add('primary');active=b.dataset.cat;render();}));
-document.getElementById('district').addEventListener('change',render);
-document.getElementById('mandal').addEventListener('change',render);
-render();
-</script>
 
-</body>
-</html>
+  <!-- (Shown only in Vendors tab) -->
+  <div id="vendorFilters" class="flex items-center gap-2 ml-auto">
+    <input id="dSearch" class="rounded-md border px-3 py-2 text-sm dark:bg-slate-950 dark:border-slate-800" placeholder="Search dealer/hatchery/lab…" />
+    <select id="dCategory" class="rounded-md border px-2 py-2 text-sm dark:bg-slate-950 dark:border-slate-800">
+      <option value="">All</option>
+      <option>Feeds</option><option>Seeds</option><option>Medicines</option>
+      <option>Lab</option><option>Supplies</option>
+    </select>
+  </div>
+</div>
+
+<!-- Vendors section -->
+<section id="v-vendors" class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-sm" id="dealersTable">
+      <thead>
+        <tr class="border-b dark:border-slate-800 text-slate-500">
+          <th class="text-left py-2 pr-4">Name</th>
+          <th class="text-left py-2 pr-4">Category</th>
+          <th class="text-left py-2 pr-4">District</th>
+          <th class="text-left py-2 pr-4">Phone</th>
+          <th class="text-left py-2 pr-4">WhatsApp</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Prawns Culture Details section -->
+<section id="v-culture" class="hidden rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
+  <h3 class="font-semibold text-lg mb-3">Prawn Culture – Quick Guides</h3>
+
+  <!-- Simple accordion -->
+  <div class="divide-y divide-slate-200 dark:divide-slate-800">
+    <details class="py-3" open>
+      <summary class="cursor-pointer font-medium">Pond Preparation (7–10 days)</summary>
+      <ul class="list-disc pl-6 mt-2 text-sm leading-relaxed">
+        <li>Dry pond bed; apply lime as per soil pH (6.5–8.5 target).</li>
+        <li>Fill water 3–4 ft; chlorinate if needed; dechlorinate after 48 hrs.</li>
+        <li>Probiotics pre-stock; check salinity, alkalinity, hardness.</li>
+      </ul>
+    </details>
+
+    <details class="py-3">
+      <summary class="cursor-pointer font-medium">Stocking (Vannamei SPF PL)</summary>
+      <ul class="list-disc pl-6 mt-2 text-sm">
+        <li>Acclimatize PL (temp/salinity) for 45–60 min.</li>
+        <li>Density per local practice (e.g., 40–60/m² intensive).</li>
+        <li>Start feed @ 4–5% biomass; adjust by tray observations.</li>
+      </ul>
+    </details>
+
+    <details class="py-3">
+      <summary class="cursor-pointer font-medium">Daily Water Quality</summary>
+      <ul class="list-disc pl-6 mt-2 text-sm">
+        <li>DO &gt; 5 mg/L (night aeration 8pm–3am if shallow ponds).</li>
+        <li>pH 7.5–8.2 (morning/evening checks).</li>
+        <li>Transparency 25–35 cm; color stable (golden/brown).</li>
+      </ul>
+    </details>
+
+    <details class="py-3">
+      <summary class="cursor-pointer font-medium">Health & Disease</summary>
+      <ul class="list-disc pl-6 mt-2 text-sm">
+        <li>Vibriosis prevention: regular probiotics, avoid overfeeding.</li>
+        <li>Lab checks weekly—histology if stress signs.</li>
+        <li>Biosecurity: bird fencing, foot dips, gear sanitize.</li>
+      </ul>
+    </details>
+
+    <details class="py-3">
+      <summary class="cursor-pointer font-medium">Harvest & Post-Harvest</summary>
+      <ul class="list-disc pl-6 mt-2 text-sm">
+        <li>Plan ice & van logistics (use Harvest tab calculators).</li>
+        <li>Use clean ice; rapid chilling; avoid freshwater wash for saline species.</li>
+      </ul>
+    </details>
+  </div>
+</section>
