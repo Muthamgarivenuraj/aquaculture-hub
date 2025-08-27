@@ -18,6 +18,66 @@
     @media (max-width:640px){.ticker{mask-image:none;-webkit-mask-image:none}.ticker-track{gap:16px;animation-duration:28s}}
     @keyframes blink{0%,100%{opacity:1;background-color:#facc15;color:#111827}50%{opacity:1;background-color:#dc2626;color:#fff}}
     .blink{animation:blink 1.2s infinite}
+    /* === Scoped Promo Media (won't disturb other UI) === */
+.ahPromoMedia{
+  position:relative;
+  margin-top:10px;
+  border:1px solid #e7eef5;           /* match card border-light */
+  background:#ffffff;                  /* your card white */
+  border-radius:14px;
+  overflow:hidden;
+  min-height:200px;                    /* keeps the box visible even before assets load */
+  box-shadow:0 0 0 0 rgba(0,0,0,0);
+}
+@media (prefers-color-scheme: dark){
+  .ahPromoMedia{ background:#101826; border-color:#1b2742; }
+}
+.ahTrack{
+  display:grid;
+  grid-auto-flow:column;
+  grid-auto-columns:100%;
+  transition:transform .4s ease;
+  height:100%;
+}
+.ahSlide{ margin:0; height:100%; }
+.ahSlide img,.ahSlide video{
+  width:100%; height:100%;
+  object-fit:cover;
+  aspect-ratio:16/9;                   /* neat crop */
+  display:block;
+}
+.ahNav{
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:34px; height:34px; border-radius:50%;
+  border:1px solid rgba(0,0,0,.08);
+  background:rgba(255,255,255,.75);
+  backdrop-filter:blur(4px);
+  color:#111; cursor:pointer; z-index:2;
+}
+.ahPrev{ left:8px } .ahNext{ right:8px }
+.ahNav:hover{ background:#fff }
+.ahMute{
+  position:absolute; right:50px; top:8px; z-index:2;
+  border:1px solid rgba(0,0,0,.08);
+  background:rgba(255,255,255,.8); color:#111;
+  padding:6px 10px; border-radius:10px; cursor:pointer;
+}
+.ahDots{
+  position:absolute; left:0; right:0; bottom:8px;
+  display:flex; gap:6px; justify-content:center; z-index:2;
+}
+.ahDots button{
+  width:8px; height:8px; border-radius:50%;
+  border:1px solid rgba(0,0,0,.2);
+  background:rgba(255,255,255,.7); cursor:pointer;
+}
+.ahDots button[aria-selected="true"]{ background:#4fb3ff; border-color:#4fb3ff }
+
+/* Responsive: slightly shorter on small screens inside the card */
+@media (max-width: 720px){
+  .ahPromoMedia{ min-height:180px; }
+}
+
   </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100">
@@ -105,6 +165,39 @@
           <div id="promoDots" class="absolute bottom-2 inset-x-0 flex justify-center gap-2"></div>
         </div>
       </div>
+      <!-- ▶️ Aquaculture Hub • Promo Media (scoped) -->
+<div class="ahPromoMedia" aria-label="Promo videos">
+  <button type="button" class="ahNav ahPrev" aria-label="Previous">‹</button>
+  <button type="button" class="ahNav ahNext" aria-label="Next">›</button>
+  <button type="button" class="ahMute" aria-pressed="true" aria-label="Toggle sound">🔇</button>
+
+  <div class="ahTrack">
+    <!-- Slide 1: VIDEO -->
+    <figure class="ahSlide is-active" data-type="video">
+      <video class="ahVideo" playsinline muted loop preload="metadata"
+             poster="assets/posters/pond-aerator.webp">
+        <source src="assets/videos/pond-aerator.mp4" type="video/mp4" />
+      </video>
+    </figure>
+
+    <!-- Slide 2: IMAGE -->
+    <figure class="ahSlide" data-type="image">
+      <img src="assets/images/harvest-weigh.webp" alt="Vannamei harvest weighing on scale" loading="lazy">
+    </figure>
+
+    <!-- Slide 3: VIDEO -->
+    <figure class="ahSlide" data-type="video">
+      <video class="ahVideo" playsinline muted loop preload="metadata"
+             poster="assets/posters/pl-tray.webp">
+        <source src="assets/videos/pl-tray.mp4" type="video/mp4" />
+      </video>
+    </figure>
+  </div>
+
+  <div class="ahDots" role="tablist" aria-label="Slides"></div>
+</div>
+<!-- ◀️ /Promo Media -->
+
     </section>
   </main>
 
