@@ -1,240 +1,238 @@
 <!DOCTYPE html>
 <html lang="te">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Aquaculture A–Z • Home (Promo Video)</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config={darkMode:'class',theme:{extend:{boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'}}}}</script>
-  <style>
-    html{scroll-behavior:smooth}
-    body{background:linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#f0fdf4 100%)}
-    .dark body{background:linear-gradient(135deg,#0f172a 0%,#082f49 50%,#14532d 100%)}
-    .navbtn{border:1px solid rgb(226,232,240);padding:.6rem .9rem;border-radius:.75rem;background:#fff;font-weight:500}
-    .dark .navbtn{background:#0b1220;border-color:#1f2937}
-    /* Flash news ticker */
-    .ticker{overflow:hidden;mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent)}
-    .ticker-track{display:flex;gap:24px;white-space:nowrap;min-width:max-content;animation:ticker 20s linear infinite}
-    @keyframes ticker{from{transform:translateX(0)} to{transform:translateX(-50%)}}
-    @media (max-width:640px){.ticker{mask-image:none;-webkit-mask-image:none}.ticker-track{gap:16px;animation-duration:28s}}
-    /* Harvest-only blink */
-    @keyframes blink{0%,100%{opacity:1;background-color:#facc15;color:#111827}50%{opacity:1;background-color:#dc2626;color:#fff}}
-    .blink{animation:blink 1.2s infinite}
-    /* Promo video footer */
-    .promo-footer{display:flex;align-items:center;gap:.75rem;margin-top:.75rem}
-    .promo-video{width:100%;max-height:220px;border-radius:.75rem;border:1px solid rgba(148,163,184,.35);object-fit:cover}
-    .live-pill{font-size:.75rem;padding:.15rem .5rem;border-radius:.5rem;background:#ef4444;color:#fff}
-  </style>
-  <!-- (Optional) HLS support for .m3u8 streams -->
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aquaculture Hub – Promo Slider Demo</title>
+<meta name="description" content="Aquaculture Hub: video/image promo slider for prawns culture offers and services." />
+<style>
+  :root{
+    --bg:#0b1220; --card:#111a2c; --muted:#8fa3c7; --text:#eaf1ff; --brand:#4fb3ff; --accent:#49e0a6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;background:linear-gradient(180deg,#0b1220,#0e1526);color:var(--text)}
+  a{color:var(--brand);text-decoration:none}
+
+  header{position:sticky;top:0;z-index:20;background:rgba(11,18,32,.8);backdrop-filter:blur(8px);border-bottom:1px solid #1b2742}
+  .container{max-width:1100px;margin:0 auto;padding:0 16px}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{display:flex;gap:10px;align-items:center;color:var(--text);font-weight:700}
+  .logo .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--accent))}
+  .hero{padding:28px 0}
+
+  /* ===== Promo Slider ===== */
+  .promo-wrap{margin:10px 0 26px}
+  .promo-slider{ position:relative; border:1px solid #1b2742; background:#111a2c; border-radius:18px; overflow:hidden }
+  .promo-track{ display:grid; grid-auto-flow:column; grid-auto-columns:100%; transition:transform .45s ease }
+  .promo-slide{ display:grid; grid-template-columns:1.2fr .8fr; gap:16px; align-items:stretch; padding:14px }
+  .promo-slide .promo-media{ margin:0; border-radius:14px; overflow:hidden; background:#0b1220 }
+  .promo-media video,.promo-media img{ width:100%; height:100%; object-fit:cover; aspect-ratio:16/9; display:block }
+  .promo-caption{ display:flex; flex-direction:column; gap:8px; justify-content:center; color:#eaf1ff }
+  .promo-caption h4{ margin:0; font-size:clamp(18px,3.2vw,24px) }
+  .promo-caption p{ margin:0; color:#8fa3c7; font-size:14px }
+  .promo-cta{ display:inline-block; margin-top:6px; background:linear-gradient(135deg,#4fb3ff,#6ad1ff); color:#051026; font-weight:700; padding:10px 14px; border-radius:12px; text-decoration:none }
+  .promo-nav{ position:absolute; top:50%; transform:translateY(-50%); z-index:3; width:40px; height:40px; border-radius:50%; border:1px solid #2a3a61; background:#0c1527a6; color:#eaf1ff; cursor:pointer }
+  .promo-nav:hover{ background:#0c1527 }
+  .promo-nav.prev{ left:8px } .promo-nav.next{ right:8px }
+  .promo-mute{ position:absolute; right:54px; top:8px; z-index:3; border:1px solid #2a3a61; background:#0c1527a6; color:#eaf1ff; padding:6px 10px; border-radius:10px; cursor:pointer }
+  .promo-dots{ position:absolute; left:0; right:0; bottom:8px; display:flex; gap:6px; justify-content:center; z-index:3 }
+  .promo-dots button{ width:8px; height:8px; border-radius:50%; border:1px solid #2a3a61; background:#0c1527; cursor:pointer }
+  .promo-dots button[aria-selected="true"]{ background:#4fb3ff }
+  .pill{ display:inline-block; padding:3px 8px; border-radius:999px; font-size:12px; border:1px solid #2a3a61; background:#13203a; color:#a7c4ff; width:max-content }
+  .pill.live{ border-color:#3f9cff } .pill.best{ border-color:#49e0a6 } .pill.new{ border-color:#c89bff } .pill.verified{ border-color:#ffd76a }
+  @media (max-width: 860px){
+    .promo-slide{ grid-template-columns:1fr; padding:10px }
+    .promo-nav{ top:auto; bottom:42%; }
+    .promo-mute{ right:8px; top:8px }
+  }
+
+  /* Page helpers */
+  .muted{color:var(--muted)}
+  .section{padding:8px 0 28px}
+  footer{padding:28px 0;color:#94abd8;border-top:1px solid #1b2742;margin-top:32px}
+</style>
 </head>
-<body class="text-slate-900 dark:text-slate-100">
-  <!-- Header -->
-  <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
-      <h1 class="text-xl font-bold flex-1" data-i18n="app_title">Aquaculture A–Z</h1>
-
-      <!-- Desktop nav -->
-      <nav class="hidden sm:flex gap-2">
-        <a href="harvest.html" class="navbtn">🚚 <span data-i18n="t_harvest">Harvest</span></a>
-        <a href="seeds.html" class="navbtn">🦐 <span data-i18n="t_seeds">Seeds</span></a>
-        <a href="dealers.html" class="navbtn">🏪 <span data-i18n="t_dealers">Dealers</span></a>
-      </nav>
-
-      <!-- Desktop: TE / EN -->
-      <div class="hidden sm:flex rounded-full bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-800">
-        <button id="langTE" class="px-3 py-1.5 text-sm rounded-full bg-white dark:bg-slate-800 shadow-soft">తెలుగు</button>
-        <button id="langEN" class="px-3 py-1.5 text-sm rounded-full">English</button>
-      </div>
-
-      <!-- Theme -->
-      <button id="themeToggle" class="rounded-full px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-800">🌙/☀️</button>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="logo"><span class="dot"></span> Aquaculture Hub</div>
+      <a href="#contact" style="color:#eaf1ff">Contact</a>
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto p-4 space-y-4">
-    <!-- ✅ Quick Nav (mobile only) -->
-    <section class="grid grid-cols-3 gap-2 sm:hidden">
-      <a href="harvest.html" class="navbtn text-center">🚚 <span data-i18n="t_harvest">Harvest</span></a>
-      <a href="seeds.html" class="navbtn text-center">🦐 <span data-i18n="t_seeds">Seeds</span></a>
-      <a href="dealers.html" class="navbtn text-center">🏪 <span data-i18n="t_dealers">Dealers</span></a>
+  <main class="container">
+    <section class="hero">
+      <h1 style="margin:0 0 6px">Promotions • Videos + Images Slider</h1>
+      <p class="muted">ఈ సెక్షన్‌ను మీ Home పేజీలోకి drop-in‌గా వేసుకోవచ్చు. Mobile-friendly, autoplay, muted, arrows+dots.</p>
     </section>
 
-    <!-- Flash News -->
-    <section class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
-      <div class="flex items-center justify-between">
-        <h3 class="font-semibold">📰 <span data-i18n="flash_news">Flash News</span></h3>
-        <span class="text-xs px-2 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-200">Live</span>
-      </div>
-      <div class="mt-3 ticker"><div id="newsTrackTop" class="ticker-track"></div></div>
-      <p class="text-xs text-slate-500 mt-2"><span data-i18n="updated">Updated</span>: <span id="newsUpdatedTop">—</span></p>
-    </section>
+    <!-- =================== PROMO SLIDER START =================== -->
+    <section class="promo-wrap" aria-label="Promotions">
+      <div class="promo-slider">
+        <!-- Controls -->
+        <button class="promo-nav prev" aria-label="Previous">‹</button>
+        <button class="promo-nav next" aria-label="Next">›</button>
+        <button class="promo-mute" aria-pressed="true" aria-label="Toggle sound">🔇</button>
 
-    <!-- Rates + Promotions -->
-    <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <!-- Rates -->
-      <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
-        <div class="flex items-center justify-between">
-          <h3 class="font-semibold" data-i18n="snapshot">Live Snapshot</h3>
-          <p class="text-xs text-slate-500"><span data-i18n="updated">Updated</span>: <span id="updatedAt">—</span></p>
-        </div>
-        <div class="mt-3 overflow-x-auto">
-          <table class="min-w-full text-sm" id="ratesTable">
-            <thead>
-              <tr class="border-b dark:border-slate-800 text-slate-500">
-                <th class="text-left py-2 pr-4" data-i18n="th_count">Count</th>
-                <th class="text-left py-2 pr-4" data-i18n="th_price">Price (₹/kg)</th>
-                <th class="text-left py-2 pr-4" data-i18n="th_change">Change</th>
-              </tr>
-            </thead><tbody></tbody>
-          </table>
-        </div>
-      </div>
+        <!-- Slides -->
+        <div class="promo-track">
 
-      <!-- Promotions (with video footer) -->
-      <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
-        <div class="flex items-center justify-between">
-          <h3 class="font-semibold">📣 <span data-i18n="promotions_title">Promotions</span></h3>
-          <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">NEW</span>
-        </div>
-
-        <div class="relative mt-3 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
-          <div id="promoSlides" class="flex transition-transform duration-500">
-            <!-- Slide 1 -->
-            <article class="min-w-full p-4 bg-emerald-50 dark:bg-emerald-900/20">
-              <span class="inline-flex text-xs font-bold px-2 py-1 rounded-full bg-emerald-200 text-emerald-900 dark:bg-emerald-800 dark:text-emerald-100" data-i18n="promo_chip_today">Today</span>
-              <h4 class="mt-2 text-lg font-semibold" data-i18n="promo_ice_title">Ice Booking — ₹2,400 / ton</h4>
-              <p class="text-sm text-slate-600 dark:text-slate-300" data-i18n="promo_ice_text">Factory-grade ice. Fast loading.</p>
-
-              <!-- ▶️ Promo video footer -->
-              <div class="promo-footer">
-                <span class="live-pill">LIVE</span>
-                <button id="promoMuteBtn" class="px-2 py-1 rounded-md border border-slate-300 dark:border-slate-700 text-sm">
-                  🔇 Mute
-                </button>
-              </div>
-              <video id="promoVideo" class="promo-video" autoplay muted playsinline controls
-                     poster="promo-poster.jpg">
-                <!-- MP4 fallback (replace with your file/URL) -->
-                <source src="promo.mp4" type="video/mp4">
+          <!-- Slide 1: VIDEO (Aerator/Pond) -->
+          <section class="promo-slide is-active" data-type="video">
+            <figure class="promo-media">
+              <video class="promo-video" playsinline muted loop preload="metadata"
+                     poster="assets/posters/pond-aerator.webp">
+                <!-- TODO: replace with your file -->
+                <source src="assets/videos/pond-aerator.mp4" type="video/mp4" />
               </video>
-            </article>
+            </figure>
+            <header class="promo-caption">
+              <span class="pill live">LIVE</span>
+              <h4>హార్వెస్ట్ ఐస్ — ₹2,400 / టన్</h4>
+              <p>Factory-grade ice. Fast loading. నమ్మకమైన సప్లై.</p>
+              <a href="#harvest" class="promo-cta">Book Now</a>
+            </header>
+          </section>
 
-            <!-- Slide 2 -->
-            <article class="min-w-full p-4 bg-sky-50 dark:bg-sky-900/20">
-              <span class="inline-flex text-xs font-bold px-2 py-1 rounded-full bg-sky-200 text-sky-900 dark:bg-sky-800 dark:text-sky-100" data-i18n="promo_chip_value">Best Value</span>
-              <h4 class="mt-2 text-lg font-semibold" data-i18n="promo_van_title">5T Van — ₹22 / km</h4>
-              <p class="text-sm text-slate-600 dark:text-slate-300" data-i18n="promo_van_text">Reliable transport for harvest day.</p>
-            </article>
+          <!-- Slide 2: IMAGE (Transport) -->
+          <section class="promo-slide" data-type="image">
+            <figure class="promo-media">
+              <img src="assets/images/harvest-weigh.webp" alt="Vannamei harvest weighing on scale" loading="lazy">
+            </figure>
+            <header class="promo-caption">
+              <span class="pill best">Best Value</span>
+              <h4>Transport 5T — ₹22 / km</h4>
+              <p>Harvest day logistics — time మీద delivery.</p>
+              <a href="#harvest" class="promo-cta">Get Quote</a>
+            </header>
+          </section>
 
-            <!-- Slide 3 -->
-            <article class="min-w-full p-4 bg-amber-50 dark:bg-amber-900/20">
-              <span class="inline-flex text-xs font-bold px-2 py-1 rounded-full bg-amber-200 text-amber-900 dark:bg-amber-800 dark:text-amber-100" data-i18n="promo_chip_fresh">Fresh PL</span>
-              <h4 class="mt-2 text-lg font-semibold" data-i18n="promo_seed_title">Seeds — Batch 1 Open</h4>
-              <p class="text-sm text-slate-600 dark:text-slate-300" data-i18n="promo_seed_text">Vannamei SPF PL. Bonus up to 30%.</p>
-            </article>
-          </div>
-          <div id="promoDots" class="absolute bottom-2 inset-x-0 flex justify-center gap-2"></div>
+          <!-- Slide 3: VIDEO (Hatchery / PL tray) -->
+          <section class="promo-slide" data-type="video">
+            <figure class="promo-media">
+              <video class="promo-video" playsinline muted loop preload="metadata"
+                     poster="assets/posters/pl-tray.webp">
+                <!-- TODO: replace with your file -->
+                <source src="assets/videos/pl-tray.mp4" type="video/mp4" />
+              </video>
+            </figure>
+            <header class="promo-caption">
+              <span class="pill new">Fresh PL</span>
+              <h4>సీడ్స్ — Batch 1 Open</h4>
+              <p>Vannamei SPF PL 10–15. Bonus up to 30%.</p>
+              <a href="#seeds" class="promo-cta">Reserve Now</a>
+            </header>
+          </section>
+
+          <!-- Slide 4: IMAGE (Dealer Spotlight) -->
+          <section class="promo-slide" data-type="image">
+            <figure class="promo-media">
+              <img src="assets/images/feed-bags.webp" alt="Vannamei feed bags stacked in dealer shop" loading="lazy">
+            </figure>
+            <header class="promo-caption">
+              <span class="pill verified">Verified Dealer</span>
+              <h4>FarmCare Pro</h4>
+              <p>Feeds • Medicines • Aerators — ఒక్క చోటే.</p>
+              <a href="#dealers" class="promo-cta">Call Now</a>
+            </header>
+          </section>
+
         </div>
+
+        <!-- Dots -->
+        <div class="promo-dots" role="tablist" aria-label="Slides"></div>
       </div>
     </section>
+    <!-- =================== PROMO SLIDER END =================== -->
+
+    <section class="section">
+      <h2 style="margin:0 0 6px">Assets to replace</h2>
+      <p class="muted">ఈ placeholders‌ను మీ files‌తో మార్చండి:</p>
+      <pre style="white-space:pre-wrap;background:#0f1a31;border:1px solid #223a7a;border-radius:10px;padding:12px;color:#cfe2ff">
+/assets/videos/pond-aerator.mp4      (8–12 sec, ≤ 2–3 MB)
+/assets/videos/pl-tray.mp4           (8–12 sec, ≤ 2–3 MB)
+/assets/posters/pond-aerator.webp    (1200×675, ~60–120 KB)
+/assets/posters/pl-tray.webp
+/assets/images/harvest-weigh.webp
+/assets/images/feed-bags.webp
+      </pre>
+    </section>
+
+    <footer class="container">
+      <p class="muted" style="font-size:12px">Tip: Video autoplay mobile lo work avvali ante <b>muted + playsinline</b> compulsory. Compress with HandBrake (H.264, 720p, 1–2 Mbps).</p>
+    </footer>
   </main>
 
+  <!-- ===== Slider Script ===== -->
   <script>
-    // ---------- i18n ----------
-    const dict={
-      en:{app_title:"Aquaculture A–Z",t_harvest:"Harvest",t_seeds:"Seeds",t_dealers:"Dealers",flash_news:"Flash News",snapshot:"Live Snapshot",updated:"Updated",th_count:"Count",th_price:"Price (₹/kg)",th_change:"Change",promotions_title:"Promotions",promo_chip_today:"Today",promo_ice_title:"Ice Booking — ₹2,400 / ton",promo_ice_text:"Factory-grade ice. Fast loading.",promo_chip_value:"Best Value",promo_van_title:"5T Van — ₹22 / km",promo_van_text:"Reliable transport for harvest day.",promo_chip_fresh:"Fresh PL",promo_seed_title:"Seeds — Batch 1 Open",promo_seed_text:"Vannamei SPF PL. Bonus up to 30%."},
-      te:{app_title:"Aquaculture A–Z",t_harvest:"హార్వెస్ట్",t_seeds:"సీడ్స్",t_dealers:"వెండర్లు",flash_news:"ఫ్లాష్ న్యూస్",snapshot:"లైవ్ స్నాప్‌షాట్",updated:"అప్‌డేట్",th_count:"కౌంట్",th_price:"ధర (₹/kg)",th_change:"మార్పు",promotions_title:"ప్రోమోషన్స్",promo_chip_today:"ఈ రోజు",promo_ice_title:"ఐస్ బుకింగ్ — ₹2,400 / టన్",promo_ice_text:"ఫ్యాక్టరీ గ్రేడ్ ఐస్. ఫాస్ట్ లోడింగ్.",promo_chip_value:"బెస్ట్ వాల్యూ",promo_van_title:"5T వాన్ — ₹22 / కిమీ",promo_van_text:"హార్వెస్ట్ రోజున నమ్మదగిన ట్రాన్స్‌పోర్ట్.",promo_chip_fresh:"ఫ్రెష్ PL",promo_seed_title:"సీడ్స్ — బ్యాచ్ 1 ఓపెన్",promo_seed_text:"వాన్నామెయి SPF PL. 30% వరకూ బోనస్."}
-    };
-    function setLang(){const lang=localStorage.getItem('lang')||'te';document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(dict[lang][k]) el.textContent=dict[lang][k];});}
-    // Desktop lang buttons
-    document.getElementById('langEN').onclick=()=>{localStorage.setItem('lang','en');setLang();loadNews();};
-    document.getElementById('langTE').onclick=()=>{localStorage.setItem('lang','te');setLang();loadNews();};
+  (function(){
+    const slider = document.querySelector('.promo-slider');
+    if(!slider) return;
 
-    // ---------- Theme ----------
-    const themeToggle=document.getElementById('themeToggle');
-    const savedTheme=localStorage.getItem('theme');
-    if(savedTheme==='dark'||(!savedTheme&&matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
-    themeToggle.onclick=()=>{document.documentElement.classList.toggle('dark');localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');};
+    const track  = slider.querySelector('.promo-track');
+    const slides = [...slider.querySelectorAll('.promo-slide')];
+    const prev   = slider.querySelector('.promo-nav.prev');
+    const next   = slider.querySelector('.promo-nav.next');
+    const muteBtn= slider.querySelector('.promo-mute');
+    const dotsCt = slider.querySelector('.promo-dots');
 
-    // ---------- Rates (100c → 30c) ----------
-    function loadRates(){
-      const counts=[100,90,80,70,60,50,40,30];
-      const priceByCount=c=>{
-        if(c===100)return 240;
-        if(c===90)return 250;
-        if(c===80)return 270;
-        if(c===70)return 290;
-        if(c===60)return 310;
-        if(c===50)return 330;
-        if(c===40)return 350;
-        if(c===30)return 370;
-        return 240;
-      };
-      const tbody=document.querySelector('#ratesTable tbody'); tbody.innerHTML='';
-      counts.forEach(c=>{
-        const tr=document.createElement('tr'); tr.className='border-b last:border-0 dark:border-slate-800';
-        tr.innerHTML=`<td class="py-2 pr-4 font-medium">${c}c</td>
-                      <td class="py-2 pr-4">₹ ${priceByCount(c)}</td>
-                      <td class="py-2 pr-4">—</td>`;
-        tbody.appendChild(tr);
-      });
-      document.getElementById('updatedAt').textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
-    }
+    let idx = 0, auto = null, isMuted = true, userInteracted = false;
 
-    // ---------- Flash News ----------
-    const NEWS_FALLBACK={
-      en:[{tag:'Rates',text:'50c steady across coastal AP'},
-          {tag:'Seed',text:'Batch 1 PL open this week'},
-          {tag:'Harvest',text:'Night DO risk; add aeration 8pm–3am'},
-          {tag:'Market',text:'Ice ₹1200/ton in Nellore'}],
-      te:[{tag:'రేట్స్',text:'50 కౌంట్ ధర స్థిరంగా ఉంది'},
-          {tag:'సీడ్స్',text:'బ్యాచ్ 1 PL ఈ వారం ఓపెన్'},
-          {tag:'హార్వెస్ట్',text:'రాత్రి DO రిస్క్ — 8pm–3am ఎయరేషన్ పెంచండి'},
-          {tag:'మార్కెట్',text:'నెల్లూరు ఐస్ ₹1200/టన్'}]
-    };
-    function loadNews(){
-      const track=document.getElementById('newsTrackTop'); const lang=localStorage.getItem('lang')||'te';
-      let items=NEWS_FALLBACK[lang]; if(items.length<3){items=items.concat(NEWS_FALLBACK[lang]).slice(0,3);}
-      const isHarvest=tag=>{const s=String(tag||'').trim().toLowerCase().replace(/\s+/g,''); return s.includes('harvest')||String(tag).includes('హార్వెస్ట్');};
-      const chip=(t,b=false)=>`<span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200 text-[11px] ${b?'blink':''}">${t}</span>`;
-      const row=items.map(n=>`<div class="flex items-center gap-2 pr-4">${chip(n.tag,isHarvest(n.tag))}<span>${n.text}</span></div>`).join('');
-      track.innerHTML=row+row+row;
-      document.getElementById('newsUpdatedTop').textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
-    }
+    // Create dots
+    slides.forEach((_,i)=>{
+      const b=document.createElement('button');
+      b.setAttribute('role','tab');
+      b.setAttribute('aria-label',`Slide ${i+1}`);
+      b.addEventListener('click',()=>go(i,true));
+      dotsCt.appendChild(b);
+    });
 
-    // ---------- Promo slider dots (simple) ----------
-    const promoSlidesHandler=()=>{const slides=document.getElementById('promoSlides');const dots=document.getElementById('promoDots');if(!slides||!dots)return;const total=slides.children.length;let idx=0;dots.innerHTML='';for(let i=0;i<total;i++){const b=document.createElement('button');b.className='h-2 w-2 rounded-full border border-slate-400/70 bg-white/70 dark:bg-slate-800';b.onclick=()=>go(i,true);dots.appendChild(b);}dots.children[0]?.classList.add('bg-sky-400');let timer=setInterval(()=>go(idx+1),4500);function go(n,user=false){idx=(n+total)%total;slides.style.transform=`translateX(-${idx*100}%)`;[...dots.children].forEach((d,i)=>d.classList.toggle('bg-sky-400',i===idx));if(user){clearInterval(timer);timer=setInterval(()=>go(idx+1),4500);}}};
-
-    // ---------- Promo Video logic ----------
-    (function promoVideoInit(){
-      const v=document.getElementById('promoVideo');
-      const btn=document.getElementById('promoMuteBtn');
-      if(!v||!btn) return;
-
-      // If you have an HLS stream, set it here (otherwise leave empty to use MP4 source)
-      const HLS_URL = ""; // e.g. "https://your-cdn/live/stream.m3u8"
-      if(HLS_URL){
-        if(window.Hls && Hls.isSupported()){
-          const hls=new Hls({maxBufferLength:10});
-          hls.loadSource(HLS_URL);
-          hls.attachMedia(v);
-          hls.on(Hls.Events.ERROR,(ev,data)=>console.warn('HLS error',data));
-        }else if(v.canPlayType('application/vnd.apple.mpegurl')){
-          v.src=HLS_URL; // Safari
+    function updateUI(){
+      track.style.transform = `translateX(-${idx*100}%)`;
+      slides.forEach((s,i)=>{
+        s.classList.toggle('is-active', i===idx);
+        const v = s.querySelector('video');
+        if(v){
+          v.muted = isMuted;
+          if(i===idx){ v.play().catch(()=>{}); } else { v.pause(); v.currentTime = 0; }
         }
-      }
+      });
+      [...dotsCt.children].forEach((d,i)=>d.setAttribute('aria-selected', i===idx?'true':'false'));
+      muteBtn.textContent = isMuted ? '🔇' : '🔊';
+      muteBtn.setAttribute('aria-pressed', (!isMuted).toString());
+    }
 
-      btn.addEventListener('click',()=>{ v.muted=!v.muted; btn.textContent = v.muted?'🔇 Mute':'🔊 Unmute';});
-      // Autoplay helper (muted)
-      v.play().catch(()=>{ /* autoplay may wait for user gesture; controls are visible */ });
-    })();
+    function go(n, stopAuto=false){
+      idx = (n+slides.length) % slides.length;
+      updateUI();
+      if(stopAuto){ userInteracted=true; restartAuto(); }
+    }
 
-    // INIT
-    (function init(){
-      if(!localStorage.getItem('lang')) localStorage.setItem('lang','te');
-      setLang(); loadRates(); loadNews(); promoSlidesHandler();
-    })();
+    function nextSlide(){ go(idx+1); }
+    function prevSlide(){ go(idx-1, true); }
+    next.addEventListener('click', ()=>go(idx+1, true));
+    prev.addEventListener('click', prevSlide);
+
+    muteBtn.addEventListener('click', ()=>{
+      isMuted = !isMuted;
+      updateUI();
+    });
+
+    // Autoplay (respect reduced motion)
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function startAuto(){ if(!reduceMotion) auto = setInterval(()=>{ if(!userInteracted) nextSlide(); }, 6000); }
+    function stopAuto(){ if(auto){ clearInterval(auto); auto=null; } }
+    function restartAuto(){ stopAuto(); startAuto(); }
+
+    // Pause when offscreen
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=> e.isIntersecting ? startAuto() : stopAuto());
+    },{ threshold: 0.2 });
+    io.observe(slider);
+
+    // Kickoff
+    updateUI();
+  })();
   </script>
 </body>
 </html>
