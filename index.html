@@ -28,7 +28,7 @@
       <nav class="hidden sm:flex gap-2">
         <a href="harvest.html" class="navbtn">🚚 <span data-i18n="t_harvest">Harvest</span></a>
         <a href="seeds.html" class="navbtn">🦐 <span data-i18n="t_seeds">Seeds</span></a>
-        <a href="dealers.html" class="navbtn">🏪 <span data-i18n="t_dealers">Dealers</span></a>
+        <a href="vendors.html" class="navbtn">🏪 <span data-i18n="t_dealers">Dealers</span></a>
       </nav>
       <div class="flex rounded-full bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-800">
         <button id="langTE" class="px-3 py-1.5 text-sm rounded-full bg-white dark:bg-slate-800 shadow-soft">తెలుగు</button>
@@ -57,10 +57,7 @@
           <h3 class="font-semibold" data-i18n="snapshot">Live Snapshot</h3>
           <div class="flex items-center gap-2">
             <label for="prawnType" class="text-sm text-slate-600 dark:text-slate-300" data-i18n="lbl_type">రకం</label>
-            <select id="prawnType" class="text-sm border rounded-md px-2 py-1 dark:bg-slate-800 dark:border-slate-600">
-              <option value="Vannamei" selected>Vannamei</option>
-              <option value="Tiger">Tiger</option>
-            </select>
+            <select id="prawnType" class="text-sm border rounded-md px-2 py-1 dark:bg-slate-800 dark:border-slate-600"></select>
           </div>
           <p class="text-xs text-slate-500"><span data-i18n="updated">Updated</span>: <span id="updatedAt">—</span></p>
         </div>
@@ -77,19 +74,40 @@
         </div>
       </div>
 
-      <!-- Promotions -->
-      <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
-        <h3 class="font-semibold">📣 <span data-i18n="promotions_title">Promotions</span></h3>
-        <p class="mt-2 text-sm text-slate-600 dark:text-slate-300" data-i18n="promo_seed_text">Vannamei SPF PL. Bonus up to 30%.</p>
+      <!-- Promotions (CSV-driven) -->
+      <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800" id="promoBox">
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold">📣 <span data-i18n="promotions_title">Promotions</span></h3>
+          <span id="promoNew" class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">NEW</span>
+        </div>
+        <div class="rounded-xl p-4 mt-3 bg-blue-50 dark:bg-slate-800/40">
+          <span id="promoBadge" class="inline-block text-xs px-3 py-1 rounded-full bg-sky-200/70 text-sky-900">Best Value</span>
+          <h4 id="promoTitle" class="mt-3 text-lg font-semibold">—</h4>
+          <p id="promoDesc" class="text-slate-600 dark:text-slate-300">—</p>
+          <div class="mt-2 flex gap-2 text-slate-400"><span class="h-2 w-2 rounded-full border"></span><span class="h-2 w-2 rounded-full border"></span><span class="h-2 w-2 rounded-full border"></span></div>
+        </div>
       </div>
     </section>
   </main>
 
   <script>
-    // i18n
+    // ---------- CSV helper ----------
+    async function loadCSV(url){
+      const res = await fetch(url, {cache:'no-store'});
+      if(!res.ok) throw new Error('CSV not found '+url);
+      const text = await res.text();
+      const lines = text.trim().split(/\r?\n/);
+      const headers = lines[0].split(',').map(s=>s.trim());
+      return lines.slice(1).map(line=>{
+        const cells = line.split(',').map(s=>s.trim());
+        const o = {}; headers.forEach((h,i)=>o[h]=cells[i]??''); return o;
+      });
+    }
+
+    // ---------- i18n ----------
     const dict={
-      en:{app_title:"Aquaculture A–Z",t_harvest:"Harvest",t_seeds:"Seeds",t_dealers:"Dealers",flash_news:"Flash News",snapshot:"Live Snapshot",updated:"Updated",lbl_type:"Type",th_count:"Count",th_price:"Price (₹/kg)",th_change:"Change",promotions_title:"Promotions",promo_seed_text:"Vannamei SPF PL. Bonus up to 30%.",chg_up:"Up",chg_down:"Down",chg_same:"No change"},
-      te:{app_title:"Aquaculture A–Z",t_harvest:"హార్వెస్ట్",t_seeds:"సీడ్స్",t_dealers:"వెండర్లు",flash_news:"ఫ్లాష్ న్యూస్",snapshot:"లైవ్ స్నాప్‌షాట్",updated:"అప్‌డేట్",lbl_type:"రకం",th_count:"కౌంట్",th_price:"ధర (₹/kg)",th_change:"మార్పు",promotions_title:"ప్రోమోషన్స్",promo_seed_text:"వాన్నామెయి SPF PL. 30% వరకూ బోనస్.",chg_up:"పెరిగింది",chg_down:"తగ్గింది",chg_same:"మార్పు లేదు"}
+      en:{app_title:"Aquaculture A–Z",t_harvest:"Harvest",t_seeds:"Seeds",t_dealers:"Dealers",flash_news:"Flash News",snapshot:"Live Snapshot",updated:"Updated",lbl_type:"Type",th_count:"Count",th_price:"Price (₹/kg)",th_change:"Change",promotions_title:"Promotions",promo_seed_text:"Vannamei SPF PL. Bonus up to 30%.",chg_up:"Up",chg_down:"Down",chg_same:"No change",type_van:"Vannamei",type_tig:"Tiger"},
+      te:{app_title:"Aquaculture A–Z",t_harvest:"హార్వెస్ట్",t_seeds:"సీడ్స్",t_dealers:"వెండర్లు",flash_news:"ఫ్లాష్ న్యూస్",snapshot:"లైవ్ స్నాప్‌షాట్",updated:"అప్‌డేట్",lbl_type:"రకం",th_count:"కౌంట్",th_price:"ధర (₹/kg)",th_change:"మార్పు",promotions_title:"ప్రోమోషన్స్",promo_seed_text:"వన్నామీ SPF PL. 30% వరకూ బోనస్.",chg_up:"పెరిగింది",chg_down:"తగ్గింది",chg_same:"మార్పు లేదు",type_van:"వన్నామీ",type_tig:"టైగర్"}
     };
     function setLang(){
       const lang=localStorage.getItem('lang')||'te';
@@ -98,9 +116,13 @@
         const k=el.dataset.i18n;
         if(dict[lang][k]) el.textContent=dict[lang][k];
       });
+      // re-render type dropdown labels
+      renderTypeOptions();
     }
-    langEN.onclick=()=>{localStorage.setItem('lang','en');setLang();loadNews();renderRates(prawnType.value);};
-    langTE.onclick=()=>{localStorage.setItem('lang','te');setLang();loadNews();renderRates(prawnType.value);};
+
+    // language buttons
+    langEN.onclick=()=>{localStorage.setItem('lang','en');setLang();loadNews();renderRates(prawnType.value);loadPromotions();};
+    langTE.onclick=()=>{localStorage.setItem('lang','te');setLang();loadNews();renderRates(prawnType.value);loadPromotions();};
 
     // Theme
     const themeToggle=document.getElementById('themeToggle');
@@ -108,60 +130,58 @@
     if(savedTheme==='dark'||(!savedTheme&&matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
     themeToggle.onclick=()=>{document.documentElement.classList.toggle('dark');localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');};
 
-    // ---- Rates Data (Current vs Previous for change arrows) ---------------
-    // CURRENT prices
+    // ---------- Rates data ----------
     const CURRENT={
       Vannamei:[{c:100,p:240},{c:90,p:250},{c:80,p:260},{c:70,p:280},{c:60,p:310},{c:50,p:330},{c:40,p:350},{c:30,p:370}],
       Tiger:[{c:50,p:330},{c:40,p:390},{c:30,p:470},{c:20,p:580}]
     };
-    // PREVIOUS snapshot (edit these to your last known prices)
     const PREVIOUS={
       Vannamei:[{c:100,p:235},{c:90,p:250},{c:80,p:265},{c:70,p:275},{c:60,p:300},{c:50,p:330},{c:40,p:345},{c:30,p:370}],
       Tiger:[{c:50,p:335},{c:40,p:390},{c:30,p:460},{c:20,p:580}]
     };
-
-    // Make a quick lookup {count -> price}
     const indexByCount = arr => Object.fromEntries(arr.map(x=>[x.c,x.p]));
     function withChangeRows(type){
       const prevIdx=indexByCount(PREVIOUS[type]||[]);
       return (CURRENT[type]||[]).map(row=>{
-        const prev=prevIdx[row.c];
-        const delta = (typeof prev==='number') ? (row.p - prev) : null;
+        const prev=prevIdx[row.c]; const delta = (typeof prev==='number') ? (row.p - prev) : null;
         return {...row, delta};
       });
     }
-
     function changeBadge(delta){
       const lang=localStorage.getItem('lang')||'te';
       if(delta===null || isNaN(delta)) return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">—</span>`;
       if(delta>0){
-        return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300" title="${dict[lang].chg_up}">
-                  ▲ +₹${delta}
-                </span>`;
+        return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300" title="${dict[lang].chg_up}">▲ +₹${delta}</span>`;
       }
       if(delta<0){
-        return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300" title="${dict[lang].chg_down}">
-                  ▼ ₹${Math.abs(delta)}
-                </span>`;
+        return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300" title="${dict[lang].chg_down}">▼ ₹${Math.abs(delta)}</span>`;
       }
       return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300" title="${dict[lang].chg_same}">—</span>`;
     }
-
     function renderRates(type){
       const rows=withChangeRows(type);
       const tbody=document.querySelector('#ratesTable tbody');tbody.innerHTML='';
       rows.forEach(r=>{
-        const tr=document.createElement('tr');
-        tr.className='border-b last:border-0 dark:border-slate-800';
-        tr.innerHTML=`<td class="py-2 pr-4 font-medium">${r.c}c</td>
-                      <td class="py-2 pr-4">₹ ${r.p}</td>
-                      <td class="py-2 pr-4">${changeBadge(r.delta)}</td>`;
+        const tr=document.createElement('tr'); tr.className='border-b last:border-0 dark:border-slate-800';
+        tr.innerHTML=`<td class="py-2 pr-4 font-medium">${r.c}c</td><td class="py-2 pr-4">₹ ${r.p}</td><td class="py-2 pr-4">${changeBadge(r.delta)}</td>`;
         tbody.appendChild(tr);
       });
       updatedAt.textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
     }
 
-    // ---- Flash News (same fallback) ---------------------------------------
+    // ---------- Type dropdown: bilingual labels ----------
+    function renderTypeOptions(){
+      const sel = document.getElementById('prawnType');
+      const lang = localStorage.getItem('lang')||'te';
+      const valueNow = sel.value || 'Vannamei';
+      sel.innerHTML = `
+        <option value="Vannamei">${dict[lang].type_van}</option>
+        <option value="Tiger">${dict[lang].type_tig}</option>
+      `;
+      sel.value = valueNow; // keep selection
+    }
+
+    // ---------- Flash News (fallback) ----------
     const NEWS_FALLBACK={
       en:[{tag:'Rates',text:'50c steady across coastal AP'},{tag:'Seed',text:'Batch 1 PL open this week'},{tag:'Harvest',text:'Night DO risk; add aeration 8pm–3am'},{tag:'Market',text:'Ice ₹1200/ton in Nellore'}],
       te:[{tag:'రేట్స్',text:'50 కౌంట్ ధర స్థిరంగా ఉంది'},{tag:'సీడ్స్',text:'బ్యాచ్ 1 PL ఈ వారం ఓపెన్'},{tag:'హార్వెస్ట్',text:'రాత్రి DO రిస్క్ — 8pm–3am ఎయరేషన్ పెంచండి'},{tag:'మార్కెట్',text:'నెల్లూరు ఐస్ ₹1200/టన్'}]
@@ -178,13 +198,47 @@
       newsUpdatedTop.textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
     }
 
+    // ---------- Promotions from CSV (bilingual) ----------
+    async function loadPromotions(){
+      const lang = localStorage.getItem('lang')||'te';
+      const badgeEl = document.getElementById('promoBadge');
+      const titleEl = document.getElementById('promoTitle');
+      const descEl  = document.getElementById('promoDesc');
+
+      try{
+        const rows = await loadCSV('./data/promotions.csv');
+        // pick first 'card' slot, else first row
+        const rec = rows.find(r=>r.slot==='card') || rows[0];
+        if(!rec){ titleEl.textContent = '—'; descEl.textContent = '—'; return; }
+
+        // badge (no language usually)
+        badgeEl.textContent = rec.badge || 'Best Value';
+
+        // bilingual fields
+        const t = (lang==='te') ? (rec.title_te || rec.title_en) : (rec.title_en || rec.title_te);
+        const d = (lang==='te') ? (rec.desc_te  || rec.desc_en)  : (rec.desc_en  || rec.desc_te);
+
+        titleEl.textContent = t || '—';
+        descEl.textContent  = d || '';
+      }catch(err){
+        // fallback text if CSV missing
+        badgeEl.textContent = 'Best Value';
+        titleEl.textContent = (lang==='te') ? 'సీడ్స్ — బ్యాచ్ 1 ఓపెన్' : 'Seeds — Batch 1 Open';
+        descEl.textContent  = (lang==='te') ? 'వన్నామీ SPF PL. 30% బోనస్ వరకు' : 'Vannamei SPF PL. Bonus up to 30%.';
+      }
+    }
+
     // INIT
     (function(){
       if(!localStorage.getItem('lang')) localStorage.setItem('lang','te');
-      setLang(); loadNews();
+      setLang();
+      loadNews();
+      renderTypeOptions();
       const select=document.getElementById('prawnType');
+      select.value = 'Vannamei';
       renderRates(select.value);
       select.onchange=()=>renderRates(select.value);
+      loadPromotions(); // <- promotions CSV
     })();
   </script>
 </body>
