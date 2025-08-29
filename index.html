@@ -57,17 +57,15 @@
     <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
       <!-- Rates -->
       <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
-        <div class="flex flex-wrap items-center gap-2 mb-2">
-          <!-- Mobile: Live | Desktop: Live Snapshot -->
-          <h3 class="font-semibold">
-            <span class="sm:hidden" data-i18n="live_short">Live</span>
-            <span class="hidden sm:inline" data-i18n="snapshot">Live Snapshot</span>
-          </h3>
-          <div class="flex items-center gap-2 ml-auto w-full sm:w-auto justify-between sm:justify-end">
-            <label for="prawnType" class="text-sm text-slate-600 dark:text-slate-300" data-i18n="lbl_type">రకం</label>
-            <select id="prawnType" class="text-sm border rounded-md px-2 py-1 dark:bg-slate-800 dark:border-slate-600"></select>
-          </div>
-          <p class="text-xs text-slate-500 w-full sm:w-auto sm:ml-2"><span data-i18n="updated">Updated</span>: <span id="updatedAt">—</span></p>
+        <!-- Title + Updated (same row, all screens) -->
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="font-semibold" data-i18n="snapshot">Live Snapshot</h3>
+          <p class="text-xs text-slate-500"><span data-i18n="updated">Updated</span>: <span id="updatedAt">—</span></p>
+        </div>
+        <!-- Type dropdown below -->
+        <div class="flex items-center gap-2 mb-2">
+          <label for="prawnType" class="text-sm text-slate-600 dark:text-slate-300" data-i18n="lbl_type">రకం</label>
+          <select id="prawnType" class="text-sm border rounded-md px-2 py-1 dark:bg-slate-800 dark:border-slate-600"></select>
         </div>
         <div class="mt-3 overflow-x-auto">
           <table class="min-w-full text-sm" id="ratesTable">
@@ -88,7 +86,6 @@
           <h3 class="font-semibold">📣 <span data-i18n="promotions_title">Promotions</span></h3>
           <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">NEW</span>
         </div>
-
         <div id="promoSlider" class="relative mt-3">
           <div id="promoTrack" class="overflow-hidden rounded-xl"></div>
           <div id="promoDots" class="mt-3 flex gap-2"></div>
@@ -115,8 +112,8 @@
 
     // ---------- i18n ----------
     const dict={
-      en:{app_title:"Aquaculture A–Z",t_harvest:"Harvest",t_seeds:"Seeds",t_dealers:"Dealers",flash_news:"Flash News",snapshot:"Live Snapshot",live_short:"Live",updated:"Updated",lbl_type:"Type",th_count:"Count",th_price:"Price (₹/kg)",th_change:"Change",promotions_title:"Promotions",chg_up:"Up",chg_down:"Down",chg_same:"No change",type_van:"Vannamei",type_tig:"Tiger"},
-      te:{app_title:"Aquaculture A–Z",t_harvest:"హార్వెస్ట్",t_seeds:"సీడ్స్",t_dealers:"వెండర్లు",flash_news:"ఫ్లాష్ న్యూస్",snapshot:"లైవ్ స్నాప్‌షాట్",live_short:"లైవ్",updated:"అప్‌డేట్",lbl_type:"రకం",th_count:"కౌంట్",th_price:"ధర (₹/kg)",th_change:"మార్పు",promotions_title:"ప్రోమోషన్స్",chg_up:"పెరిగింది",chg_down:"తగ్గింది",chg_same:"మార్పు లేదు",type_van:"వన్నామీ",type_tig:"టైగర్"}
+      en:{app_title:"Aquaculture A–Z",t_harvest:"Harvest",t_seeds:"Seeds",t_dealers:"Dealers",flash_news:"Flash News",snapshot:"Live Snapshot",updated:"Updated",lbl_type:"Type",th_count:"Count",th_price:"Price (₹/kg)",th_change:"Change",promotions_title:"Promotions",chg_up:"Up",chg_down:"Down",chg_same:"No change",type_van:"Vannamei",type_tig:"Tiger"},
+      te:{app_title:"Aquaculture A–Z",t_harvest:"హార్వెస్ట్",t_seeds:"సీడ్స్",t_dealers:"వెండర్లు",flash_news:"ఫ్లాష్ న్యూస్",snapshot:"లైవ్ స్నాప్‌షాట్",updated:"అప్‌డేట్",lbl_type:"రకం",th_count:"కౌంట్",th_price:"ధర (₹/kg)",th_change:"మార్పు",promotions_title:"ప్రోమోషన్స్",chg_up:"పెరిగింది",chg_down:"తగ్గింది",chg_same:"మార్పు లేదు",type_van:"వన్నామీ",type_tig:"టైగర్"}
     };
     function setLang(){
       const lang=localStorage.getItem('lang')||'te';
@@ -126,7 +123,7 @@
         if(dict[lang][k]) el.textContent=dict[lang][k];
       });
       renderTypeOptions();
-      renderPromo(); // re-apply bilingual titles/descs
+      renderPromo(); // for bilingual slides
     }
     langEN.onclick=()=>{localStorage.setItem('lang','en');setLang();loadNews();renderRates(prawnType.value);};
     langTE.onclick=()=>{localStorage.setItem('lang','te');setLang();loadNews();renderRates(prawnType.value);};
