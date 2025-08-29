@@ -97,7 +97,8 @@
         </label>
 
         <div class="text-sm flex items-end">
-          <div class="w-full"><span data-i18n="transport">Transport</span>:
+          <div class="w-full">
+            <span data-i18n="transport">Transport</span>:
             <b id="vanTotal">₹ 15000</b>
           </div>
         </div>
@@ -109,7 +110,8 @@
           <span data-i18n="cust_mobile">Customer Mobile *</span>
           <div class="mt-1 flex gap-2">
             <input id="custMobile" type="tel" placeholder="9xxxxxxxxx" class="field w-full" maxlength="10" inputmode="numeric" pattern="[6-9][0-9]{9}">
-            <button id="sendOtp" class="btn btn-primary whitespace-nowrap" type="button" data-i18n="send_otp">Send OTP</button>
+            <!-- Single button that becomes RESEND after first send -->
+            <button id="otpBtn" class="btn btn-primary whitespace-nowrap" type="button" data-mode="send" data-i18n="send_otp">Send OTP</button>
           </div>
           <div id="otpHint" class="mt-1 text-xs text-slate-500"></div>
         </label>
@@ -125,7 +127,11 @@
 
         <label class="text-sm md:col-span-1">
           <span data-i18n="address">Address *</span>
-          <input id="custAddress" class="mt-1 field w-full" placeholder="Village, Mandal, District">
+          <div class="mt-1 flex gap-2">
+            <input id="custAddress" class="field w-full" placeholder="Village, Mandal, District">
+            <button id="locBtn" class="btn border border-slate-300 dark:border-slate-700" type="button" data-i18n="use_location">Use current location</button>
+          </div>
+          <div id="locStatus" class="mt-1 text-xs text-slate-500"></div>
         </label>
       </div>
 
@@ -146,19 +152,45 @@
   <script>
     // ---------- i18n ----------
     const dict={
-      en:{harvest_title:"Harvest Booking",ice_unit:"Ice unit",ice_total:"Ice total",van_type:"Van",van_rate:"₹/km",van_km:"Distance (km)",transport:"Transport",cust_mobile:"Customer Mobile",send_otp:"Send OTP",enter_otp:"Enter OTP",verify:"Verify",address:"Address",grand_total:"Grand Total",final_book:"Finalize Booking",note_text:"Booking requires verified mobile & address.",otp_sent:"OTP sent (demo): ",otp_invalid:"Invalid number. Enter 10 digits starting with 6–9.",otp_ok:"Verified ✓",otp_wrong:"Wrong OTP",addr_required:"Address is required"},
-      te:{harvest_title:"హార్వెస్ట్ బుకింగ్",ice_unit:"ఐస్ యూనిట్",ice_total:"ఐస్ మొత్తం",van_type:"వాన్",van_rate:"₹/కిమీ",van_km:"దూరం (కిమీ)",transport:"ట్రాన్స్‌పోర్ట్",cust_mobile:"కస్టమర్ మొబైల్",send_otp:"OTP పంపు",enter_otp:"OTP ఎంటర్ చేయి",verify:"వెరిఫై",address:"అడ్రస్",grand_total:"గ్రాండ్ టోటల్",final_book:"ఫైనల్ బుక్",note_text:"బుకింగ్‌కి వెరిఫై అయిన మొబైల్ & అడ్రస్ అవసరం.",otp_sent:"OTP పంపబడింది (డెమో): ",otp_invalid:"సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి (6–9 తో ప్రారంభం).",otp_ok:"వెరిఫై అయింది ✓",otp_wrong:"తప్పు OTP",addr_required:"అడ్రస్ తప్పనిసరి"}
+      en:{
+        harvest_title:"Harvest Booking",
+        ice_unit:"Ice unit", ice_total:"Ice total",
+        van_type:"Van", van_rate:"₹/km", van_km:"Distance (km)", transport:"Transport",
+        cust_mobile:"Customer Mobile", send_otp:"Send OTP", resend_otp:"Resend",
+        enter_otp:"Enter OTP", verify:"Verify",
+        address:"Address", use_location:"Use current location", locating:"Getting location...",
+        location_ok:"Location set", location_denied:"Permission denied",
+        location_unavailable:"Location unavailable", location_error:"Could not fetch address",
+        grand_total:"Grand Total", final_book:"Finalize Booking",
+        note_text:"Booking requires verified mobile & address.",
+        otp_sent:"OTP sent (demo): ", otp_invalid:"Invalid number. Enter 10 digits starting with 6–9.",
+        otp_ok:"Verified ✓", otp_wrong:"Wrong OTP", addr_required:"Address is required"
+      },
+      te:{
+        harvest_title:"హార్వెస్ట్ బుకింగ్",
+        ice_unit:"ఐస్ యూనిట్", ice_total:"ఐస్ మొత్తం",
+        van_type:"వాన్", van_rate:"₹/కిమీ", van_km:"దూరం (కిమీ)", transport:"ట్రాన్స్‌పోర్ట్",
+        cust_mobile:"కస్టమర్ మొబైల్", send_otp:"OTP పంపు", resend_otp:"మళ్లీ పంపు",
+        enter_otp:"OTP ఎంటర్ చేయి", verify:"వెరిఫై",
+        address:"అడ్రస్", use_location:"కరెంట్ లొకేషన్ వాడు", locating:"లొకేషన్ తీసుకుంటున్నాం...",
+        location_ok:"లొకేషన్ సెట్ అయింది", location_denied:"పర్మిషన్ నిరాకరించబడింది",
+        location_unavailable:"లొకేషన్ దొరకలేదు", location_error:"అడ్రస్ తెచ్చలేకపోయాం",
+        grand_total:"గ్రాండ్ టోటల్", final_book:"ఫైనల్ బుక్",
+        note_text:"బుకింగ్‌కి వెరిఫై అయిన మొబైల్ & అడ్రస్ అవసరం.",
+        otp_sent:"OTP పంపబడింది (డెమో): ", otp_invalid:"సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి (6–9 తో ప్రారంభం).",
+        otp_ok:"వెరిఫై అయింది ✓", otp_wrong:"తప్పు OTP", addr_required:"అడ్రస్ తప్పనిసరి"
+      }
     };
     function t(k){const l=localStorage.getItem('lang')||'te';return (dict[l]&&dict[l][k])||k;}
     function setLang(){const l=localStorage.getItem('lang')||'te';document.documentElement.lang=l;document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n; if(dict[l][k]) el.textContent=dict[l][k];});}
 
-    // Theme toggle
+    // Theme & language toggles
     themeToggle.onclick=()=>{document.documentElement.classList.toggle('dark');localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');};
     langEN.onclick=()=>{localStorage.setItem('lang','en');setLang();updateLabels();};
     langTE.onclick=()=>{localStorage.setItem('lang','te');setLang();updateLabels();};
 
     // ---------- Elements ----------
-    const iceUnit=iceUnitEl=document.getElementById('iceUnit'),
+    const iceUnit=document.getElementById('iceUnit'),
           iceQty=document.getElementById('iceQty'),
           iceRate=document.getElementById('iceRate'),
           iceQtyLbl=document.getElementById('iceQtyLbl'),
@@ -171,18 +203,19 @@
           vanTotal=document.getElementById('vanTotal');
 
     const mobile=document.getElementById('custMobile'),
-          sendOtp=document.getElementById('sendOtp'),
+          otpBtn=document.getElementById('otpBtn'),
           otpInput=document.getElementById('otpInput'),
           verifyOtp=document.getElementById('verifyOtp'),
           otpHint=document.getElementById('otpHint'),
           otpStatus=document.getElementById('otpStatus'),
           address=document.getElementById('custAddress'),
+          locBtn=document.getElementById('locBtn'),
+          locStatus=document.getElementById('locStatus'),
           grand=document.getElementById('grand'),
           bookBtn=document.getElementById('bookBtn');
 
     // ---------- Van auto-rate map ----------
     const VAN_RATE={ '1':150,'2':200,'5':300,'8':350,'10':400 };
-
     function applyVanRate(){ const v=vanType.value; vanRate.value=VAN_RATE[v]||0; calc(); }
     vanType.addEventListener('change',applyVanRate);
 
@@ -192,7 +225,7 @@
       if(iceUnit.value==='can'){
         iceQtyLbl.textContent= l==='te'?'ఐస్ (క్యాన్లు)':'Ice (cans)';
         iceRateLbl.textContent= l==='te'?'ధర/క్యాన్ (₹)':'Price/can (₹)';
-        if(+iceRate.value===1200) iceRate.value=120; // switch default
+        if(+iceRate.value===1200) iceRate.value=120;
       }else{
         iceQtyLbl.textContent= l==='te'?'ఐస్ (టన్నులు)':'Ice (tons)';
         iceRateLbl.textContent= l==='te'?'ధర/టన్ (₹)':'Price/ton (₹)';
@@ -213,27 +246,34 @@
     }
     [iceQty,iceRate,vanRate,vanKm].forEach(el=>el.addEventListener('input',calc));
 
-    // ---------- OTP demo flow ----------
-    let currentOTP=null, otpOk=false, resendTimer=null, left=0;
+    // ---------- OTP flow (single button: Send → Resend) ----------
+    let currentOTP=null, otpOk=false, resendTimer=null, left=0, hasSentOnce=false;
     function validMobile(num){return /^[6-9]\d{9}$/.test(num||'');}
 
-    sendOtp.addEventListener('click',()=>{
-      if(!validMobile(mobile.value)){
-        otpHint.textContent=t('otp_invalid'); otpStatus.textContent=''; return;
-      }
-      currentOTP = (''+Math.floor(100000 + Math.random()*900000));
-      otpOk=false; otpInput.value=''; otpStatus.textContent='';
-      // Demo: show OTP on screen (in real, send SMS)
-      otpHint.innerHTML = `${t('otp_sent')} <b>${currentOTP}</b>`;
-      // Simple resend lock
-      left=30; sendOtp.disabled=true; sendOtp.textContent=`${left}s`;
+    function startCountdown(){
+      left=30;
+      otpBtn.disabled=true;
+      otpBtn.textContent=`${left}s`;
       resendTimer && clearInterval(resendTimer);
       resendTimer=setInterval(()=>{
-        left--; sendOtp.textContent=`${left}s`;
-        if(left<=0){ clearInterval(resendTimer); sendOtp.disabled=false; sendOtp.textContent=t('send_otp'); }
+        left--; otpBtn.textContent=`${left}s`;
+        if(left<=0){ clearInterval(resendTimer); otpBtn.disabled=false; otpBtn.textContent=t(hasSentOnce?'resend_otp':'send_otp'); }
       },1000);
+    }
+
+    function sendOrResendOtp(){
+      if(!validMobile(mobile.value)){ otpHint.textContent=t('otp_invalid'); otpStatus.textContent=''; return; }
+      currentOTP = (''+Math.floor(100000 + Math.random()*900000));
+      otpOk=false; otpInput.value=''; otpStatus.textContent='';
+      otpHint.innerHTML = `${t('otp_sent')} <b>${currentOTP}</b>`;
+      hasSentOnce=true;
+      otpBtn.dataset.mode='resend';
+      otpBtn.textContent=t('resend_otp');
+      startCountdown();
       validateForm();
-    });
+    }
+
+    otpBtn.addEventListener('click', sendOrResendOtp);
 
     verifyOtp.addEventListener('click',()=>{
       if(otpInput.value===currentOTP && currentOTP){
@@ -244,13 +284,45 @@
       validateForm();
     });
 
+    // ---------- Current location for Address ----------
+    async function reverseGeocode(lat, lon){
+      try{
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);
+        if(!res.ok) throw new Error('HTTP');
+        const data = await res.json();
+        return data.display_name || '';
+      }catch(e){ return ''; }
+    }
+
+    locBtn.addEventListener('click', async ()=>{
+      locStatus.textContent = t('locating');
+      locBtn.disabled = true;
+
+      if(!('geolocation' in navigator)){
+        locStatus.textContent = t('location_unavailable');
+        locBtn.disabled = false; return;
+      }
+
+      navigator.geolocation.getCurrentPosition(async (pos)=>{
+        const {latitude:lat, longitude:lon} = pos.coords;
+        let addr = await reverseGeocode(lat, lon);
+        if(!addr) addr = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+        address.value = addr;
+        locStatus.textContent = t('location_ok');
+        validateForm();
+        locBtn.disabled = false;
+      },(err)=>{
+        locStatus.textContent = (err.code===1)? t('location_denied') : t('location_unavailable');
+        locBtn.disabled = false;
+      },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+    });
+
     // ---------- Validation & Book enable ----------
     function validateForm(){
       const okMobile = validMobile(mobile.value) && otpOk;
       const okAddr = (address.value||'').trim().length>0;
       bookBtn.disabled = !(okMobile && okAddr);
     }
-
     address.addEventListener('input',validateForm);
     mobile.addEventListener('input',()=>{otpOk=false; otpStatus.textContent=''; validateForm();});
 
@@ -265,7 +337,7 @@
         `• Mobile: +91 ${mobile.value}\n`+
         `• Address: ${address.value}`;
       alert('✅ ' + msg);
-      // If you want WhatsApp link instead of alert, replace above with:
+      // To send on WhatsApp later:
       // window.open('https://wa.me/91XXXXXXXXXX?text='+encodeURIComponent(msg),'_blank');
     });
 
