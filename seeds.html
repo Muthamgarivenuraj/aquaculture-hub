@@ -179,38 +179,8 @@
   <script>
     // ---------- i18n ----------
     const dict={
-      en:{
-        seed_title:"Seed Booking", state:"State", district:"District", village:"Village", hatchery:"Hatchery",
-        next_prod:"Next Production", next_batch:"Next Batch", salinity:"Salinity",
-        price_per:"Price/1000 (₹)", start_booking:"Book",
-        production:"Production", booking_date:"Booking Date", qty_pcs:"Quantity (pcs)",
-        bonus_percent:"Bonus %", total_seeds:"Total Seeds", amount:"Amount",
-        cust_mobile:"Customer Mobile", send_otp:"Send OTP", resend_otp:"Resend",
-        enter_otp:"Enter OTP", verify:"Verify", address:"Address",
-        use_location:"Use current location", locating:"Getting location...",
-        location_ok:"Location set", location_denied:"Permission denied",
-        location_unavailable:"Location unavailable", location_error:"Could not fetch address",
-        grand_total:"Grand Total", final_book:"Finalize Booking",
-        note_text:"Booking requires verified mobile & address.",
-        otp_sent:"OTP sent (demo): ", otp_invalid:"Invalid number. Enter 10 digits starting with 6–9.",
-        otp_ok:"Verified ✓", otp_wrong:"Wrong OTP"
-      },
-      te:{
-        seed_title:"సీడ్స్ బుకింగ్", state:"రాష్ట్రం", district:"జిల్లా", village:"గ్రామం", hatchery:"హ్యాచరీ",
-        next_prod:"తదుపరి ప్రొడక్షన్", next_batch:"తదుపరి బ్యాచ్", salinity:"సాలినిటీ",
-        price_per:"ధర/1000 (₹)", start_booking:"బుక్",
-        production:"ప్రొడక్షన్", booking_date:"బుకింగ్ తేదీ", qty_pcs:"పరిమాణం (పీసులు)",
-        bonus_percent:"బోనస్ %", total_seeds:"మొత్తం సీడ్స్", amount:"అమౌంట్",
-        cust_mobile:"కస్టమర్ మొబైల్", send_otp:"OTP పంపు", resend_otp:"మళ్లీ పంపు",
-        enter_otp:"OTP ఎంటర్ చేయి", verify:"వెరిఫై", address:"అడ్రస్",
-        use_location:"కరెంట్ లొకేషన్ వాడు", locating:"లొకేషన్ తీసుకుంటున్నాం...",
-        location_ok:"లొకేషన్ సెట్ అయింది", location_denied:"పర్మిషన్ నిరాకరించబడింది",
-        location_unavailable:"లొకేషన్ దొరకలేదు", location_error:"అడ్రస్ తెచ్చలేకపోయాం",
-        grand_total:"గ్రాండ్ టోటల్", final_book:"ఫైనల్ బుక్",
-        note_text:"బుకింగ్‌కి వెరిఫై అయిన మొబైల్ & అడ్రస్ అవసరం.",
-        otp_sent:"OTP పంపబడింది (డెమో): ", otp_invalid:"సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి (6–9 తో ప్రారంభం).",
-        otp_ok:"వెరిఫై అయింది ✓", otp_wrong:"తప్పు OTP"
-      }
+      en:{seed_title:"Seed Booking",state:"State",district:"District",village:"Village",hatchery:"Hatchery",next_prod:"Next Production",next_batch:"Next Batch",salinity:"Salinity",price_per:"Price/1000 (₹)",start_booking:"Book",production:"Production",booking_date:"Booking Date",qty_pcs:"Quantity (pcs)",bonus_percent:"Bonus %",total_seeds:"Total Seeds",amount:"Amount",cust_mobile:"Customer Mobile",send_otp:"Send OTP",resend_otp:"Resend",enter_otp:"Enter OTP",verify:"Verify",address:"Address",use_location:"Use current location",locating:"Getting location...",location_ok:"Location set",location_denied:"Permission denied",location_unavailable:"Location unavailable",location_error:"Could not fetch address",grand_total:"Grand Total",final_book:"Finalize Booking",note_text:"Booking requires verified mobile & address.",otp_sent:"OTP sent (demo): ",otp_invalid:"Invalid number. Enter 10 digits starting with 6–9.",otp_ok:"Verified ✓",otp_wrong:"Wrong OTP"},
+      te:{seed_title:"సీడ్స్ బుకింగ్",state:"రాష్ట్రం",district:"జిల్లా",village:"గ్రామం",hatchery:"హ్యాచరీ",next_prod:"తదుపరి ప్రొడక్షన్",next_batch:"తదుపరి బ్యాచ్",salinity:"సాలినిటీ",price_per:"ధర/1000 (₹)",start_booking:"బుక్",production:"ప్రొడక్షన్",booking_date:"బుకింగ్ తేదీ",qty_pcs:"పరిమాణం (పీసులు)",bonus_percent:"బోనస్ %",total_seeds:"మొత్తం సీడ్స్",amount:"అమౌంట్",cust_mobile:"కస్టమర్ మొబైల్",send_otp:"OTP పంపు",resend_otp:"మళ్లీ పంపు",enter_otp:"OTP ఎంటర్ చేయి",verify:"వెరిఫై",address:"అడ్రస్",use_location:"కరెంట్ లొకేషన్ వాడు",locating:"లొకేషన్ తీసుకుంటున్నాం...",location_ok:"లొకేషన్ సెట్ అయింది",location_denied:"పర్మిషన్ నిరాకరించబడింది",location_unavailable:"లొకేషన్ దొరకలేదు",location_error:"అడ్రస్ తెచ్చలేకపోయాం",grand_total:"గ్రాండ్ టోటల్",final_book:"ఫైనల్ బుక్",note_text:"బుకింగ్‌కి వెరిఫై అయిన మొబైల్ & అడ్రస్ అవసరం.",otp_sent:"OTP పంపబడింది (డెమో): ",otp_invalid:"సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి (6–9 తో ప్రారంభం).",otp_ok:"వెరిఫై అయింది ✓",otp_wrong:"తప్పు OTP"}
     };
     function t(k){const l=localStorage.getItem('lang')||'te';return (dict[l]&&dict[l][k])||k;}
     function setLang(){const l=localStorage.getItem('lang')||'te';document.documentElement.lang=l;document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(dict[l][k]) el.textContent=dict[l][k];});}
@@ -218,37 +188,35 @@
     langEN.onclick=()=>{localStorage.setItem('lang','en');setLang();};
     langTE.onclick=()=>{localStorage.setItem('lang','te');setLang();};
 
-    // ---------- Sample Data (expand easily) ----------
-    // AP → Districts → Villages + Hatcheries
-    // TN → Villages + Hatcheries
-    const DATA = {
-      "Andhra Pradesh": {
-        districts: {
-          "Nellore": {
-            villages: ["Kavali","Podalakur","Buchireddypalem"],
-            hatcheries: [
-              {name:"Blue Aqua", salinity:"15–25 ppt", price:350, bonus:20, nextProduction:"2025-09-05", nextBatch:"Batch 1"},
-              {name:"CoastLine Hatchery", salinity:"18–28 ppt", price:360, bonus:30, nextProduction:"2025-09-10", nextBatch:"Batch 2"}
-            ]
-          },
-          "Krishna": {
-            villages: ["Machilipatnam","Avanigadda"],
-            hatcheries: [
-              {name:"Delta Hatchery", salinity:"12–22 ppt", price:370, bonus:25, nextProduction:"2025-09-08", nextBatch:"Batch 1"}
-            ]
-          }
-        }
-      },
-      "Tamil Nadu": {
-        villages:["Cuddalore","Nagapattinam","Pudupattinam"],
-        hatcheries:[
-          {name:"Chennai Aqua", salinity:"20–30 ppt", price:360, bonus:25, nextProduction:"2025-09-07", nextBatch:"Batch 1"},
-          {name:"Bayfront Hatchery", salinity:"18–26 ppt", price:355, bonus:15, nextProduction:"2025-09-12", nextBatch:"Batch 2"}
-        ]
+    // ---------- CSV loader (simple, handles quotes) ----------
+    async function loadCSV(url){
+      const res = await fetch(url, {cache:'no-store'});
+      if(!res.ok) throw new Error('CSV load failed: '+url);
+      const text = await res.text();
+      const rows=[]; let cur='', inQ=false, row=[];
+      function pushCell(){ row.push(cur); cur=''; }
+      for(let i=0;i<text.length;i++){
+        const ch=text[i];
+        if(ch=='"'){
+          if(inQ && text[i+1]=='"'){ cur+='"'; i++; }
+          else inQ=!inQ;
+        }else if(ch===',' && !inQ){ pushCell(); }
+        else if((ch==='\n'||ch==='\r') && !inQ){
+          if(row.length>0 || cur.trim()!==''){ pushCell(); rows.push(row); row=[]; }
+        }else{ cur+=ch; }
       }
-    };
+      if(cur.length || row.length){ pushCell(); rows.push(row); }
+      // header
+      const header = rows.shift().map(h=>h.trim());
+      return rows.filter(r=>r.length).map(r=>{
+        const obj={}; header.forEach((h,idx)=>obj[h]= (r[idx]??'').trim()); return obj;
+      });
+    }
 
-    // ---------- Elements ----------
+    // ---------- Data holders ----------
+    let VILLAGES=[], HATCHERIES=[];
+
+    // ---------- UI elements ----------
     const sState   = document.getElementById('sState');
     const wrapDist = document.getElementById('wrapDistrict');
     const wrapVill = document.getElementById('wrapVillage');
@@ -270,7 +238,7 @@
     const sDate    = document.getElementById('sDate');
     const sBatch   = document.getElementById('sBatch');
     const sQty     = document.getElementById('sQty');
-    const sPrice   = document.getElementById('sPrice');
+    const sPriceIn = document.getElementById('sPrice');
     const sBonusPct= document.getElementById('sBonusPct');
     const sTotalSeeds = document.getElementById('sTotalSeeds');
     const sAmount  = document.getElementById('sAmount');
@@ -288,88 +256,67 @@
     const locBtn   = document.getElementById('locBtn');
     const locStatus= document.getElementById('locStatus');
 
-    // ---------- Populate region controls ----------
-    function fillState(){
-      // pre-select AP
-      onStateChange();
-    }
-
+    // ---------- Populate UI from CSV ----------
     function onStateChange(){
       const st = sState.value;
-      card.classList.add('hidden');
-      bookingWrap.classList.add('hidden');
-      sHatch.innerHTML='';
-      // AP: show District + Village; TN: hide District, show Village
+      card.classList.add('hidden'); bookingWrap.classList.add('hidden'); sHatch.innerHTML='';
       if(st==="Andhra Pradesh"){
-        wrapDist.style.display='';
-        wrapVill.style.display='';
-        const dists = Object.keys(DATA[st].districts);
-        sDistrict.innerHTML = dists.map(d=>`<option>${d}</option>`).join('');
+        wrapDist.style.display=''; wrapVill.style.display='';
+        const dists=[...new Set(VILLAGES.filter(v=>v.state===st).map(v=>v.district))].sort();
+        sDistrict.innerHTML=dists.map(d=>`<option>${d}</option>`).join('');
         onDistrictChange();
       }else{
-        wrapDist.style.display='none';
-        wrapVill.style.display='';
-        const vills = DATA[st].villages;
-        sVillage.innerHTML = vills.map(v=>`<option>${v}</option>`).join('');
+        wrapDist.style.display='none'; wrapVill.style.display='';
+        const vills=[...new Set(VILLAGES.filter(v=>v.state===st).map(v=>v.village))].sort();
+        sVillage.innerHTML=vills.map(v=>`<option>${v}</option>`).join('');
         fillHatchList();
       }
     }
-
     function onDistrictChange(){
       const st=sState.value, d=sDistrict.value;
-      const vills = DATA[st].districts[d].villages;
-      sVillage.innerHTML = vills.map(v=>`<option>${v}</option>`).join('');
+      const vills=[...new Set(VILLAGES.filter(v=>v.state===st && v.district===d).map(v=>v.village))].sort();
+      sVillage.innerHTML=vills.map(v=>`<option>${v}</option>`).join('');
       fillHatchList();
     }
-
     function fillHatchList(){
       const st=sState.value;
-      let hatchList=[];
+      let list=[];
       if(st==="Andhra Pradesh"){
-        const d=sDistrict.value;
-        hatchList = DATA[st].districts[d].hatcheries;
+        const d=sDistrict.value, v=sVillage.value;
+        list=HATCHERIES.filter(h=>h.state===st && h.district===d && (!h.village || h.village===v));
       }else{
-        hatchList = DATA[st].hatcheries;
+        const v=sVillage.value;
+        list=HATCHERIES.filter(h=>h.state===st && (!h.village || h.village===v));
       }
-      sHatch.innerHTML = hatchList.map((h,i)=>
-        `<option value="${i}">${h.name}</option>`).join('');
-      // Clear details until user picks
-      card.classList.add('hidden');
-      bookingWrap.classList.add('hidden');
+      sHatch.innerHTML=list.map((h,i)=>`<option value="${h.id}">${h.hatchery}</option>`).join('');
+      card.classList.add('hidden'); bookingWrap.classList.add('hidden');
     }
 
     sState.addEventListener('change', onStateChange);
     sDistrict.addEventListener('change', onDistrictChange);
-    sVillage.addEventListener('change', ()=>{ /* keeps selection for context */ });
+    sVillage.addEventListener('change', ()=>fillHatchList());
     sHatch.addEventListener('change', showDetails);
 
-    function currentHatch(){
-      const st=sState.value;
-      if(st==="Andhra Pradesh"){
-        const d=sDistrict.value;
-        return DATA[st].districts[d].hatcheries[+sHatch.value||0];
-      }else{
-        return DATA[st].hatcheries[+sHatch.value||0];
-      }
-    }
+    function getHatchById(id){ return HATCHERIES.find(h=>h.id===id); }
 
-    // ---------- Show hatchery details ----------
+    // ---------- Show details ----------
     function showDetails(){
-      const st=sState.value;
-      const reg = (st==="Andhra Pradesh") ? `${sDistrict.value}, ${sVillage.value}` : `${sVillage.value}, ${st}`;
-      const h = currentHatch();
+      const id = sHatch.value;
+      const h = getHatchById(id);
       if(!h) return;
+      const st=sState.value;
+      const region = (st==="Andhra Pradesh") ? `${h.district || sDistrict.value}, ${sVillage.value}` : `${sVillage.value}, ${st}`;
 
-      dName.textContent = h.name;
-      dRegion.textContent = reg;
+      dName.textContent = h.hatchery;
+      dRegion.textContent = region;
       dBonus.textContent = `Bonus — ${h.bonus}%`;
-      dProd.textContent = h.nextProduction;
-      dBatch.textContent= h.nextBatch;
-      dSal.textContent  = h.salinity;
+      dProd.textContent = h.next_production || '—';
+      dBatch.textContent= h.next_batch || '—';
+      dSal.textContent  = h.salinity || '—';
       dPrice.textContent= `₹ ${h.price}`;
 
-      // Prime booking values (read-only price/bonus)
-      sPrice.value = h.price;
+      // inject into booking
+      sPriceIn.value = h.price;
       sBonusPct.textContent = `${h.bonus}%`;
       sQty.value = 0;
       updateTotals();
@@ -378,106 +325,64 @@
       bookingWrap.classList.add('hidden');
     }
 
-    // ---------- Start booking (reveals booking form) ----------
-    startBook.addEventListener('click', ()=>{
+    // ---------- Start booking ----------
+    document.getElementById('startBook').addEventListener('click', ()=>{
       bookingWrap.classList.remove('hidden');
-      // set batch to what card shows
-      const h=currentHatch();
+      const h=getHatchById(sHatch.value);
       if(h){
-        const idx = [...sBatch.options].findIndex(o=>o.text===h.nextBatch);
+        const idx=[...sBatch.options].findIndex(o=>o.text=== (h.next_batch||'Batch 1'));
         if(idx>=0) sBatch.selectedIndex=idx;
       }
-      document.getElementById('bookingWrap').scrollIntoView({behavior:'smooth',block:'start'});
+      bookingWrap.scrollIntoView({behavior:'smooth',block:'start'});
     });
 
     // ---------- Totals ----------
     function updateTotals(){
-      const pricePerK = +sPrice.value || 0;
-      const qtyPieces = +sQty.value || 0;     // pcs
+      const pricePerK = +sPriceIn.value || 0;
+      const qtyPieces = +sQty.value || 0;
       const bonusPct  = parseInt((sBonusPct.textContent||'0').replace('%',''))||0;
-
       const totalSeeds = Math.floor(qtyPieces + (qtyPieces * bonusPct/100));
       const amount = Math.round((qtyPieces/1000) * pricePerK);
-
       sTotalSeeds.textContent = totalSeeds.toLocaleString('en-IN');
       sAmount.textContent     = `₹ ${amount.toLocaleString('en-IN')}`;
       sGrand.textContent      = sAmount.textContent;
-
       validateForm();
     }
     sQty.addEventListener('input', updateTotals);
 
-    // ---------- OTP flow (single button: Send → Resend) ----------
+    // ---------- OTP: single button Send→Resend ----------
     let currentOTP=null, otpOk=false, resendTimer=null, left=0, hasSentOnce=false;
-    function validMobile(num){return /^[6-9]\d{9}$/.test(num||'');}
-
+    function validMobile(n){return /^[6-9]\d{9}$/.test(n||'');}
     function startCountdown(){
-      left=30;
-      otpBtn.disabled=true;
-      otpBtn.textContent=`${left}s`;
+      left=30; otpBtn.disabled=true; otpBtn.textContent=`${left}s`;
       resendTimer && clearInterval(resendTimer);
-      resendTimer=setInterval(()=>{
-        left--; otpBtn.textContent=`${left}s`;
-        if(left<=0){ clearInterval(resendTimer); otpBtn.disabled=false; otpBtn.textContent=t(hasSentOnce?'resend_otp':'send_otp'); }
-      },1000);
+      resendTimer=setInterval(()=>{left--; otpBtn.textContent=`${left}s`; if(left<=0){clearInterval(resendTimer); otpBtn.disabled=false; otpBtn.textContent=t(hasSentOnce?'resend_otp':'send_otp');}},1000);
     }
-
     function sendOrResendOtp(){
       if(!validMobile(mobile.value)){ otpHint.textContent=t('otp_invalid'); otpStatus.textContent=''; return; }
-      currentOTP = (''+Math.floor(100000 + Math.random()*900000));
+      currentOTP=(''+Math.floor(100000+Math.random()*900000));
       otpOk=false; otpInput.value=''; otpStatus.textContent='';
       otpHint.innerHTML = `${t('otp_sent')} <b>${currentOTP}</b>`;
-      hasSentOnce=true;
-      otpBtn.dataset.mode='resend';
-      otpBtn.textContent=t('resend_otp');
-      startCountdown();
-      validateForm();
+      hasSentOnce=true; otpBtn.textContent=t('resend_otp'); startCountdown(); validateForm();
     }
     otpBtn.addEventListener('click', sendOrResendOtp);
+    verifyOtp.addEventListener('click',()=>{ if(otpInput.value===currentOTP&&currentOTP){otpOk=true; otpStatus.textContent=t('otp_ok'); otpStatus.className='mt-1 text-xs text-emerald-600';} else {otpOk=false; otpStatus.textContent=t('otp_wrong'); otpStatus.className='mt-1 text-xs text-rose-600';} validateForm(); });
 
-    verifyOtp.addEventListener('click',()=>{
-      if(otpInput.value===currentOTP && currentOTP){
-        otpOk=true; otpStatus.textContent=t('otp_ok'); otpStatus.className='mt-1 text-xs text-emerald-600';
-      }else{
-        otpOk=false; otpStatus.textContent=t('otp_wrong'); otpStatus.className='mt-1 text-xs text-rose-600';
-      }
-      validateForm();
-    });
-
-    // ---------- Current location for Address ----------
+    // ---------- Location ----------
     async function reverseGeocode(lat, lon){
-      try{
-        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);
-        if(!res.ok) throw new Error('HTTP');
-        const data = await res.json();
-        return data.display_name || '';
-      }catch(e){ return ''; }
+      try{ const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`); if(!r.ok) throw 0; const j=await r.json(); return j.display_name||''; }catch(e){ return ''; }
     }
-
     locBtn.addEventListener('click', async ()=>{
-      locStatus.textContent = t('locating');
-      locBtn.disabled = true;
-
-      if(!('geolocation' in navigator)){
-        locStatus.textContent = t('location_unavailable');
-        locBtn.disabled = false; return;
-      }
-
-      navigator.geolocation.getCurrentPosition(async (pos)=>{
-        const {latitude:lat, longitude:lon} = pos.coords;
-        let addr = await reverseGeocode(lat, lon);
-        if(!addr) addr = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
-        address.value = addr;
-        locStatus.textContent = t('location_ok');
-        validateForm();
-        locBtn.disabled = false;
-      },(err)=>{
-        locStatus.textContent = (err.code===1)? t('location_denied') : t('location_unavailable');
-        locBtn.disabled = false;
-      },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+      locStatus.textContent = t('locating'); locBtn.disabled=true;
+      if(!('geolocation' in navigator)){ locStatus.textContent=t('location_unavailable'); locBtn.disabled=false; return;}
+      navigator.geolocation.getCurrentPosition(async p=>{
+        const {latitude:lat, longitude:lon}=p.coords;
+        let addr=await reverseGeocode(lat,lon); if(!addr) addr=`${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+        address.value=addr; locStatus.textContent=t('location_ok'); validateForm(); locBtn.disabled=false;
+      },err=>{locStatus.textContent=(err.code===1)?t('location_denied'):t('location_unavailable'); locBtn.disabled=false;},{enableHighAccuracy:true,timeout:15000,maximumAge:0});
     });
 
-    // ---------- Validation & Book enable ----------
+    // ---------- Validation ----------
     function validateForm(){
       const okMobile = validMobile(mobile.value) && otpOk;
       const okAddr = (address.value||'').trim().length>0;
@@ -486,33 +391,40 @@
     mobile.addEventListener('input',()=>{otpOk=false; otpStatus.textContent=''; validateForm();});
     address.addEventListener('input',validateForm);
 
-    // ---------- Finalize Booking ----------
+    // ---------- Finalize ----------
     sBook.addEventListener('click',()=>{
       if(sBook.disabled) return;
-      const st=sState.value;
-      const region = (st==="Andhra Pradesh") ? `${sDistrict.value}, ${sVillage.value}` : `${sVillage.value}, ${st}`;
-      const h=currentHatch();
-
+      const h=getHatchById(sHatch.value);
+      const region = (sState.value==="Andhra Pradesh") ? `${h.district || sDistrict.value}, ${sVillage.value}` : `${sVillage.value}, ${sState.value}`;
       const msg =
         `Seeds Booking\n`+
-        `• ${st} • ${region}\n`+
-        `• Hatchery: ${h.name} | Price: ₹${h.price}/1000 | Bonus: ${h.bonus}%\n`+
-        `• Next Production: ${h.nextProduction} | Next Batch: ${h.nextBatch} | Salinity: ${h.salinity}\n`+
+        `• ${sState.value} • ${region}\n`+
+        `• Hatchery: ${h.hatchery} | Price: ₹${h.price}/1000 | Bonus: ${h.bonus}%\n`+
+        `• Next Production: ${h.next_production||'-'} | Next Batch: ${h.next_batch||'-'} | Salinity: ${h.salinity||'-'}\n`+
         `• Booking Date: ${sDate.value||'-'} | Production: ${sBatch.value}\n`+
         `• Qty: ${(+(sQty.value||0)).toLocaleString('en-IN')} pcs | Total: ${sTotalSeeds.textContent}\n`+
         `• Amount: ${sAmount.textContent}\n`+
         `• Mobile: +91 ${mobile.value}\n`+
         `• Address: ${address.value}`;
       alert('✅ ' + msg);
-      // WhatsApp (later):
       // window.open('https://wa.me/91XXXXXXXXXX?text='+encodeURIComponent(msg),'_blank');
     });
 
     // ---------- INIT ----------
-    (function(){
+    (async function init(){
       if(!localStorage.getItem('lang')) localStorage.setItem('lang','te');
       setLang();
-      fillState();
+      try{
+        VILLAGES   = await loadCSV('data/villages.csv');
+        HATCHERIES = await loadCSV('data/hatcheries.csv');
+        // simple ids
+        HATCHERIES.forEach((h,i)=>{ if(!h.id) h.id = 'H'+(i+1); });
+      }catch(e){
+        alert('CSV load failed. Using demo data.');
+        VILLAGES=[{state:'Andhra Pradesh',district:'Nellore',village:'Kavali'},{state:'Tamil Nadu',district:'',village:'Cuddalore'}];
+        HATCHERIES=[{id:'H1',state:'Andhra Pradesh',district:'Nellore',village:'Kavali',hatchery:'Blue Aqua',salinity:'15–25 ppt',price:'350',bonus:'20',next_production:'2025-09-05',next_batch:'Batch 1'}];
+      }
+      onStateChange(); // populate first view
     })();
   </script>
 </body>
