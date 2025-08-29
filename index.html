@@ -13,19 +13,21 @@
     body{background:linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#f0fdf4 100%)}
     .dark body{background:linear-gradient(135deg,#0f172a 0%,#082f49 50%,#14532d 100%)}
 
+    /* Buttons used for header (desktop) + mobile row */
     .navbtn{
       border:1px solid rgb(226,232,240);
-      padding:.55rem .8rem;
+      padding:.55rem .9rem;
       border-radius:.75rem;
       background:#fff;
       text-align:center;
-      font-weight:600;
-      font-size:.82rem; /* mobile */
+      font-weight:700;
+      font-size:1rem;          /* MOBILE size (matches bottom-bar labels) */
       white-space:nowrap;
     }
-    @media (min-width:640px){ .navbtn{font-size:.9rem;padding:.6rem .9rem} }
+    @media (min-width:640px){ .navbtn{font-size:.95rem;padding:.6rem 1rem} }
     .dark .navbtn{background:#0b1220;border-color:#1f2937}
 
+    /* News ticker */
     .ticker{overflow:hidden;mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent)}
     .ticker-track{display:flex;gap:24px;white-space:nowrap;min-width:max-content;animation:ticker 20s linear infinite}
     @keyframes ticker{from{transform:translateX(0)} to{transform:translateX(-50%)}}
@@ -34,6 +36,7 @@
     @keyframes blink{0%,100%{opacity:1;background-color:#facc15;color:#111827}50%{opacity:1;background-color:#dc2626;color:#fff}}
     .blink{animation:blink 1.2s infinite}
 
+    /* Promotions */
     .promo-dot{height:.5rem;width:.5rem;border-radius:9999px;border:1px solid currentColor;opacity:.5}
     .promo-dot.active{opacity:1;background:currentColor}
     .promo-slide{display:none}
@@ -41,17 +44,19 @@
   </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100">
-  <!-- Header (desktop nav here) -->
+  <!-- Header (desktop nav here only) -->
   <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-2 sm:gap-3">
       <h1 class="text-lg sm:text-xl font-bold flex-none" data-i18n="app_title">Aquaculture A–Z</h1>
 
+      <!-- Desktop nav -->
       <nav class="hidden sm:flex gap-2 flex-1 justify-center">
         <a href="harvest.html" class="navbtn">🚚 <span data-i18n="t_harvest">Harvest</span></a>
         <a href="seeds.html"   class="navbtn">🦐 <span data-i18n="t_seeds">Seeds</span></a>
         <a href="vendors.html" class="navbtn">🏪 <span data-i18n="t_dealers">Dealers</span></a>
       </nav>
 
+      <!-- Right controls -->
       <div class="flex items-center gap-2 flex-none">
         <label for="langSel" class="text-sm text-slate-600 dark:text-slate-300 select-none">Ln</label>
         <select id="langSel" class="text-sm border rounded-md px-2 py-1 dark:bg-slate-900 dark:border-slate-700">
@@ -74,7 +79,7 @@
       <p class="text-xs text-slate-500 mt-2"><span data-i18n="updated">Updated</span>: <span id="newsUpdatedTop">—</span></p>
     </section>
 
-    <!-- Mobile only: nav row below Flash News -->
+    <!-- Mobile-only: row of Harvest / Seeds / Vendors BELOW Flash News -->
     <div class="flex sm:hidden gap-2 justify-around">
       <a href="harvest.html" class="navbtn flex-1 text-center">🚚 <span data-i18n="t_harvest">Harvest</span></a>
       <a href="seeds.html"   class="navbtn flex-1 text-center">🦐 <span data-i18n="t_seeds">Seeds</span></a>
@@ -90,7 +95,7 @@
           <p class="text-xs text-slate-500"><span data-i18n="updated">Updated</span>: <span id="updatedAt">—</span></p>
         </div>
 
-        <!-- alignment: label under Count, dropdown under Price -->
+        <!-- Alignment: label below Count, dropdown below Price -->
         <div class="mt-2 overflow-x-auto">
           <table class="min-w-full text-sm">
             <thead>
@@ -132,7 +137,7 @@
     </section>
   </main>
 
-  <!-- Bottom nav (mobile) — bigger font -->
+  <!-- Bottom nav (mobile only) with SAME font size as navbtn -->
   <nav class="fixed bottom-0 inset-x-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 flex justify-around py-2 z-40 sm:hidden"
        style="padding-bottom: env(safe-area-inset-bottom);">
     <a href="index.html" class="flex flex-col items-center text-base font-semibold">
@@ -149,7 +154,7 @@
   <script>
     const $id = s=>document.getElementById(s);
 
-    // tiny CSV loader (optional for promos)
+    /* --- tiny CSV loader (for optional external promos) --- */
     async function loadCSV(url){
       try{
         const res = await fetch(url,{cache:'no-store'});
@@ -164,7 +169,7 @@
       }catch(_){ return null; }
     }
 
-    // i18n dictionary
+    /* --- i18n dictionary --- */
     const dict={
       en:{app_title:"Aquaculture A–Z",t_harvest:"Harvest",t_seeds:"Seeds",t_dealers:"Dealers",
           flash_news:"Flash News",snapshot:"Live Snapshot",updated:"Updated",
@@ -187,7 +192,7 @@
       $id('langSel').value = lang;
     }
 
-    // theme toggle
+    /* --- theme toggle --- */
     (function(){
       const saved = localStorage.getItem('theme');
       if(saved==='dark' || (!saved && matchMedia('(prefers-color-scheme: dark)').matches)){
@@ -199,7 +204,7 @@
       };
     })();
 
-    // Rates data
+    /* --- rates data --- */
     const CURRENT={Vannamei:[{c:100,p:240},{c:90,p:250},{c:80,p:260},{c:70,p:280},{c:60,p:310},{c:50,p:330},{c:40,p:350},{c:30,p:370}],
                    Tiger:[{c:50,p:330},{c:40,p:390},{c:30,p:470},{c:20,p:580}]};
     const PREVIOUS={Vannamei:[{c:100,p:235},{c:90,p:250},{c:80,p:265},{c:70,p:275},{c:60,p:300},{c:50,p:330},{c:40,p:345},{c:30,p:370}],
@@ -243,7 +248,7 @@
       $id('updatedAt').textContent = new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
     }
 
-    // Flash news
+    /* --- flash news --- */
     const NEWS={
       en:[{tag:'Rates',text:'50c steady across coastal AP'},{tag:'Seed',text:'Batch 1 PL open this week'},{tag:'Harvest',text:'Night DO risk; add aeration 8pm–3am'},{tag:'Market',text:'Ice ₹1200/ton in Nellore'}],
       te:[{tag:'రేట్స్',text:'50 కౌంట్ ధర స్థిరంగా ఉంది'},{tag:'సీడ్స్',text:'బ్యాచ్ 1 PL ఈ వారం ఓపెన్'},{tag:'హార్వెస్ట్',text:'రాత్రి DO రిస్క్ — 8pm–3am ఎయరేషన్ పెంచండి'},{tag:'మార్కెట్',text:'నెల్లూరు ఐస్ ₹1200/టన్'}]
@@ -258,7 +263,7 @@
       $id('newsUpdatedTop').textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
     }
 
-    // Promotions
+    /* --- promotions --- */
     let PROMOS=[], promoIdx=0, promoTimer=null;
     function renderPromo(){
       const track=$id('promoTrack'), dots=$id('promoDots');
@@ -280,7 +285,7 @@
     }
     function startPromo(){ if(promoTimer) clearInterval(promoTimer); promoTimer=setInterval(()=>{promoIdx=(promoIdx+1)%PROMOS.length;renderPromo();},6000); }
 
-    // INIT
+    /* --- INIT --- */
     document.addEventListener('DOMContentLoaded',async()=>{
       if(!localStorage.getItem('lang')) localStorage.setItem('lang','te');
       applyI18n();
