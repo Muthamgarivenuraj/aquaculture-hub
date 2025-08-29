@@ -49,7 +49,7 @@
   <main class="max-w-5xl mx-auto p-4">
     <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800 space-y-5">
 
-      <!-- Selectors -->
+      <!-- Region & Hatchery selection -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
         <label class="text-sm">
           <span data-i18n="state">State</span>
@@ -59,209 +59,425 @@
           </select>
         </label>
 
-        <label class="text-sm">
+        <label class="text-sm" id="wrapDistrict">
           <span data-i18n="district">District</span>
           <select id="sDistrict" class="mt-1 field w-full"></select>
         </label>
 
-        <label class="text-sm md:col-span-2">
+        <label class="text-sm" id="wrapVillage">
+          <span data-i18n="village">Village</span>
+          <select id="sVillage" class="mt-1 field w-full"></select>
+        </label>
+
+        <label class="text-sm">
           <span data-i18n="hatchery">Hatchery</span>
-          <div class="mt-1 flex gap-2">
-            <select id="sHatchery" class="field flex-1">
-              <!-- filled by JS -->
-            </select>
-            <!-- read-only Bonus badge -->
-            <span id="sBonusBadge" class="badge bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200 whitespace-nowrap">Bonus — 0%</span>
-          </div>
+          <select id="sHatchery" class="mt-1 field w-full"></select>
         </label>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-        <label class="text-sm">
-          <span data-i18n="price_per">Price/1000 (₹)</span>
-          <input id="sPrice" type="number" class="mt-1 field w-full" readonly>
-        </label>
-
-        <label class="text-sm">
-          <span data-i18n="production">Production</span>
-          <select id="sBatch" class="mt-1 field w-full">
-            <option>Batch 1</option><option>Batch 2</option>
-          </select>
-        </label>
-
-        <label class="text-sm">
-          <span data-i18n="booking_date">Booking Date</span>
-          <input id="sDate" type="date" class="mt-1 field w-full">
-        </label>
-
-        <label class="text-sm">
-          <span data-i18n="qty_pcs">Quantity (pcs)</span>
-          <input id="sQty" type="number" value="0" class="mt-1 field w-full">
-        </label>
-      </div>
-
-      <!-- Totals -->
-      <p class="text-sm">
-        <span data-i18n="bonus_percent">Bonus %</span>:
-        <b id="sBonusPct">0%</b> |
-        <span data-i18n="total_seeds">Total Seeds</span>:
-        <b id="sTotalSeeds">0</b> |
-        <span data-i18n="amount">Amount</span>:
-        <b id="sAmount">₹ 0</b>
-      </p>
-
-      <!-- Customer (OTP + Address) -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <label class="text-sm">
-          <span data-i18n="cust_mobile">Customer Mobile *</span>
-          <div class="mt-1 flex gap-2">
-            <input id="custMobile" type="tel" placeholder="9xxxxxxxxx" class="field w-full" maxlength="10" inputmode="numeric" pattern="[6-9][0-9]{9}">
-            <button id="sendOtp" class="btn btn-primary whitespace-nowrap" type="button" data-i18n="send_otp">Send OTP</button>
+      <!-- Hatchery details card (appears after selection) -->
+      <div id="detailsCard" class="hidden rounded-xl border border-slate-200 dark:border-slate-800 p-4 bg-slate-50 dark:bg-slate-900/40">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 id="dName" class="text-lg font-semibold">—</h2>
+            <p class="text-sm opacity-80" id="dRegion">—</p>
           </div>
-          <div id="otpHint" class="mt-1 text-xs text-slate-500"></div>
-        </label>
-
-        <label class="text-sm">
-          <span data-i18n="enter_otp">Enter OTP</span>
-          <div class="mt-1 flex gap-2">
-            <input id="otpInput" type="number" class="field w-full" placeholder="******" maxlength="6">
-            <button id="verifyOtp" class="btn border border-emerald-600 text-emerald-700" type="button" data-i18n="verify">Verify</button>
-          </div>
-          <div id="otpStatus" class="mt-1 text-xs"></div>
-        </label>
-
-        <label class="text-sm">
-          <span data-i18n="address">Address *</span>
-          <input id="custAddress" class="mt-1 field w-full" placeholder="Village, Mandal, District">
-        </label>
-      </div>
-
-      <!-- Action -->
-      <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <div class="text-sm font-medium">🧮 <span data-i18n="grand_total">Grand Total</span>:
-          <b id="sGrand">₹ 0</b>
+          <span id="dBonus" class="badge bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200">Bonus — 0%</span>
         </div>
-        <button id="sBook" class="btn btn-primary md:self-end" disabled data-i18n="final_book">Finalize Booking</button>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mt-3 text-sm">
+          <div><span class="opacity-70" data-i18n="next_prod">Next Production</span><br><b id="dProd">—</b></div>
+          <div><span class="opacity-70" data-i18n="next_batch">Next Batch</span><br><b id="dBatch">—</b></div>
+          <div><span class="opacity-70" data-i18n="salinity">Salinity</span><br><b id="dSalinity">—</b></div>
+          <div><span class="opacity-70" data-i18n="price_per">Price/1000 (₹)</span><br><b id="dPrice">—</b></div>
+        </div>
+        <div class="mt-4">
+          <button id="startBook" class="btn btn-primary" type="button" data-i18n="start_booking">Book</button>
+        </div>
       </div>
 
-      <p class="text-xs text-slate-500"><span class="badge bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200">Note</span>
-        <span data-i18n="note_text">Booking requires verified mobile & address.</span>
-      </p>
+      <!-- Booking section (hidden until Book) -->
+      <div id="bookingWrap" class="hidden space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+          <label class="text-sm">
+            <span data-i18n="booking_date">Booking Date</span>
+            <input id="sDate" type="date" class="mt-1 field w-full">
+          </label>
+
+          <label class="text-sm">
+            <span data-i18n="production">Production</span>
+            <select id="sBatch" class="mt-1 field w-full">
+              <option>Batch 1</option>
+              <option>Batch 2</option>
+            </select>
+          </label>
+
+          <label class="text-sm">
+            <span data-i18n="qty_pcs">Quantity (pcs)</span>
+            <input id="sQty" type="number" value="0" class="mt-1 field w-full" min="0">
+          </label>
+
+          <label class="text-sm">
+            <span data-i18n="price_per">Price/1000 (₹)</span>
+            <input id="sPrice" type="number" class="mt-1 field w-full" readonly>
+          </label>
+        </div>
+
+        <p class="text-sm">
+          <span data-i18n="bonus_percent">Bonus %</span>:
+          <b id="sBonusPct">0%</b> |
+          <span data-i18n="total_seeds">Total Seeds</span>:
+          <b id="sTotalSeeds">0</b> |
+          <span data-i18n="amount">Amount</span>:
+          <b id="sAmount">₹ 0</b>
+        </p>
+
+        <!-- Customer (OTP + Address) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <label class="text-sm">
+            <span data-i18n="cust_mobile">Customer Mobile *</span>
+            <div class="mt-1 flex gap-2">
+              <input id="custMobile" type="tel" placeholder="9xxxxxxxxx" class="field w-full" maxlength="10" inputmode="numeric" pattern="[6-9][0-9]{9}">
+              <button id="otpBtn" class="btn btn-primary whitespace-nowrap" type="button" data-mode="send" data-i18n="send_otp">Send OTP</button>
+            </div>
+            <div id="otpHint" class="mt-1 text-xs text-slate-500"></div>
+          </label>
+
+          <label class="text-sm">
+            <span data-i18n="enter_otp">Enter OTP</span>
+            <div class="mt-1 flex gap-2">
+              <input id="otpInput" type="number" class="field w-full" placeholder="******" maxlength="6">
+              <button id="verifyOtp" class="btn border border-emerald-600 text-emerald-700" type="button" data-i18n="verify">Verify</button>
+            </div>
+            <div id="otpStatus" class="mt-1 text-xs"></div>
+          </label>
+
+          <label class="text-sm">
+            <span data-i18n="address">Address *</span>
+            <div class="mt-1 flex gap-2">
+              <input id="custAddress" class="field w-full" placeholder="Village, Mandal, District">
+              <button id="locBtn" class="btn border border-slate-300 dark:border-slate-700" type="button" data-i18n="use_location">Use current location</button>
+            </div>
+            <div id="locStatus" class="mt-1 text-xs text-slate-500"></div>
+          </label>
+        </div>
+
+        <!-- Action -->
+        <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div class="text-sm font-medium">🧮 <span data-i18n="grand_total">Grand Total</span>:
+            <b id="sGrand">₹ 0</b>
+          </div>
+          <button id="sBook" class="btn btn-primary md:self-end" disabled data-i18n="final_book">Finalize Booking</button>
+        </div>
+
+        <p class="text-xs text-slate-500"><span class="badge bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200">Note</span>
+          <span data-i18n="note_text">Booking requires verified mobile & address.</span>
+        </p>
+      </div>
     </div>
   </main>
 
   <script>
     // ---------- i18n ----------
     const dict={
-      en:{seed_title:"Seed Booking",state:"State",district:"District",hatchery:"Hatchery",price_per:"Price/1000 (₹)",production:"Production",booking_date:"Booking Date",qty_pcs:"Quantity (pcs)",bonus_percent:"Bonus %",total_seeds:"Total Seeds",amount:"Amount",cust_mobile:"Customer Mobile",send_otp:"Send OTP",enter_otp:"Enter OTP",verify:"Verify",address:"Address",grand_total:"Grand Total",final_book:"Finalize Booking",note_text:"Booking requires verified mobile & address.",otp_sent:"OTP sent (demo): ",otp_invalid:"Invalid number. Enter 10 digits starting with 6–9.",otp_ok:"Verified ✓",otp_wrong:"Wrong OTP"},
-      te:{seed_title:"సీడ్స్ బుకింగ్",state:"రాష్ట్రం",district:"జిల్లా",hatchery:"హ్యాచరీ",price_per:"ధర/1000 (₹)",production:"ప్రొడక్షన్",booking_date:"బుకింగ్ తేదీ",qty_pcs:"పరిమాణం (పీసులు)",bonus_percent:"బోనస్ %",total_seeds:"మొత్తం సీడ్స్",amount:"అమౌంట్",cust_mobile:"కస్టమర్ మొబైల్",send_otp:"OTP పంపు",enter_otp:"OTP ఎంటర్ చేయి",verify:"వెరిఫై",address:"అడ్రస్",grand_total:"గ్రాండ్ టోటల్",final_book:"ఫైనల్ బుక్",note_text:"బుకింగ్‌కి వెరిఫై అయిన మొబైల్ & అడ్రస్ అవసరం.",otp_sent:"OTP పంపబడింది (డెమో): ",otp_invalid:"సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి (6–9 తో ప్రారంభం).",otp_ok:"వెరిఫై అయింది ✓",otp_wrong:"తప్పు OTP"}
+      en:{
+        seed_title:"Seed Booking", state:"State", district:"District", village:"Village", hatchery:"Hatchery",
+        next_prod:"Next Production", next_batch:"Next Batch", salinity:"Salinity",
+        price_per:"Price/1000 (₹)", start_booking:"Book",
+        production:"Production", booking_date:"Booking Date", qty_pcs:"Quantity (pcs)",
+        bonus_percent:"Bonus %", total_seeds:"Total Seeds", amount:"Amount",
+        cust_mobile:"Customer Mobile", send_otp:"Send OTP", resend_otp:"Resend",
+        enter_otp:"Enter OTP", verify:"Verify", address:"Address",
+        use_location:"Use current location", locating:"Getting location...",
+        location_ok:"Location set", location_denied:"Permission denied",
+        location_unavailable:"Location unavailable", location_error:"Could not fetch address",
+        grand_total:"Grand Total", final_book:"Finalize Booking",
+        note_text:"Booking requires verified mobile & address.",
+        otp_sent:"OTP sent (demo): ", otp_invalid:"Invalid number. Enter 10 digits starting with 6–9.",
+        otp_ok:"Verified ✓", otp_wrong:"Wrong OTP"
+      },
+      te:{
+        seed_title:"సీడ్స్ బుకింగ్", state:"రాష్ట్రం", district:"జిల్లా", village:"గ్రామం", hatchery:"హ్యాచరీ",
+        next_prod:"తదుపరి ప్రొడక్షన్", next_batch:"తదుపరి బ్యాచ్", salinity:"సాలినిటీ",
+        price_per:"ధర/1000 (₹)", start_booking:"బుక్",
+        production:"ప్రొడక్షన్", booking_date:"బుకింగ్ తేదీ", qty_pcs:"పరిమాణం (పీసులు)",
+        bonus_percent:"బోనస్ %", total_seeds:"మొత్తం సీడ్స్", amount:"అమౌంట్",
+        cust_mobile:"కస్టమర్ మొబైల్", send_otp:"OTP పంపు", resend_otp:"మళ్లీ పంపు",
+        enter_otp:"OTP ఎంటర్ చేయి", verify:"వెరిఫై", address:"అడ్రస్",
+        use_location:"కరెంట్ లొకేషన్ వాడు", locating:"లొకేషన్ తీసుకుంటున్నాం...",
+        location_ok:"లొకేషన్ సెట్ అయింది", location_denied:"పర్మిషన్ నిరాకరించబడింది",
+        location_unavailable:"లొకేషన్ దొరకలేదు", location_error:"అడ్రస్ తెచ్చలేకపోయాం",
+        grand_total:"గ్రాండ్ టోటల్", final_book:"ఫైనల్ బుక్",
+        note_text:"బుకింగ్‌కి వెరిఫై అయిన మొబైల్ & అడ్రస్ అవసరం.",
+        otp_sent:"OTP పంపబడింది (డెమో): ", otp_invalid:"సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి (6–9 తో ప్రారంభం).",
+        otp_ok:"వెరిఫై అయింది ✓", otp_wrong:"తప్పు OTP"
+      }
     };
+    function t(k){const l=localStorage.getItem('lang')||'te';return (dict[l]&&dict[l][k])||k;}
     function setLang(){const l=localStorage.getItem('lang')||'te';document.documentElement.lang=l;document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(dict[l][k]) el.textContent=dict[l][k];});}
     themeToggle.onclick=()=>{document.documentElement.classList.toggle('dark');localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');};
-    langEN.onclick=()=>{localStorage.setItem('lang','en');setLang();updateTotals();}
-    langTE.onclick=()=>{localStorage.setItem('lang','te');setLang();updateTotals();}
+    langEN.onclick=()=>{localStorage.setItem('lang','en');setLang();};
+    langTE.onclick=()=>{localStorage.setItem('lang','te');setLang();};
 
-    // ---------- Data (with static bonus %) ----------
-    // price = ₹ per 1000 PL, bonusPct = static bonus shown next to hatchery (read-only)
-    let seedsData=[
-      {state:'Andhra Pradesh',district:'Nellore',hatchery:'Blue Aqua',price:350,bonusPct:20},
-      {state:'Andhra Pradesh',district:'Krishna',hatchery:'Delta Hatchery',price:370,bonusPct:30},
-      {state:'Tamil Nadu',district:'',hatchery:'Chennai Aqua',price:360,bonusPct:25}
-    ];
+    // ---------- Sample Data (expand easily) ----------
+    // AP → Districts → Villages + Hatcheries
+    // TN → Villages + Hatcheries
+    const DATA = {
+      "Andhra Pradesh": {
+        districts: {
+          "Nellore": {
+            villages: ["Kavali","Podalakur","Buchireddypalem"],
+            hatcheries: [
+              {name:"Blue Aqua", salinity:"15–25 ppt", price:350, bonus:20, nextProduction:"2025-09-05", nextBatch:"Batch 1"},
+              {name:"CoastLine Hatchery", salinity:"18–28 ppt", price:360, bonus:30, nextProduction:"2025-09-10", nextBatch:"Batch 2"}
+            ]
+          },
+          "Krishna": {
+            villages: ["Machilipatnam","Avanigadda"],
+            hatcheries: [
+              {name:"Delta Hatchery", salinity:"12–22 ppt", price:370, bonus:25, nextProduction:"2025-09-08", nextBatch:"Batch 1"}
+            ]
+          }
+        }
+      },
+      "Tamil Nadu": {
+        villages:["Cuddalore","Nagapattinam","Pudupattinam"],
+        hatcheries:[
+          {name:"Chennai Aqua", salinity:"20–30 ppt", price:360, bonus:25, nextProduction:"2025-09-07", nextBatch:"Batch 1"},
+          {name:"Bayfront Hatchery", salinity:"18–26 ppt", price:355, bonus:15, nextProduction:"2025-09-12", nextBatch:"Batch 2"}
+        ]
+      }
+    };
 
     // ---------- Elements ----------
-    const sState=document.getElementById('sState'),
-          sDistrict=document.getElementById('sDistrict'),
-          sHatch=document.getElementById('sHatchery'),
-          sBonusBadge=document.getElementById('sBonusBadge'),
-          sPrice=document.getElementById('sPrice'),
-          sBatch=document.getElementById('sBatch'),
-          sDate=document.getElementById('sDate'),
-          sQty=document.getElementById('sQty'),
-          sBonusPct=document.getElementById('sBonusPct'),
-          sTotalSeeds=document.getElementById('sTotalSeeds'),
-          sAmount=document.getElementById('sAmount'),
-          sGrand=document.getElementById('sGrand'),
-          sBook=document.getElementById('sBook');
+    const sState   = document.getElementById('sState');
+    const wrapDist = document.getElementById('wrapDistrict');
+    const wrapVill = document.getElementById('wrapVillage');
+    const sDistrict= document.getElementById('sDistrict');
+    const sVillage = document.getElementById('sVillage');
+    const sHatch   = document.getElementById('sHatchery');
+
+    const card     = document.getElementById('detailsCard');
+    const dName    = document.getElementById('dName');
+    const dRegion  = document.getElementById('dRegion');
+    const dBonus   = document.getElementById('dBonus');
+    const dProd    = document.getElementById('dProd');
+    const dBatch   = document.getElementById('dBatch');
+    const dSal     = document.getElementById('dSalinity');
+    const dPrice   = document.getElementById('dPrice');
+    const startBook= document.getElementById('startBook');
+
+    const bookingWrap = document.getElementById('bookingWrap');
+    const sDate    = document.getElementById('sDate');
+    const sBatch   = document.getElementById('sBatch');
+    const sQty     = document.getElementById('sQty');
+    const sPrice   = document.getElementById('sPrice');
+    const sBonusPct= document.getElementById('sBonusPct');
+    const sTotalSeeds = document.getElementById('sTotalSeeds');
+    const sAmount  = document.getElementById('sAmount');
+    const sGrand   = document.getElementById('sGrand');
+    const sBook    = document.getElementById('sBook');
 
     // OTP & Address
-    const mobile=document.getElementById('custMobile'),
-          sendOtp=document.getElementById('sendOtp'),
-          otpInput=document.getElementById('otpInput'),
-          verifyOtp=document.getElementById('verifyOtp'),
-          otpHint=document.getElementById('otpHint'),
-          otpStatus=document.getElementById('otpStatus'),
-          address=document.getElementById('custAddress');
+    const mobile   = document.getElementById('custMobile');
+    const otpBtn   = document.getElementById('otpBtn');
+    const otpInput = document.getElementById('otpInput');
+    const verifyOtp= document.getElementById('verifyOtp');
+    const otpHint  = document.getElementById('otpHint');
+    const otpStatus= document.getElementById('otpStatus');
+    const address  = document.getElementById('custAddress');
+    const locBtn   = document.getElementById('locBtn');
+    const locStatus= document.getElementById('locStatus');
 
-    function fillDistrict(){
+    // ---------- Populate region controls ----------
+    function fillState(){
+      // pre-select AP
+      onStateChange();
+    }
+
+    function onStateChange(){
+      const st = sState.value;
+      card.classList.add('hidden');
+      bookingWrap.classList.add('hidden');
+      sHatch.innerHTML='';
+      // AP: show District + Village; TN: hide District, show Village
+      if(st==="Andhra Pradesh"){
+        wrapDist.style.display='';
+        wrapVill.style.display='';
+        const dists = Object.keys(DATA[st].districts);
+        sDistrict.innerHTML = dists.map(d=>`<option>${d}</option>`).join('');
+        onDistrictChange();
+      }else{
+        wrapDist.style.display='none';
+        wrapVill.style.display='';
+        const vills = DATA[st].villages;
+        sVillage.innerHTML = vills.map(v=>`<option>${v}</option>`).join('');
+        fillHatchList();
+      }
+    }
+
+    function onDistrictChange(){
+      const st=sState.value, d=sDistrict.value;
+      const vills = DATA[st].districts[d].villages;
+      sVillage.innerHTML = vills.map(v=>`<option>${v}</option>`).join('');
+      fillHatchList();
+    }
+
+    function fillHatchList(){
       const st=sState.value;
-      const ds=[...new Set(seedsData.filter(x=>x.state===st && x.district).map(x=>x.district))];
-      sDistrict.innerHTML=ds.map(d=>`<option>${d}</option>`).join('');
-      sDistrict.parentElement.style.display = (st==='Tamil Nadu')?'none':'';
-      fillHatch();
-    }
-    function fillHatch(){
-      const st=sState.value, d=sDistrict.value||'';
-      const list=seedsData.filter(x=>x.state===st && (st==='Tamil Nadu' || x.district===d));
-      sHatch.innerHTML = list.map(x=>`<option data-price="${x.price}" data-bonus="${x.bonusPct}">${x.hatchery}</option>`).join('');
-      updPriceBonus();
-    }
-    function updPriceBonus(){
-      const opt=sHatch.selectedOptions[0];
-      const price = opt ? +opt.dataset.price : 0;
-      const bonus = opt ? +opt.dataset.bonus : 0;
-      sPrice.value = price || '';
-      sBonusPct.textContent = `${bonus}%`;
-      sBonusBadge.textContent = `Bonus — ${bonus}%`;
-      updateTotals();
+      let hatchList=[];
+      if(st==="Andhra Pradesh"){
+        const d=sDistrict.value;
+        hatchList = DATA[st].districts[d].hatcheries;
+      }else{
+        hatchList = DATA[st].hatcheries;
+      }
+      sHatch.innerHTML = hatchList.map((h,i)=>
+        `<option value="${i}">${h.name}</option>`).join('');
+      // Clear details until user picks
+      card.classList.add('hidden');
+      bookingWrap.classList.add('hidden');
     }
 
-    sState.onchange=fillDistrict;
-    sDistrict.onchange=fillHatch;
-    sHatch.onchange=updPriceBonus;
-    sQty.oninput=updateTotals;
+    sState.addEventListener('change', onStateChange);
+    sDistrict.addEventListener('change', onDistrictChange);
+    sVillage.addEventListener('change', ()=>{ /* keeps selection for context */ });
+    sHatch.addEventListener('change', showDetails);
+
+    function currentHatch(){
+      const st=sState.value;
+      if(st==="Andhra Pradesh"){
+        const d=sDistrict.value;
+        return DATA[st].districts[d].hatcheries[+sHatch.value||0];
+      }else{
+        return DATA[st].hatcheries[+sHatch.value||0];
+      }
+    }
+
+    // ---------- Show hatchery details ----------
+    function showDetails(){
+      const st=sState.value;
+      const reg = (st==="Andhra Pradesh") ? `${sDistrict.value}, ${sVillage.value}` : `${sVillage.value}, ${st}`;
+      const h = currentHatch();
+      if(!h) return;
+
+      dName.textContent = h.name;
+      dRegion.textContent = reg;
+      dBonus.textContent = `Bonus — ${h.bonus}%`;
+      dProd.textContent = h.nextProduction;
+      dBatch.textContent= h.nextBatch;
+      dSal.textContent  = h.salinity;
+      dPrice.textContent= `₹ ${h.price}`;
+
+      // Prime booking values (read-only price/bonus)
+      sPrice.value = h.price;
+      sBonusPct.textContent = `${h.bonus}%`;
+      sQty.value = 0;
+      updateTotals();
+
+      card.classList.remove('hidden');
+      bookingWrap.classList.add('hidden');
+    }
+
+    // ---------- Start booking (reveals booking form) ----------
+    startBook.addEventListener('click', ()=>{
+      bookingWrap.classList.remove('hidden');
+      // set batch to what card shows
+      const h=currentHatch();
+      if(h){
+        const idx = [...sBatch.options].findIndex(o=>o.text===h.nextBatch);
+        if(idx>=0) sBatch.selectedIndex=idx;
+      }
+      document.getElementById('bookingWrap').scrollIntoView({behavior:'smooth',block:'start'});
+    });
 
     // ---------- Totals ----------
     function updateTotals(){
       const pricePerK = +sPrice.value || 0;
       const qtyPieces = +sQty.value || 0;     // pcs
-      const bonusPct = parseInt((sBonusPct.textContent||'0').replace('%',''))||0;
+      const bonusPct  = parseInt((sBonusPct.textContent||'0').replace('%',''))||0;
+
       const totalSeeds = Math.floor(qtyPieces + (qtyPieces * bonusPct/100));
       const amount = Math.round((qtyPieces/1000) * pricePerK);
+
       sTotalSeeds.textContent = totalSeeds.toLocaleString('en-IN');
-      sAmount.textContent = `₹ ${amount.toLocaleString('en-IN')}`;
-      sGrand.textContent = sAmount.textContent;
+      sAmount.textContent     = `₹ ${amount.toLocaleString('en-IN')}`;
+      sGrand.textContent      = sAmount.textContent;
+
       validateForm();
     }
+    sQty.addEventListener('input', updateTotals);
 
-    // ---------- OTP demo flow ----------
-    let currentOTP=null, otpOk=false, resendTimer=null, left=0;
-    const validMobile = n => /^[6-9]\d{9}$/.test(n||'');
+    // ---------- OTP flow (single button: Send → Resend) ----------
+    let currentOTP=null, otpOk=false, resendTimer=null, left=0, hasSentOnce=false;
+    function validMobile(num){return /^[6-9]\d{9}$/.test(num||'');}
 
-    sendOtp.addEventListener('click',()=>{
-      if(!validMobile(mobile.value)){
-        otpHint.textContent = (dict[localStorage.getItem('lang')||'te'].otp_invalid);
-        otpStatus.textContent=''; return;
-      }
-      currentOTP=(''+Math.floor(100000+Math.random()*900000));
-      otpOk=false; otpInput.value=''; otpStatus.textContent='';
-      otpHint.innerHTML = (dict[localStorage.getItem('lang')||'te'].otp_sent) + '<b>'+currentOTP+'</b>';
-      left=30; sendOtp.disabled=true; sendOtp.textContent=`${left}s`;
+    function startCountdown(){
+      left=30;
+      otpBtn.disabled=true;
+      otpBtn.textContent=`${left}s`;
       resendTimer && clearInterval(resendTimer);
-      resendTimer=setInterval(()=>{left--;sendOtp.textContent=`${left}s`; if(left<=0){clearInterval(resendTimer);sendOtp.disabled=false;sendOtp.textContent=dict[localStorage.getItem('lang')||'te'].send_otp;}},1000);
+      resendTimer=setInterval(()=>{
+        left--; otpBtn.textContent=`${left}s`;
+        if(left<=0){ clearInterval(resendTimer); otpBtn.disabled=false; otpBtn.textContent=t(hasSentOnce?'resend_otp':'send_otp'); }
+      },1000);
+    }
+
+    function sendOrResendOtp(){
+      if(!validMobile(mobile.value)){ otpHint.textContent=t('otp_invalid'); otpStatus.textContent=''; return; }
+      currentOTP = (''+Math.floor(100000 + Math.random()*900000));
+      otpOk=false; otpInput.value=''; otpStatus.textContent='';
+      otpHint.innerHTML = `${t('otp_sent')} <b>${currentOTP}</b>`;
+      hasSentOnce=true;
+      otpBtn.dataset.mode='resend';
+      otpBtn.textContent=t('resend_otp');
+      startCountdown();
       validateForm();
-    });
+    }
+    otpBtn.addEventListener('click', sendOrResendOtp);
 
     verifyOtp.addEventListener('click',()=>{
-      const L=dict[localStorage.getItem('lang')||'te'];
       if(otpInput.value===currentOTP && currentOTP){
-        otpOk=true; otpStatus.textContent=L.otp_ok; otpStatus.className='mt-1 text-xs text-emerald-600';
+        otpOk=true; otpStatus.textContent=t('otp_ok'); otpStatus.className='mt-1 text-xs text-emerald-600';
       }else{
-        otpOk=false; otpStatus.textContent=L.otp_wrong; otpStatus.className='mt-1 text-xs text-rose-600';
+        otpOk=false; otpStatus.textContent=t('otp_wrong'); otpStatus.className='mt-1 text-xs text-rose-600';
       }
       validateForm();
     });
 
+    // ---------- Current location for Address ----------
+    async function reverseGeocode(lat, lon){
+      try{
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);
+        if(!res.ok) throw new Error('HTTP');
+        const data = await res.json();
+        return data.display_name || '';
+      }catch(e){ return ''; }
+    }
+
+    locBtn.addEventListener('click', async ()=>{
+      locStatus.textContent = t('locating');
+      locBtn.disabled = true;
+
+      if(!('geolocation' in navigator)){
+        locStatus.textContent = t('location_unavailable');
+        locBtn.disabled = false; return;
+      }
+
+      navigator.geolocation.getCurrentPosition(async (pos)=>{
+        const {latitude:lat, longitude:lon} = pos.coords;
+        let addr = await reverseGeocode(lat, lon);
+        if(!addr) addr = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+        address.value = addr;
+        locStatus.textContent = t('location_ok');
+        validateForm();
+        locBtn.disabled = false;
+      },(err)=>{
+        locStatus.textContent = (err.code===1)? t('location_denied') : t('location_unavailable');
+        locBtn.disabled = false;
+      },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+    });
+
+    // ---------- Validation & Book enable ----------
     function validateForm(){
       const okMobile = validMobile(mobile.value) && otpOk;
       const okAddr = (address.value||'').trim().length>0;
@@ -270,29 +486,33 @@
     mobile.addEventListener('input',()=>{otpOk=false; otpStatus.textContent=''; validateForm();});
     address.addEventListener('input',validateForm);
 
-    // Book
+    // ---------- Finalize Booking ----------
     sBook.addEventListener('click',()=>{
       if(sBook.disabled) return;
+      const st=sState.value;
+      const region = (st==="Andhra Pradesh") ? `${sDistrict.value}, ${sVillage.value}` : `${sVillage.value}, ${st}`;
+      const h=currentHatch();
+
       const msg =
         `Seeds Booking\n`+
-        `• ${sState.value} ${sDistrict.parentElement.style.display==='none'?'':sDistrict.value}\n`+
-        `• ${sHatch.value} @ ₹${sPrice.value}/1000 | Bonus ${sBonusPct.textContent}\n`+
-        `• Qty: ${(+sQty.value||0).toLocaleString('en-IN')} pcs | Total: ${sTotalSeeds.textContent}\n`+
+        `• ${st} • ${region}\n`+
+        `• Hatchery: ${h.name} | Price: ₹${h.price}/1000 | Bonus: ${h.bonus}%\n`+
+        `• Next Production: ${h.nextProduction} | Next Batch: ${h.nextBatch} | Salinity: ${h.salinity}\n`+
+        `• Booking Date: ${sDate.value||'-'} | Production: ${sBatch.value}\n`+
+        `• Qty: ${(+(sQty.value||0)).toLocaleString('en-IN')} pcs | Total: ${sTotalSeeds.textContent}\n`+
         `• Amount: ${sAmount.textContent}\n`+
         `• Mobile: +91 ${mobile.value}\n`+
         `• Address: ${address.value}`;
       alert('✅ ' + msg);
-      // For WhatsApp, replace alert with:
+      // WhatsApp (later):
       // window.open('https://wa.me/91XXXXXXXXXX?text='+encodeURIComponent(msg),'_blank');
     });
 
-    // INIT
+    // ---------- INIT ----------
     (function(){
       if(!localStorage.getItem('lang')) localStorage.setItem('lang','te');
       setLang();
-      fillDistrict();
-      sQty.value = 0;      // default 0
-      updateTotals();
+      fillState();
     })();
   </script>
 </body>
