@@ -45,6 +45,13 @@
   </header>
 
   <main class="max-w-7xl mx-auto p-4 space-y-4 pb-24 sm:pb-4">
+    <!-- QUICK NAV (TOP, above Flash News) -->
+    <section class="grid grid-cols-3 gap-2">
+      <a href="harvest.html" class="navbtn">🚚 <span data-i18n="t_harvest">Harvest</span></a>
+      <a href="seeds.html"   class="navbtn">🦐 <span data-i18n="t_seeds">Seeds</span></a>
+      <a href="vendors.html" class="navbtn">🏪 <span data-i18n="t_dealers">Dealers</span></a>
+    </section>
+
     <!-- Flash News -->
     <section class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
       <div class="flex items-center justify-between">
@@ -65,7 +72,7 @@
           <p class="text-xs text-slate-500"><span data-i18n="updated">Updated</span>: <span id="updatedAt">—</span></p>
         </div>
 
-        <!-- Alignment strip so the dropdown begins under the Price column -->
+        <!-- Alignment strip (Type label over Count, dropdown starts near Price; nudged left a bit) -->
         <div class="mt-3 overflow-x-auto">
           <table class="min-w-full text-sm">
             <thead>
@@ -74,7 +81,9 @@
                   <span class="text-sm text-slate-600 dark:text-slate-300" data-i18n="lbl_type">రకం</span>
                 </th>
                 <th class="text-left py-1 pr-4 align-bottom">
-                  <select id="prawnType" class="text-sm border rounded-md px-2 py-1 dark:bg-slate-800 dark:border-slate-600"></select>
+                  <div class="-ml-1 sm:-ml-2">
+                    <select id="prawnType" class="text-sm border rounded-md px-2 py-1 dark:bg-slate-800 dark:border-slate-600"></select>
+                  </div>
                 </th>
                 <th class="text-left py-1 pr-4 align-bottom"></th>
               </tr>
@@ -113,17 +122,20 @@
     </section>
   </main>
 
-  <!-- MOBILE-ONLY bottom nav (renamed labels; hidden on desktop) -->
+  <!-- MOBILE-ONLY bottom nav: Left Home | Middle History | Right Shrimp -->
   <nav class="fixed bottom-0 inset-x-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 flex justify-around py-2 z-40 sm:hidden"
        style="padding-bottom: env(safe-area-inset-bottom);">
-    <a href="index.html" class="flex flex-col items-center text-xs" aria-label="Rates">
-      <span>📊</span><span data-i18n="m_rates">Rates</span>
+    <!-- LEFT: Home -->
+    <a href="index.html" class="flex flex-col items-center text-xs" aria-label="Home">
+      <span>🏠</span><span data-i18n="m_home">Home</span>
     </a>
-    <a href="harvest.html" class="flex flex-col items-center text-xs" aria-label="Booking">
-      <span>📝</span><span data-i18n="m_booking">Booking</span>
+    <!-- MIDDLE: History (placeholder link for now) -->
+    <a href="harvest.html" class="flex flex-col items-center text-xs" aria-label="History">
+      <span>🕘</span><span data-i18n="m_history">History</span>
     </a>
-    <a href="vendors.html" class="flex flex-col items-center text-xs" aria-label="Vendors">
-      <span>🏪</span><span data-i18n="m_vendors">Vendors</span>
+    <!-- RIGHT: Shrimp -->
+    <a href="seeds.html" class="flex flex-col items-center text-xs" aria-label="Shrimp">
+      <span>🦐</span><span data-i18n="m_shrimp">Shrimp</span>
     </a>
   </nav>
 
@@ -151,8 +163,8 @@
         promotions_title:"Promotions",
         chg_up:"Up", chg_down:"Down", chg_same:"No change",
         type_van:"Vannamei", type_tig:"Tiger",
-        /* mobile bottom labels (renamed) */
-        m_rates:"Rates", m_booking:"Booking", m_vendors:"Vendors"
+        /* mobile bottom labels */
+        m_home:"Home", m_history:"History", m_shrimp:"Shrimp"
       },
       te:{
         app_title:"Aquaculture A–Z",
@@ -162,8 +174,8 @@
         promotions_title:"ప్రోమోషన్స్",
         chg_up:"పెరిగింది", chg_down:"తగ్గింది", chg_same:"మార్పు లేదు",
         type_van:"వన్నామీ", type_tig:"టైగర్",
-        /* mobile bottom labels (renamed) */
-        m_rates:"రేట్స్", m_booking:"బుకింగ్", m_vendors:"వెండర్లు"
+        /* mobile bottom labels */
+        m_home:"హోమ్", m_history:"చరిత్ర", m_shrimp:"రొయ్యలు"
       }
     };
     function setLang(){
@@ -304,15 +316,15 @@
     (function(){
       if(!localStorage.getItem('lang')) localStorage.setItem('lang','te');
       setLang(); loadNews();
+      // type dropdown
       const sel=document.getElementById('prawnType');
-      // render dropdown options in current language
-      (function renderTypeOptions(){
-        const lang=localStorage.getItem('lang')||'te';
+      const renderTypeOptionsNow=()=>{ const lang=localStorage.getItem('lang')||'te';
         const valueNow=sel.value||'Vannamei';
         sel.innerHTML=`<option value="Vannamei">${dict[lang].type_van}</option>
                        <option value="Tiger">${dict[lang].type_tig}</option>`;
         sel.value=valueNow;
-      })();
+      };
+      renderTypeOptionsNow();
       sel.value='Vannamei';
       sel.onchange=()=>renderRates(sel.value);
       renderRates(sel.value);
