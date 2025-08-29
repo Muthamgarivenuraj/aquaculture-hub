@@ -59,17 +59,20 @@
 
         <label class="text-sm">
           <span id="iceQtyLbl">Ice (tons)</span>
-          <input id="iceQty" type="number" value="1" class="mt-1 field w-full">
+          <!-- default 0 -->
+          <input id="iceQty" type="number" value="0" class="mt-1 field w-full" min="0">
         </label>
 
         <label class="text-sm">
           <span id="iceRateLbl">Price/ton (₹)</span>
-          <input id="iceRate" type="number" value="1200" class="mt-1 field w-full">
+          <!-- default 0 -->
+          <input id="iceRate" type="number" value="0" class="mt-1 field w-full" min="0">
         </label>
 
         <div class="text-sm flex items-end">
           <div class="w-full"><span data-i18n="ice_total">Ice total</span>:
-            <b id="iceTotal">₹ 1200</b>
+            <!-- show 0 -->
+            <b id="iceTotal">₹ 0</b>
           </div>
         </div>
       </div>
@@ -78,9 +81,10 @@
         <label class="text-sm">
           <span data-i18n="van_type">Van</span>
           <select id="vanType" class="mt-1 field w-full">
-            <option value="1">1T</option>
+            <!-- default 1T -->
+            <option value="1" selected>1T</option>
             <option value="2">2T</option>
-            <option value="5" selected>5T</option>
+            <option value="5">5T</option>
             <option value="8">8T</option>
             <option value="10">10T</option>
           </select>
@@ -88,18 +92,21 @@
 
         <label class="text-sm">
           <span data-i18n="van_rate">₹/km</span>
-          <input id="vanRate" type="number" class="mt-1 field w-full" value="300" readonly>
+          <!-- default 0; stays 0 until user changes van -->
+          <input id="vanRate" type="number" class="mt-1 field w-full" value="0" readonly>
         </label>
 
         <label class="text-sm">
           <span data-i18n="van_km">Distance (km)</span>
-          <input id="vanKm" type="number" value="50" class="mt-1 field w-full">
+          <!-- default 0 -->
+          <input id="vanKm" type="number" value="0" class="mt-1 field w-full" min="0">
         </label>
 
         <div class="text-sm flex items-end">
           <div class="w-full">
             <span data-i18n="transport">Transport</span>:
-            <b id="vanTotal">₹ 15000</b>
+            <!-- show 0 -->
+            <b id="vanTotal">₹ 0</b>
           </div>
         </div>
       </div>
@@ -216,7 +223,13 @@
 
     // ---------- Van auto-rate map ----------
     const VAN_RATE={ '1':150,'2':200,'5':300,'8':350,'10':400 };
-    function applyVanRate(){ const v=vanType.value; vanRate.value=VAN_RATE[v]||0; calc(); }
+    function applyVanRate(){
+      const v=vanType.value;
+      // only set rate when user changes the dropdown
+      vanRate.value=VAN_RATE[v]||0;
+      calc();
+    }
+    // Set on user change (no initial auto-fill)
     vanType.addEventListener('change',applyVanRate);
 
     // ---------- Ice unit labels ----------
@@ -225,11 +238,9 @@
       if(iceUnit.value==='can'){
         iceQtyLbl.textContent= l==='te'?'ఐస్ (క్యాన్లు)':'Ice (cans)';
         iceRateLbl.textContent= l==='te'?'ధర/క్యాన్ (₹)':'Price/can (₹)';
-        if(+iceRate.value===1200) iceRate.value=120;
       }else{
         iceQtyLbl.textContent= l==='te'?'ఐస్ (టన్నులు)':'Ice (tons)';
         iceRateLbl.textContent= l==='te'?'ధర/టన్ (₹)':'Price/ton (₹)';
-        if(+iceRate.value===120) iceRate.value=1200;
       }
       calc();
     }
@@ -337,7 +348,6 @@
         `• Mobile: +91 ${mobile.value}\n`+
         `• Address: ${address.value}`;
       alert('✅ ' + msg);
-      // To send on WhatsApp later:
       // window.open('https://wa.me/91XXXXXXXXXX?text='+encodeURIComponent(msg),'_blank');
     });
 
@@ -345,7 +355,7 @@
     (function(){
       if(!localStorage.getItem('lang')) localStorage.setItem('lang','te');
       setLang();
-      applyVanRate();
+      // NOTE: no applyVanRate() here, to keep ₹/km at 0 by default
       updateLabels();
       calc();
     })();
