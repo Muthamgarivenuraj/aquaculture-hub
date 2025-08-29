@@ -1,6 +1,6 @@
 id,state,district,village,hatchery,salinity,price,bonus,next_production,next_batch
 ,Andhra Pradesh,Nellore,Muthyalathopu,Sreepa,"15–25 ppt",0.32,20,2025-09-05,Batch 1
-,Andhra Pradesh,Nellore,,Muthyalathopu Biomarien ,"18–28 ppt",0.35,30,2025-09-10,Batch 2
+,Andhra Pradesh,Nellore,Muthyalathopu, Biomarien ,"18–28 ppt",0.35,30,2025-09-10,Batch 2
 ,Andhra Pradesh,Krishna,Avanigadda,Delta Hatchery,"12–22 ppt",370,25,2025-09-08,Batch 1
 ,Andhra Pradesh,East Godavari,Kakinada,Seabreeze Hatchery,"16–24 ppt",365,15,2025-09-11,Batch 2
 ,Andhra Pradesh,West Godavari,Bhimavaram,Godavari Aqua Farms,"14–22 ppt",355,10,2025-09-06,Batch 1
