@@ -13,7 +13,6 @@
     body{background:linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#f0fdf4 100%)}
     .dark body{background:linear-gradient(135deg,#0f172a 0%,#082f49 50%,#14532d 100%)}
 
-    /* Buttons used for header (desktop) + mobile row */
     .navbtn{
       border:1px solid rgb(226,232,240);
       padding:.55rem .9rem;
@@ -21,13 +20,12 @@
       background:#fff;
       text-align:center;
       font-weight:700;
-      font-size:1rem;          /* MOBILE size (matches bottom-bar labels) */
+      font-size:1rem;
       white-space:nowrap;
     }
     @media (min-width:640px){ .navbtn{font-size:.95rem;padding:.6rem 1rem} }
     .dark .navbtn{background:#0b1220;border-color:#1f2937}
 
-    /* News ticker */
     .ticker{overflow:hidden;mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent)}
     .ticker-track{display:flex;gap:24px;white-space:nowrap;min-width:max-content;animation:ticker 20s linear infinite}
     @keyframes ticker{from{transform:translateX(0)} to{transform:translateX(-50%)}}
@@ -36,7 +34,6 @@
     @keyframes blink{0%,100%{opacity:1;background-color:#facc15;color:#111827}50%{opacity:1;background-color:#dc2626;color:#fff}}
     .blink{animation:blink 1.2s infinite}
 
-    /* Promotions */
     .promo-dot{height:.5rem;width:.5rem;border-radius:9999px;border:1px solid currentColor;opacity:.5}
     .promo-dot.active{opacity:1;background:currentColor}
     .promo-slide{display:none}
@@ -44,16 +41,19 @@
   </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100">
-  <!-- Header (desktop nav here only) -->
+  <!-- Header -->
   <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-2 sm:gap-3">
       <h1 class="text-lg sm:text-xl font-bold flex-none" data-i18n="app_title">Aquaculture A–Z</h1>
 
-      <!-- Desktop nav -->
+      <!-- Desktop nav: Home, Harvest, Seeds, Dealers, Shrimp, Contact -->
       <nav class="hidden sm:flex gap-2 flex-1 justify-center">
+        <a href="index.html"   class="navbtn">🏠 <span data-i18n="m_home">Home</span></a>
         <a href="harvest.html" class="navbtn">🚚 <span data-i18n="t_harvest">Harvest</span></a>
         <a href="seeds.html"   class="navbtn">🦐 <span data-i18n="t_seeds">Seeds</span></a>
         <a href="vendors.html" class="navbtn">🏪 <span data-i18n="t_dealers">Dealers</span></a>
+        <a href="seeds.html"   class="navbtn">🦐 <span data-i18n="m_shrimp">Shrimp</span></a>
+        <a href="contact.html" class="navbtn">📞 <span data-i18n="contact">Contact</span></a>
       </nav>
 
       <!-- Right controls -->
@@ -69,6 +69,14 @@
   </header>
 
   <main class="max-w-7xl mx-auto p-3 sm:p-4 space-y-4 pb-24 sm:pb-4">
+
+    <!-- MOBILE ONLY: move Harvest / Seeds / Dealers ABOVE Flash News -->
+    <div class="flex sm:hidden gap-2 justify-around">
+      <a href="harvest.html" class="navbtn flex-1 text-center">🚚 <span data-i18n="t_harvest">Harvest</span></a>
+      <a href="seeds.html"   class="navbtn flex-1 text-center">🦐 <span data-i18n="t_seeds">Seeds</span></a>
+      <a href="vendors.html" class="navbtn flex-1 text-center">🏪 <span data-i18n="t_dealers">Dealers</span></a>
+    </div>
+
     <!-- Flash News -->
     <section class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
       <div class="flex items-center justify-between">
@@ -79,30 +87,24 @@
       <p class="text-xs text-slate-500 mt-2"><span data-i18n="updated">Updated</span>: <span id="newsUpdatedTop">—</span></p>
     </section>
 
-    <!-- Mobile-only: row of Harvest / Seeds / Vendors BELOW Flash News -->
-    <div class="flex sm:hidden gap-2 justify-around">
-      <a href="harvest.html" class="navbtn flex-1 text-center">🚚 <span data-i18n="t_harvest">Harvest</span></a>
-      <a href="seeds.html"   class="navbtn flex-1 text-center">🦐 <span data-i18n="t_seeds">Seeds</span></a>
-      <a href="vendors.html" class="navbtn flex-1 text-center">🏪 <span data-i18n="t_dealers">Dealers</span></a>
-    </div>
-
     <!-- Rates + Promotions -->
     <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
       <!-- Rates -->
       <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
         <div class="flex items-center justify-between">
-          <h3 class="font-semibold" data-i18n="snapshot">Live Snapshot</h3>
-          <p class="text-xs text-slate-500"><span data-i18n="updated">Updated</span>: <span id="updatedAt">—</span></p>
+          <h3 class="font-semibold" data-i18n="snapshot">లైవ్ స్నాప్‌షాట్</h3>
+          <p class="text-xs text-slate-500"><span data-i18n="updated">అప్‌డేట్</span>: <span id="updatedAt">—</span></p>
         </div>
 
-        <!-- Alignment: label below Count, dropdown below Price -->
+        <!-- header row for Type aligned under PRICE. We nudge select a little LEFT -->
         <div class="mt-2 overflow-x-auto">
           <table class="min-w-full text-sm">
             <thead>
               <tr>
                 <th class="text-left py-1 pr-4"><span data-i18n="lbl_type">రకం</span></th>
                 <th class="text-left py-1 pr-4">
-                  <select id="prawnType" class="text-sm border rounded-md px-2 py-1 dark:bg-slate-800 dark:border-slate-600"></select>
+                  <!-- the -ml-2 nudges the dropdown to the LEFT to sit under the Price header neatly -->
+                  <select id="prawnType" class="text-sm border rounded-md px-2 py-1 dark:bg-slate-800 dark:border-slate-600 -ml-2"></select>
                 </th>
                 <th></th>
               </tr>
@@ -114,9 +116,9 @@
           <table class="min-w-full text-sm" id="ratesTable">
             <thead>
               <tr class="border-b dark:border-slate-800 text-slate-500">
-                <th class="text-left py-2 pr-4" data-i18n="th_count">Count</th>
-                <th class="text-left py-2 pr-4" data-i18n="th_price">Price (₹/kg)</th>
-                <th class="text-left py-2 pr-4" data-i18n="th_change">Change</th>
+                <th class="text-left py-2 pr-4" data-i18n="th_count">కౌంట్</th>
+                <th class="text-left py-2 pr-4" data-i18n="th_price">ధర (₹/kg)</th>
+                <th class="text-left py-2 pr-4" data-i18n="th_change">మార్పు</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -127,7 +129,7 @@
       <!-- Promotions -->
       <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
         <div class="flex items-center justify-between">
-          <h3 class="font-semibold">📣 <span data-i18n="promotions_title">Promotions</span></h3>
+          <h3 class="font-semibold">📣 <span data-i18n="promotions_title">ప్రోమోషన్స్</span></h3>
         </div>
         <div id="promoSlider" class="relative mt-3">
           <div id="promoTrack" class="overflow-hidden rounded-xl"></div>
@@ -137,7 +139,7 @@
     </section>
   </main>
 
-  <!-- Bottom nav (mobile only) with SAME font size as navbtn -->
+  <!-- Bottom nav (mobile only) -->
   <nav class="fixed bottom-0 inset-x-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 flex justify-around py-2 z-40 sm:hidden"
        style="padding-bottom: env(safe-area-inset-bottom);">
     <a href="index.html" class="flex flex-col items-center text-base font-semibold">
@@ -154,7 +156,6 @@
   <script>
     const $id = s=>document.getElementById(s);
 
-    /* --- tiny CSV loader (for optional external promos) --- */
     async function loadCSV(url){
       try{
         const res = await fetch(url,{cache:'no-store'});
@@ -169,18 +170,19 @@
       }catch(_){ return null; }
     }
 
-    /* --- i18n dictionary --- */
     const dict={
       en:{app_title:"Aquaculture A–Z",t_harvest:"Harvest",t_seeds:"Seeds",t_dealers:"Dealers",
           flash_news:"Flash News",snapshot:"Live Snapshot",updated:"Updated",
           lbl_type:"Type",th_count:"Count",th_price:"Price (₹/kg)",th_change:"Change",
           promotions_title:"Promotions",chg_up:"Up",chg_down:"Down",chg_same:"No change",
-          type_van:"Vannamei",type_tig:"Tiger", m_home:"Home", m_history:"History", m_shrimp:"Shrimp"},
+          type_van:"Vannamei",type_tig:"Tiger", m_home:"Home", m_history:"History", m_shrimp:"Shrimp",
+          contact:"Contact"},
       te:{app_title:"Aquaculture A–Z",t_harvest:"హార్వెస్ట్",t_seeds:"సీడ్స్",t_dealers:"వెండర్లు",
           flash_news:"ఫ్లాష్ న్యూస్",snapshot:"లైవ్ స్నాప్‌షాట్",updated:"అప్‌డేట్",
           lbl_type:"రకం",th_count:"కౌంట్",th_price:"ధర (₹/kg)",th_change:"మార్పు",
           promotions_title:"ప్రోమోషన్స్",chg_up:"పెరిగింది",chg_down:"తగ్గింది",chg_same:"మార్పు లేదు",
-          type_van:"వన్నామీ",type_tig:"టైగర్", m_home:"హోమ్", m_history:"చరిత్ర", m_shrimp:"రొయ్యలు"}
+          type_van:"వన్నామీ",type_tig:"టైగర్", m_home:"హోమ్", m_history:"చరిత్ర", m_shrimp:"రొయ్యలు",
+          contact:"సంప్రదించండి"}
     };
 
     function applyI18n(){
@@ -192,7 +194,6 @@
       $id('langSel').value = lang;
     }
 
-    /* --- theme toggle --- */
     (function(){
       const saved = localStorage.getItem('theme');
       if(saved==='dark' || (!saved && matchMedia('(prefers-color-scheme: dark)').matches)){
@@ -204,7 +205,6 @@
       };
     })();
 
-    /* --- rates data --- */
     const CURRENT={Vannamei:[{c:100,p:240},{c:90,p:250},{c:80,p:260},{c:70,p:280},{c:60,p:310},{c:50,p:330},{c:40,p:350},{c:30,p:370}],
                    Tiger:[{c:50,p:330},{c:40,p:390},{c:30,p:470},{c:20,p:580}]};
     const PREVIOUS={Vannamei:[{c:100,p:235},{c:90,p:250},{c:80,p:265},{c:70,p:275},{c:60,p:300},{c:50,p:330},{c:40,p:345},{c:30,p:370}],
@@ -248,7 +248,6 @@
       $id('updatedAt').textContent = new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
     }
 
-    /* --- flash news --- */
     const NEWS={
       en:[{tag:'Rates',text:'50c steady across coastal AP'},{tag:'Seed',text:'Batch 1 PL open this week'},{tag:'Harvest',text:'Night DO risk; add aeration 8pm–3am'},{tag:'Market',text:'Ice ₹1200/ton in Nellore'}],
       te:[{tag:'రేట్స్',text:'50 కౌంట్ ధర స్థిరంగా ఉంది'},{tag:'సీడ్స్',text:'బ్యాచ్ 1 PL ఈ వారం ఓపెన్'},{tag:'హార్వెస్ట్',text:'రాత్రి DO రిస్క్ — 8pm–3am ఎయరేషన్ పెంచండి'},{tag:'మార్కెట్',text:'నెల్లూరు ఐస్ ₹1200/టన్'}]
@@ -263,15 +262,13 @@
       $id('newsUpdatedTop').textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
     }
 
-    /* --- promotions --- */
     let PROMOS=[], promoIdx=0, promoTimer=null;
     function renderPromo(){
       const track=$id('promoTrack'), dots=$id('promoDots');
       const lang=localStorage.getItem('lang')||'te';
       if(!PROMOS.length){
         PROMOS=[
-          {badge:'Best Value',title_en:'5T Van — ₹22 / km',title_te:'5T వాన్ — ₹22 / కి.మీ',desc_en:'Reliable transport for harvest day.',desc_te:'హార్వెస్ట్ రోజుకు నమ్మదగిన ట్రాన్స్‌పోర్ట్.'},
-          {badge:'Fresh PL',  title_en:'Seeds — Batch 1 Open',title_te:'సీడ్స్ — బ్యాచ్ 1 ఓపెన్',desc_en:'Vannamei SPF PL. Bonus up to 30%',desc_te:'వన్నామీ SPF PL. 30% బోనస్ వరకు'}
+          {badge:'Fresh PL',title_en:'Seeds — Batch 1 Open',title_te:'సీడ్స్ — బ్యాచ్ 1 ఓపెన్',desc_en:'Vannamei SPF PL. 30% bonus',desc_te:'వన్నామీ SPF PL. 30% బోనస్'}
         ];
       }
       track.innerHTML = PROMOS.map((r,i)=>`
@@ -285,7 +282,6 @@
     }
     function startPromo(){ if(promoTimer) clearInterval(promoTimer); promoTimer=setInterval(()=>{promoIdx=(promoIdx+1)%PROMOS.length;renderPromo();},6000); }
 
-    /* --- INIT --- */
     document.addEventListener('DOMContentLoaded',async()=>{
       if(!localStorage.getItem('lang')) localStorage.setItem('lang','te');
       applyI18n();
@@ -295,13 +291,11 @@
         applyI18n(); fillTypeOptions(); renderRates($id('prawnType').value); loadNews(); renderPromo();
       });
 
-      // rates
       fillTypeOptions();
       const sel=$id('prawnType'); if(!sel.value) sel.value='Vannamei';
       sel.onchange=()=>renderRates(sel.value);
       renderRates(sel.value);
 
-      // news + promos
       loadNews();
       const csv = await loadCSV('./data/promotions.csv');
       if(csv && csv.length){
