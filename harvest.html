@@ -65,13 +65,12 @@
 
         <label class="text-sm">
           <span id="iceRateLbl">Price/ton (₹)</span>
-          <!-- default 0 -->
+          <!-- default 0; auto-set on unit select -->
           <input id="iceRate" type="number" value="0" class="mt-1 field w-full" min="0">
         </label>
 
         <div class="text-sm flex items-end">
           <div class="w-full"><span data-i18n="ice_total">Ice total</span>:
-            <!-- show 0 -->
             <b id="iceTotal">₹ 0</b>
           </div>
         </div>
@@ -81,7 +80,6 @@
         <label class="text-sm">
           <span data-i18n="van_type">Van</span>
           <select id="vanType" class="mt-1 field w-full">
-            <!-- default 1T -->
             <option value="1" selected>1T</option>
             <option value="2">2T</option>
             <option value="5">5T</option>
@@ -92,7 +90,7 @@
 
         <label class="text-sm">
           <span data-i18n="van_rate">₹/km</span>
-          <!-- default 0; stays 0 until user changes van -->
+          <!-- default 0; auto-set on van select or when distance entered -->
           <input id="vanRate" type="number" class="mt-1 field w-full" value="0" readonly>
         </label>
 
@@ -105,7 +103,6 @@
         <div class="text-sm flex items-end">
           <div class="w-full">
             <span data-i18n="transport">Transport</span>:
-            <!-- show 0 -->
             <b id="vanTotal">₹ 0</b>
           </div>
         </div>
@@ -221,41 +218,62 @@
           grand=document.getElementById('grand'),
           bookBtn=document.getElementById('bookBtn');
 
-    // ---------- Van auto-rate map ----------
-    const VAN_RATE={ '1':150,'2':200,'5':300,'8':350,'10':400 };
-    function applyVanRate(){
-      const v=vanType.value;
-      // only set rate when user changes the dropdown
-      vanRate.value=VAN_RATE[v]||0;
-      calc();
-    }
-    // Set on user change (no initial auto-fill)
-    vanType.addEventListener('change',applyVanRate);
+    // ---------- Mappings ----------
+    // New van rates as requested
+    const VAN_RATE={ '1':100,'2':150,'5':200,'8':250,'10':300 };
+    const ICE_DEFAULT_RATE={ ton:1200, can:120 };
 
-    // ---------- Ice unit labels ----------
+    // ---------- Helpers ----------
+    function rupee(n){ return `₹ ${(+n||0).toFixed(0)}`; }
+
+    // ---------- Behavior: Ice unit auto-price ----------
     function updateLabels(){
       const l=localStorage.getItem('lang')||'te';
       if(iceUnit.value==='can'){
         iceQtyLbl.textContent= l==='te'?'ఐస్ (క్యాన్లు)':'Ice (cans)';
         iceRateLbl.textContent= l==='te'?'ధర/క్యాన్ (₹)':'Price/can (₹)';
+        // set auto price when unit chosen
+        iceRate.value = ICE_DEFAULT_RATE.can;
       }else{
         iceQtyLbl.textContent= l==='te'?'ఐస్ (టన్నులు)':'Ice (tons)';
         iceRateLbl.textContent= l==='te'?'ధర/టన్ (₹)':'Price/ton (₹)';
+        // set auto price when unit chosen
+        iceRate.value = ICE_DEFAULT_RATE.ton;
       }
       calc();
     }
     iceUnit.addEventListener('change',updateLabels);
 
+    // ---------- Behavior: Van auto-rate ----------
+    function applyVanRate(){
+      const v=vanType.value;
+      vanRate.value = VAN_RATE[v] || 0;
+      calc();
+    }
+    // Set rate whenever van changes
+    vanType.addEventListener('change',applyVanRate);
+
+    // If user starts typing distance while rate is 0, auto-fill from current van
+    vanKm.addEventListener('input',()=>{
+      if((+vanRate.value||0)===0){
+        const v=vanType.value;
+        vanRate.value = VAN_RATE[v] || 0;
+      }
+      calc();
+    });
+
     // ---------- Totals ----------
     function calc(){
-      const ice=(+iceQty.value||0)*(+iceRate.value||0);
-      const van=(+vanRate.value||0)*(+vanKm.value||0);
-      iceTotal.textContent=`₹ ${ice.toFixed(0)}`;
-      vanTotal.textContent=`₹ ${van.toFixed(0)}`;
-      grand.textContent=`₹ ${(ice+van).toFixed(0)}`;
+      const iceVal=(+iceQty.value||0)*(+iceRate.value||0);
+      const vanVal=(+vanRate.value||0)*(+vanKm.value||0);
+
+      iceTotal.textContent = rupee(iceVal);
+      vanTotal.textContent = rupee(vanVal);
+      grand.textContent    = rupee(iceVal + vanVal);
+
       validateForm();
     }
-    [iceQty,iceRate,vanRate,vanKm].forEach(el=>el.addEventListener('input',calc));
+    [iceQty,iceRate,vanRate].forEach(el=>el.addEventListener('input',calc));
 
     // ---------- OTP flow (single button: Send → Resend) ----------
     let currentOTP=null, otpOk=false, resendTimer=null, left=0, hasSentOnce=false;
@@ -283,7 +301,6 @@
       startCountdown();
       validateForm();
     }
-
     otpBtn.addEventListener('click', sendOrResendOtp);
 
     verifyOtp.addEventListener('click',()=>{
@@ -355,8 +372,8 @@
     (function(){
       if(!localStorage.getItem('lang')) localStorage.setItem('lang','te');
       setLang();
-      // NOTE: no applyVanRate() here, to keep ₹/km at 0 by default
-      updateLabels();
+      // Keep all defaults at 0 on first load
+      // Auto prices/rates are applied when user selects unit/van or types distance
       calc();
     })();
   </script>
