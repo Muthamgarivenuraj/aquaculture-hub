@@ -43,16 +43,22 @@
 <body class="text-slate-900 dark:text-slate-100">
   <!-- Header -->
   <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800">
-    	 <div class="max-w-7xl mx-auto px-4 py-3 flex items-center">
-  <!-- Logo -->
-  <img src="assets/logo.png" class="h-9 w-auto mr-0" alt="Logo">
+    	<!-- Logo + Titles (drop-in replace for your current block) -->
+<div class="max-w-7xl mx-auto px-4 py-3 flex items-center">
+  <!-- Logo: swap by theme -->
+  <div class="h-9 w-9 mr-1 relative">
+    <!-- Light mode logo -->
+    <img src="assets/logo.png" alt="Logo" class="h-9 w-9 object-contain block dark:hidden">
+    <!-- Dark mode logo (black background version) -->
+    <img src="assets/logo-dark.png" alt="Logo" class="h-9 w-9 object-contain hidden dark:block">
+  </div>
 
-  <!-- Desktop Title -->
+  <!-- Desktop title -->
   <h1 class="text-xl font-bold hidden sm:inline">Aquaculture A–Z</h1>
+  <!-- Mobile title with extra gap -->
+  <h1 class="text-xl font-bold sm:hidden mr-4 sm:mr-0">Aquaa A–Z</h1>
 
-  <!-- Mobile Title -->
- 
-<h1 class="text-xl font-bold sm:hidden mr-14 sm:mr-0">Aquaa A–Z</h1>
+
 
 
 
