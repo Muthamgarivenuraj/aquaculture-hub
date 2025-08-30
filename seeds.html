@@ -16,14 +16,20 @@
     .btn{padding:.6rem 1rem;border-radius:.75rem}
     .btn-primary{background:#059669;color:#fff}
     .btn-primary[disabled]{opacity:.5;cursor:not-allowed}
+    .badge{font-size:.75rem;padding:.2rem .55rem;border-radius:.5rem}
   </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100">
   <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
       <a href="index.html" class="rounded-lg px-3 py-1.5 border border-slate-200 dark:border-slate-800">←</a>
-      <h1 class="text-lg font-bold flex-1" data-i18n="seed_booking">Seed Booking</h1>
+      <h1 class="text-lg font-bold flex-1">Seed Booking</h1>
+	  <div class="hidden sm:flex rounded-full bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-800">
+        <button id="langTE" class="px-3 py-1.5 text-sm rounded-full bg-white dark:bg-slate-800">తెలుగు</button>
+        <button id="langEN" class="px-3 py-1.5 text-sm rounded-full">English</button>
+      </div>
       <button id="themeToggle" class="rounded-full px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-800">🌙/☀️</button>
+    </div>
     </div>
   </header>
 
@@ -31,115 +37,181 @@
     <!-- Selectors -->
     <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border space-y-4">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-        <label class="text-sm"><span data-i18n="state">State</span>
-          <select id="sState" class="mt-1 field w-full"></select>
+        <label class="text-sm">State
+          <select id="sState" class="mt-1 field w-full">
+            <option value="">Select</option>
+          </select>
         </label>
-        <label class="text-sm"><span data-i18n="district">District</span>
-          <select id="sDistrict" class="mt-1 field w-full"></select>
+        <label class="text-sm">District
+          <select id="sDistrict" class="mt-1 field w-full"><option value="">Select</option></select>
         </label>
-        <label class="text-sm"><span data-i18n="village">Village</span>
-          <select id="sVillage" class="mt-1 field w-full"></select>
+        <label class="text-sm">Village
+          <select id="sVillage" class="mt-1 field w-full"><option value="">Select</option></select>
         </label>
-        <label class="text-sm"><span data-i18n="hatchery">Hatchery</span>
-          <select id="sHatchery" class="mt-1 field w-full"></select>
+        <label class="text-sm">Hatchery
+          <select id="sHatchery" class="mt-1 field w-full"><option value="">Select</option></select>
         </label>
       </div>
+
+      <!-- Hatchery Details -->
+      <div id="hatchDetails" class="hidden p-4 rounded-xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 space-y-2">
+        <h2 id="hName" class="font-bold text-lg"></h2>
+        <p id="hLoc" class="text-sm"></p>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-sm">
+          <div>Next Production <div id="hProd" class="font-bold"></div></div>
+          <div>Next Batch <div id="hBatch" class="font-bold"></div></div>
+          <div>Salinity <div id="hSalinity" class="font-bold"></div></div>
+          <div>Price <div id="hPrice" class="font-bold"></div></div>
+          <div>EHP Result <div id="hEhp" class="font-bold"></div></div>
+        </div>
+        <span id="hBonus" class="badge bg-emerald-100 text-emerald-700"></span>
+        <button id="bookBtn" class="btn btn-primary">Book</button>
+      </div>
+    </div>
+
+    <!-- Booking Form -->
+    <div id="bookingForm" class="hidden rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <label class="text-sm">Booking Date
+          <input id="sDate" type="date" class="mt-1 field w-full">
+        </label>
+        <label class="text-sm">Production
+          <input id="sBatch" type="text" class="mt-1 field w-full" readonly>
+        </label>
+        <label class="text-sm">Quantity (pcs)
+          <input id="sQty" type="number" value="0" class="mt-1 field w-full">
+        </label>
+        <label class="text-sm">Price
+          <input id="sPrice" type="number" class="mt-1 field w-full" readonly>
+        </label>
+      </div>
+      <p class="text-sm">Bonus %: <b id="sBonus">0%</b> | Total Seeds: <b id="sTotal">0</b> | Amount: <b id="sAmount">₹ 0</b></p>
+
+      <!-- Customer Details -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <label class="text-sm">Customer Mobile *
+          <div class="mt-1 flex gap-2">
+            <input id="custMobile" type="tel" placeholder="9xxxxxxxxx" class="field w-full" maxlength="10" inputmode="numeric" pattern="[6-9][0-9]{9}">
+            <button id="sendOtp" class="btn btn-primary whitespace-nowrap" type="button">Send OTP</button>
+          </div>
+          <div id="otpHint" class="mt-1 text-xs text-slate-500"></div>
+        </label>
+
+        <label class="text-sm">Enter OTP
+          <div class="mt-1 flex gap-2">
+            <input id="otpInput" type="number" class="field w-full" placeholder="******" maxlength="6">
+            <button id="verifyOtp" class="btn border border-emerald-600 text-emerald-700" type="button">Verify</button>
+          </div>
+          <div id="otpStatus" class="mt-1 text-xs"></div>
+        </label>
+
+        <label class="text-sm">Address *
+          <div class="mt-1 flex gap-2">
+            <input id="custAddress" class="field w-full" placeholder="Village, Mandal, District">
+            <button id="locBtn" class="btn border">Use current location</button>
+          </div>
+        </label>
+      </div>
+
+      <!-- Final -->
+      <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex justify-between">
+        <div>🧮 Grand Total: <b id="sGrand">₹ 0</b></div>
+        <button id="finalBook" class="btn btn-primary" disabled>Finalize Booking</button>
+      </div>
+      <p class="text-xs text-slate-500"><span class="badge bg-amber-100 text-amber-700">Note</span> Booking requires verified mobile & address.</p>
     </div>
   </main>
 
   <script>
-    // i18n dictionary
-    const dict={
-      en:{seed_booking:"Seed Booking",state:"State",district:"District",village:"Village",hatchery:"Hatchery",select:"Select"},
-      te:{seed_booking:"సీడ్స్ బుకింగ్",state:"రాష్ట్రం",district:"జిల్లా",village:"గ్రామం",hatchery:"హ్యాచరీ",select:"ఎంచుకోండి"}
-    };
-
-    function applyI18n(){
-      const lang=localStorage.getItem('lang')||'te';
-      document.documentElement.lang=lang;
-      document.querySelectorAll("[data-i18n]").forEach(el=>{
-        const key=el.dataset.i18n;
-        if(dict[lang][key]) el.textContent=dict[lang][key];
-      });
-      document.querySelectorAll("select").forEach(sel=>{
-        if(sel.options.length && sel.options[0].value==="") sel.options[0].text=dict[lang].select;
-      });
-    }
-
-    // Dark mode persist
-    (function(){
-      const saved=localStorage.getItem('theme');
-      if(saved==='dark' || (!saved && matchMedia('(prefers-color-scheme: dark)').matches)){
-        document.documentElement.classList.add('dark');
-      }
-      document.getElementById("themeToggle").onclick=()=>{
-        document.documentElement.classList.toggle("dark");
-        localStorage.setItem("theme",document.documentElement.classList.contains("dark")?"dark":"light");
-      };
-    })();
-
-    // CSV load
+    let hatcheries=[],currentOTP=null,otpOk=false,resendTimer=null,left=0;
     async function loadCSV(path){
-      try{
-        const res=await fetch(path,{cache:"no-store"});
-        if(!res.ok) throw new Error("HTTP "+res.status);
-        const txt=await res.text();
-        return txt.trim().split("\n").slice(1).map(r=>{
-          const [id,state,district,village,hatchery]=r.split(",").map(s=>s.trim());
-          return {state,district,village,hatchery};
-        });
-      }catch(e){
-        console.error("CSV load failed",e);
-        return [];
-      }
+      const res=await fetch(path);
+      const txt=await res.text();
+      return txt.trim().split('\n').slice(1).map(r=>{
+        const [id,state,district,village,hatchery,salinity,price,bonus,next_production,next_batch,ehp]=r.split(',');
+        return {state,district,village,hatchery,salinity,price:+price,bonus:+bonus,next_production,next_batch,ehp_result:ehp};
+      });
     }
-
-    function fillDropdown(id,items){
-      const lang=localStorage.getItem('lang')||'te';
-      const first=(lang==='te')?"ఎంచుకోండి":"Select";
-      document.getElementById(id).innerHTML=`<option value="">${first}</option>`+
-        items.map(v=>`<option>${v}</option>`).join("");
+    async function init(){
+      hatcheries=await loadCSV('data/hatcheries.csv');
+      const states=[...new Set(hatcheries.map(h=>h.state))];
+      document.getElementById('sState').innerHTML='<option value="">Select</option>'+states.map(s=>`<option>${s}</option>`).join('');
+      document.getElementById('sState').onchange=fillDistrict;
+      document.getElementById('sDistrict').onchange=fillVillage;
+      document.getElementById('sVillage').onchange=fillHatch;
+      document.getElementById('sHatchery').onchange=showDetails;
+      document.getElementById('sQty').addEventListener('input',updateTotals);
     }
-
-    let hatcheries=[];
-
     function fillDistrict(){
       const st=sState.value;
+      if(!st){resetDropdowns(['sDistrict','sVillage','sHatchery']);return;}
       const ds=[...new Set(hatcheries.filter(h=>h.state===st).map(h=>h.district))];
-      fillDropdown("sDistrict",ds);
-      fillDropdown("sVillage",[]);
-      fillDropdown("sHatchery",[]);
+      sDistrict.innerHTML='<option value="">Select</option>'+ds.map(d=>`<option>${d}</option>`).join('');
+      resetDropdowns(['sVillage','sHatchery']);
     }
     function fillVillage(){
-      const st=sState.value, d=sDistrict.value;
-      const vs=[...new Set(hatcheries.filter(h=>h.state===st&&h.district===d).map(h=>h.village))];
-      fillDropdown("sVillage",vs);
-      fillDropdown("sHatchery",[]);
+      const st=sState.value,d=sDistrict.value;
+      if(!d){resetDropdowns(['sVillage','sHatchery']);return;}
+      const vs=[...new Set(hatcheries.filter(h=>h.state===st && h.district===d).map(h=>h.village))];
+      sVillage.innerHTML='<option value="">Select</option>'+vs.map(v=>`<option>${v}</option>`).join('');
+      resetDropdowns(['sHatchery']);
     }
-    function fillHatchery(){
+    function fillHatch(){
       const st=sState.value,d=sDistrict.value,v=sVillage.value;
-      const hs=[...new Set(hatcheries.filter(h=>h.state===st&&h.district===d&&h.village===v).map(h=>h.hatchery))];
-      fillDropdown("sHatchery",hs);
+      if(!v){resetDropdowns(['sHatchery']);return;}
+      const hs=hatcheries.filter(h=>h.state===st && h.district===d && h.village===v);
+      sHatchery.innerHTML='<option value="">Select</option>'+hs.map(h=>`<option>${h.hatchery}</option>`).join('');
+    }
+    function showDetails(){
+      const st=sState.value,d=sDistrict.value,v=sVillage.value,h=sHatchery.value;
+      const x=hatcheries.find(x=>x.state===st && x.district===d && x.village===v && x.hatchery===h);
+      if(!x)return;
+      hatchDetails.classList.remove('hidden');
+      hName.textContent=x.hatchery; hLoc.textContent=`${x.district}, ${x.village}`;
+      hProd.textContent=x.next_production; hBatch.textContent=x.next_batch;
+      hSalinity.textContent=x.salinity; hPrice.textContent="₹ "+x.price; hEhp.textContent=x.ehp_result;
+      hBonus.textContent=`Bonus — ${x.bonus}%`;
+      sPrice.value=x.price; sBatch.value=x.next_batch; sBonus.textContent=`${x.bonus}%`;
+      bookBtn.onclick=()=>{bookingForm.classList.remove('hidden'); updateTotals();};
+    }
+    function updateTotals(){
+      const qty=+sQty.value||0,price=+sPrice.value||0,bonus=parseInt(sBonus.textContent)||0;
+      const total=qty+Math.floor(qty*bonus/100); const amt=qty*price;
+      sTotal.textContent=total.toLocaleString('en-IN'); sAmount.textContent="₹ "+amt.toLocaleString('en-IN'); sGrand.textContent="₹ "+amt.toLocaleString('en-IN');
+      validateForm();
+    }
+    function resetDropdowns(ids){
+      ids.forEach(id=>document.getElementById(id).innerHTML='<option value="">Select</option>');
+      hatchDetails.classList.add('hidden'); bookingForm.classList.add('hidden');
     }
 
-    async function init(){
-      hatcheries=await loadCSV("data/hatcheries.csv");
-      if(!hatcheries.length){console.warn("No data in CSV");return;}
-      const states=[...new Set(hatcheries.map(h=>h.state))];
-      fillDropdown("sState",states);
-      fillDropdown("sDistrict",[]);
-      fillDropdown("sVillage",[]);
-      fillDropdown("sHatchery",[]);
-      sState.onchange=fillDistrict;
-      sDistrict.onchange=fillVillage;
-      sVillage.onchange=fillHatchery;
+    // OTP + Address validation
+    const validMobile=n=>/^[6-9]\d{9}$/.test(n||'');
+    sendOtp.onclick=()=>{
+      if(!validMobile(custMobile.value)){otpHint.textContent="❌ Invalid mobile";return;}
+      currentOTP=(''+Math.floor(100000+Math.random()*900000)); otpOk=false; otpInput.value=''; otpStatus.textContent='';
+      otpHint.innerHTML="OTP (demo): <b>"+currentOTP+"</b>";
+      left=30; sendOtp.disabled=true; sendOtp.textContent=`${left}s`;
+      resendTimer&&clearInterval(resendTimer);
+      resendTimer=setInterval(()=>{left--;sendOtp.textContent=`${left}s`;if(left<=0){clearInterval(resendTimer);sendOtp.disabled=false;sendOtp.textContent="Resend OTP";}},1000);
+      validateForm();
+    };
+    verifyOtp.onclick=()=>{
+      if(otpInput.value===currentOTP && currentOTP){otpOk=true;otpStatus.textContent="✔ Verified";otpStatus.className='text-xs text-emerald-600';}
+      else{otpOk=false;otpStatus.textContent="❌ Wrong OTP";otpStatus.className='text-xs text-rose-600';}
+      validateForm();
+    };
+    locBtn.onclick=(e)=>{e.preventDefault();navigator.geolocation?.getCurrentPosition(pos=>{
+      custAddress.value=`Lat:${pos.coords.latitude.toFixed(4)}, Lng:${pos.coords.longitude.toFixed(4)}`;validateForm();
+    });};
+    function validateForm(){
+      const okMobile=validMobile(custMobile.value)&&otpOk, okAddr=(custAddress.value||'').trim().length>0;
+      finalBook.disabled=!(okMobile&&okAddr);
     }
-
-    document.addEventListener("DOMContentLoaded",()=>{
-      if(!localStorage.getItem("lang")) localStorage.setItem("lang","te");
-      applyI18n();
-      init();
-    });
+    custMobile.oninput=()=>{otpOk=false;otpStatus.textContent='';validateForm();};
+    custAddress.oninput=validateForm;
+    finalBook.onclick=()=>{if(finalBook.disabled)return;alert("✅ Seeds booking confirmed!");};
+    init();
   </script>
 </body>
 </html>
