@@ -1,1 +1,16 @@
+type,count,current_price,previous_price
+Vannamei,100,230,240
+Vannamei,90,240,250
+Vannamei,80,260,265
+Vannamei,70,285,285
+Vannamei,60,305,305
+Vannamei,50,325,320
+Vannamei,40,345,340
+Vannamei,30,395,380
+Tiger,50,260,260
+Tiger,40,280,280
+Tiger,30,340,350
+Tiger,20,480,490
+Tiger,16,530,540
+Tiger,15,550,560
 
