@@ -31,11 +31,11 @@
         <h1 class="text-lg font-bold" data-i18n="vendors_title">Vendors</h1>
       </div>
 
-      <!-- Desktop buttons -->
+      <!-- Desktop buttons (➡️ linked to pages) -->
       <div class="hidden sm:flex gap-2">
-        <button class="btn btn-light" data-i18n="feed">Feed</button>
-        <button class="btn btn-light" data-i18n="medicine">Medicines</button>
-        <button class="btn btn-light" data-i18n="technicians">Technicians</button>
+        <a href="feed.html" class="btn btn-light" data-i18n="feed">Feed</a>
+        <a href="medicine.html" class="btn btn-light" data-i18n="medicine">Medicines</a>
+        <a href="technicians.html" class="btn btn-light" data-i18n="technicians">Technicians</a>
       </div>
 
       <div class="flex items-center gap-2">
@@ -50,14 +50,14 @@
     </div>
   </header>
 
-  <!-- Mobile buttons -->
+  <!-- Mobile buttons (➡️ linked to pages) -->
   <div class="sm:hidden flex justify-around gap-2 p-3">
-    <button class="btn btn-light flex-1" data-i18n="feed">Feed</button>
-    <button class="btn btn-light flex-1" data-i18n="medicine">Medicines</button>
-    <button class="btn btn-light flex-1" data-i18n="technicians">Technicians</button>
+    <a href="feed.html" class="btn btn-light flex-1" data-i18n="feed">Feed</a>
+    <a href="medicine.html" class="btn btn-light flex-1" data-i18n="medicine">Medicines</a>
+    <a href="technicians.html" class="btn btn-light flex-1" data-i18n="technicians">Technicians</a>
   </div>
 
-  <main class="max-w-5xl mx-auto p-4 space-y-4">
+  <main class="max-w-5xl mx-auto p-4">
     <!-- Ads/Promotions -->
     <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border 
                 border-slate-200/60 dark:border-slate-800">
@@ -70,17 +70,18 @@
       </div>
     </div>
 
-    <!-- 🌦 Weather Card -->
-    <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border 
-                border-slate-200/60 dark:border-slate-800">
-      <h3 class="font-semibold mb-2">🌦 <span data-i18n="weather">Weather Forecast</span></h3>
-      <div id="weatherBox" class="text-sm">Loading...</div>
-    </div>
+    <!-- Weather -->
+    <section class="rounded-2xl p-4 mt-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200 dark:border-slate-800">
+      <h3 class="font-semibold mb-2">🌦️ <span data-i18n="weather">వాతావరణ సూచన</span></h3>
+      <div id="weatherBox" class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800">
+        Loading weather...
+      </div>
+    </section>
   </main>
 
   <script>
     const dict={
-      en:{vendors_title:"Vendors",feed:"Feed",medicine:"Medicines",technicians:"Technicians",promotions:"Promotions",weather:"Weather Forecast"},
+      en:{vendors_title:"Vendors",feed:"Feed",medicine:"Medicines",technicians:"Technicians",promotions:"Promotions",weather:"Weather"},
       te:{vendors_title:"వెండర్లు",feed:"ఫీడ్",medicine:"ఔషధాలు",technicians:"టెక్నీషియన్లు",promotions:"ప్రోమోషన్స్",weather:"వాతావరణ సూచన"}
     };
     function applyI18n(){
@@ -93,15 +94,13 @@
       document.getElementById("langSel").value=lang;
     }
 
-    // ✅ Promotions
+    // ✅ Image promos
     const PROMOS=[
-      {img:"assets/feed1.png", title_en:"High Quality Feed", title_te:"ఉన్నతమైన ఫీడ్", 
-       desc_en:"Best nutritional feed for shrimps", desc_te:"రొయ్యల కోసం ఉత్తమమైన పోషక ఫీడ్"},
-      {img:"assets/med1.png", title_en:"Aquaculture Medicines", title_te:"ఆక్వా మెడిసిన్స్", 
-       desc_en:"Trusted medicines for healthy culture", desc_te:"ఆరోగ్యకరమైన కల్చర్ కోసం నమ్మకమైన మందులు"},
-      {img:"assets/tech1.png", title_en:"Expert Technicians", title_te:"నిపుణులైన టెక్నీషియన్లు", 
-       desc_en:"On-site technician support available", desc_te:"ప్రాంగణంలోనే టెక్నీషియన్ సపోర్ట్ లభిస్తుంది"}
+      {img:"assets/feed1.png", title_en:"High Quality Feed", title_te:"ఉన్నతమైన ఫీడ్", desc_en:"Best nutritional feed for shrimps", desc_te:"రొయ్యల కోసం ఉత్తమమైన పోషక ఫీడ్"},
+      {img:"assets/med1.png", title_en:"Aquaculture Medicines", title_te:"ఆక్వా మెడిసిన్స్", desc_en:"Trusted medicines for healthy culture", desc_te:"ఆరోగ్యకరమైన కల్చర్ కోసం నమ్మకమైన మందులు"},
+      {img:"assets/tech1.png", title_en:"Expert Technicians", title_te:"నిపుణులైన టెక్నీషియన్లు", desc_en:"On-site technician support available", desc_te:"ప్రాంగణంలోనే టెక్నీషియన్ సపోర్ట్ లభిస్తుంది"}
     ];
+
     let promoIdx=0,timer=null;
     function renderPromo(){
       const lang=localStorage.getItem("lang")||"te";
@@ -129,26 +128,32 @@
       },6000);
     }
 
-    // 🌦 Weather API
+    // 🌦️ Weather
     const API_KEY="dd76809d5e71a15ca87c39247f74c349";
-    async function loadWeather(city="Nellore"){
+    async function loadWeather(){
       try{
-        const res=await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`);
-        const data=await res.json();
-        if(data.main){
-          document.getElementById("weatherBox").innerHTML=
-            `<div class="flex items-center gap-3">
-              <div class="text-3xl font-bold">${Math.round(data.main.temp)}°C</div>
+        navigator.geolocation?.getCurrentPosition(async pos=>{
+          const lat=pos.coords.latitude,lon=pos.coords.longitude;
+          const url=`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`;
+          const res=await fetch(url);
+          const data=await res.json();
+          const place=data.name || "—";
+          const temp=Math.round(data.main.temp);
+          const desc=data.weather[0].description;
+          const high=Math.round(data.main.temp_max);
+          const low=Math.round(data.main.temp_min);
+          document.getElementById("weatherBox").innerHTML=`
+            <div class="flex items-center gap-3">
+              <div class="text-3xl font-bold">${temp}°C</div>
               <div>
-                <div>${data.weather[0].description}</div>
-                <div class="text-xs">H:${Math.round(data.main.temp_max)}° L:${Math.round(data.main.temp_min)}°</div>
+                <div class="font-semibold">${place}</div>
+                <div class="text-sm capitalize">${desc}</div>
+                <div class="text-xs">H:${high}° L:${low}°</div>
               </div>
             </div>`;
-        }else{
-          document.getElementById("weatherBox").textContent="⚠ Weather unavailable";
-        }
+        });
       }catch(e){
-        document.getElementById("weatherBox").textContent="⚠ Weather unavailable";
+        document.getElementById("weatherBox").innerHTML="⚠️ Weather unavailable";
       }
     }
 
@@ -168,8 +173,7 @@
         applyI18n();renderPromo();
       };
 
-      renderPromo();startPromo();
-      loadWeather("Nellore");
+      renderPromo();startPromo();loadWeather();
     });
   </script>
 </body>
