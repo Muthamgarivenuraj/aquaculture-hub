@@ -20,17 +20,22 @@
   </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100">
+  <!-- Header -->
   <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
       <a href="index.html" class="rounded-lg px-3 py-1.5 border border-slate-200 dark:border-slate-800">←</a>
       <h1 class="text-lg font-bold flex-1" data-i18n="seed_title">Seed Booking</h1>
+      <!-- 🌙/☀️ Toggle -->
+      <button id="themeToggle" class="rounded-full px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-800">
+        🌙/☀️
+      </button>
     </div>
   </header>
 
   <main class="max-w-5xl mx-auto p-4 space-y-6">
     <!-- Selectors -->
     <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border space-y-4">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+      <div id="selectors" class="grid grid-cols-1 md:grid-cols-4 gap-3">
         <label class="text-sm"><span data-i18n="state">State</span>
           <select id="sState" class="mt-1 field w-full"><option value="">Select</option></select>
         </label>
@@ -57,14 +62,43 @@
           <div><span data-i18n="ehp_result">EHP Result</span> <div id="hEhp" class="font-bold"></div></div>
         </div>
         <span id="hBonus" class="badge bg-emerald-100 text-emerald-700"></span>
-        <button id="bookBtn" class="btn btn-primary" data-i18n="book">Book</button>
+        <!-- ✅ FIXED: Book button restored -->
+        <button id="bookBtn" class="btn btn-primary mt-3" data-i18n="book">Book</button>
+      </div>
+    </div>
+
+    <!-- Booking Form -->
+    <div id="bookingForm" class="hidden rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <label class="text-sm"><span data-i18n="booking_date">Booking Date</span>
+          <input id="sDate" type="date" class="mt-1 field w-full">
+        </label>
+        <label class="text-sm"><span data-i18n="production">Production</span>
+          <input id="sBatch" type="text" class="mt-1 field w-full" readonly>
+        </label>
+        <label class="text-sm"><span data-i18n="quantity">Quantity (pcs)</span>
+          <input id="sQty" type="number" value="0" class="mt-1 field w-full">
+        </label>
+        <label class="text-sm"><span data-i18n="price">Price</span>
+          <input id="sPrice" type="number" class="mt-1 field w-full" readonly>
+        </label>
+      </div>
+      <p class="text-sm"><span data-i18n="bonus">Bonus %</span>: <b id="sBonus">0%</b> | <span data-i18n="total_seeds">Total Seeds</span>: <b id="sTotal">0</b> | <span data-i18n="amount">Amount</span>: <b id="sAmount">₹ 0</b></p>
+
+      <!-- Final -->
+      <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex justify-between">
+        <div>🧮 <span data-i18n="grand_total">Grand Total</span>: <b id="sGrand">₹ 0</b></div>
+        <button id="finalBook" class="btn btn-primary" disabled data-i18n="final_book">Finalize Booking</button>
       </div>
     </div>
   </main>
 
   <script>
     // -------- i18n dict --------
-    const dict={ en:{seed_title:"Seed Booking",state:"State",district:"District",village:"Village",hatchery:"Hatchery",next_production:"Next Production",next_batch:"Next Batch",salinity:"Salinity",price:"Price",ehp_result:"EHP Result",book:"Book"}, te:{seed_title:"సీడ్ బుకింగ్",state:"రాష్ట్రం",district:"జిల్లా",village:"గ్రామం",hatchery:"హ్యాచరీ",next_production:"తరువాతి ఉత్పత్తి",next_batch:"తరువాతి బ్యాచ్",salinity:"ఉప్పుతనం",price:"ధర",ehp_result:"EHP ఫలితం",book:"బుక్"}};
+    const dict={ 
+      en:{seed_title:"Seed Booking",state:"State",district:"District",village:"Village",hatchery:"Hatchery",next_production:"Next Production",next_batch:"Next Batch",salinity:"Salinity",price:"Price",ehp_result:"EHP Result",book:"Book",booking_date:"Booking Date",production:"Production",quantity:"Quantity (pcs)",bonus:"Bonus %",total_seeds:"Total Seeds",amount:"Amount",grand_total:"Grand Total",final_book:"Finalize Booking"},
+      te:{seed_title:"సీడ్ బుకింగ్",state:"రాష్ట్రం",district:"జిల్లా",village:"గ్రామం",hatchery:"హ్యాచరీ",next_production:"తరువాతి ఉత్పత్తి",next_batch:"తరువాతి బ్యాచ్",salinity:"ఉప్పుతనం",price:"ధర",ehp_result:"EHP ఫలితం",book:"బుక్",booking_date:"బుకింగ్ తేదీ",production:"ఉత్పత్తి",quantity:"మొత్తం (pcs)",bonus:"బోనస్ %",total_seeds:"మొత్తం సీడ్స్",amount:"మొత్తం",grand_total:"గ్రాండ్ టోటల్",final_book:"ఫైనల్ బుక్"}
+    };
 
     function applyI18n(){
       const lang=localStorage.getItem('lang')||'te';
@@ -72,11 +106,7 @@
         const k=el.dataset.i18n;if(dict[lang][k]) el.textContent=dict[lang][k];
       });
     }
-
-    function getLabel(obj,key){
-      const lang=localStorage.getItem("lang")||"te";
-      return lang==="te"?obj[key+"_te"]:obj[key+"_en"];
-    }
+    function getLabel(obj,key){const lang=localStorage.getItem("lang")||"te";return lang==="te"?obj[key+"_te"]:obj[key+"_en"];}
 
     let hatcheries=[];
     async function loadCSV(path){
@@ -97,21 +127,16 @@
     function fillDistrict(){
       const st=sState.value;
       const lang=localStorage.getItem("lang")||"te";
-
-      // Reset always
       resetDropdowns(["sDistrict","sVillage","sHatchery"]);
-
-      if(st.includes("Tamil") || st.includes("తమిళ")){
-        // Hide District + Village
+      
+      if(st.includes("Tamil")||st.includes("తమిళ")){
         document.querySelectorAll(".ap-only").forEach(el=>el.style.display="none");
-        // Fill hatcheries directly
         const hs=hatcheries.filter(h=>getLabel(h,"state")===st);
         sHatchery.innerHTML=`<option value="">${lang==="te"?"ఎంచుకోండి":"Select"}</option>`+
           hs.map(h=>`<option>${getLabel(h,"hatchery")}</option>`).join('');
         return;
       }
 
-      // Show District + Village for Andhra Pradesh
       document.querySelectorAll(".ap-only").forEach(el=>el.style.display="block");
       const ds=[...new Set(hatcheries.filter(h=>getLabel(h,"state")===st).map(h=>getLabel(h,"district")))];
       sDistrict.innerHTML='<option value="">Select</option>'+ds.map(d=>`<option>${d}</option>`).join('');
@@ -130,16 +155,32 @@
       sHatchery.innerHTML='<option value="">Select</option>'+hs.map(h=>`<option>${getLabel(h,"hatchery")}</option>`).join('');
     }
 
-    function resetDropdowns(ids){ids.forEach(id=>document.getElementById(id).innerHTML='<option value="">Select</option>');}
+    function showDetails(){
+      const st=sState.value,d=sDistrict.value,v=sVillage.value,h=sHatchery.value;
+      const x=hatcheries.find(x=>getLabel(x,"state")===st&&getLabel(x,"hatchery")===h&&(!d||getLabel(x,"district")===d)&&(!v||getLabel(x,"village")===v));
+      if(!x)return;
+      hatchDetails.classList.remove("hidden");
+      hName.textContent=getLabel(x,"hatchery");
+      hLoc.textContent=`${getLabel(x,"district")||""}, ${getLabel(x,"village")||""}`;
+      hProd.textContent=x.next_production;hBatch.textContent=x.next_batch;
+      hSalinity.textContent=x.salinity;hPrice.textContent="₹ "+x.price;hEhp.textContent=x.ehp_result;
+      hBonus.textContent=`Bonus — ${x.bonus}%`;
+      sPrice.value=x.price;sBatch.value=x.next_batch;sBonus.textContent=`${x.bonus}%`;
+      bookBtn.onclick=()=>{bookingForm.classList.remove("hidden");};
+    }
+
+    function resetDropdowns(ids){ids.forEach(id=>document.getElementById(id).innerHTML='<option value="">Select</option>');hatchDetails.classList.add('hidden');bookingForm.classList.add('hidden');}
 
     document.addEventListener("DOMContentLoaded",async()=>{
-      if(!localStorage.getItem("lang")) localStorage.setItem("lang","te");
-      applyI18n();
-      hatcheries=await loadCSV('data/hatcheries.csv');
+      if(localStorage.getItem("theme")==="dark"){document.documentElement.classList.add("dark");}
+      document.getElementById("themeToggle").onclick=()=>{document.documentElement.classList.toggle("dark");localStorage.setItem("theme",document.documentElement.classList.contains("dark")?"dark":"light");};
+      if(!localStorage.getItem("lang")) localStorage.setItem("lang","te");applyI18n();
+      hatcheries=await loadCSV("data/hatcheries.csv");
       fillStates();
       sState.onchange=fillDistrict;
       sDistrict.onchange=fillVillage;
       sVillage.onchange=fillHatch;
+      sHatchery.onchange=showDetails;
     });
   </script>
 </body>
