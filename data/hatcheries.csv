@@ -4,9 +4,19 @@ id,state_en,state_te,district_en,district_te,village_en,village_te,hatchery_en,h
 3,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Muthyalathopu,ముత్యాలతొపూ,Blue Ocean Hatchery,బ్లూ ఓషన్ హ్యాచరీ,29ppt,0.40,25,5-Sep,PL20,Negative
 4,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Muthyalathopu,ముత్యాలతొపూ,Sun Aqua Hatchery,సన్ ఆక్వా హ్యాచరీ,28ppt,0.30,18,6-Sep,PL22,Negative
 5,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Muthyalathopu,ముత్యాలతొపూ,Green Valley Hatchery,గ్రీన్ వ్యాలీ హ్యాచరీ,30ppt,0.40,20,7-Sep,PL25,Negative
-6,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Prakasam,ప్రకాశం,Chirala,చీరాల,BlueBay Hatchery,బ్లూబే హ్యాచరీ,30ppt,340,25,4-Sep,PL20,Negative
-7,Tamil Nadu,తమిళనాడు,,,,,Ocean Hatchery,ఓషన్ హ్యాచరీ,30ppt,0.36,20,6-Sep,PL25,Negative
-8,Tamil Nadu,తమిళనాడు,,,,,Sunrise Hatchery,సన్‌రైజ్ హ్యాచరీ,28ppt,0.35,22,7-Sep,PL28,Negative
-9,Tamil Nadu,తమిళనాడు,,,,,Golden Aqua Hatchery,గోల్డెన్ ఆక్వా హ్యాచరీ,29ppt,0.36,18,8-Sep,PL30,Negative
-10,Tamil Nadu,తమిళనాడు,,,,,Blue Pearl Hatchery,బ్లూ పెర్ల్ హ్యాచరీ,27ppt,0.70,25,9-Sep,PL32,Negative
-11,Tamil Nadu,తమిళనాడు,,,,,Royal Shrimp Hatchery,రాయల్ శ్రింప్ హ్యాచరీ,30ppt,0.75,20,10-Sep,PL35,Negative
+6,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Venkannapalem,వెంకన్నపాలెం,Aqua Star Hatchery,ఆక్వా స్టార్ హ్యాచరీ,28ppt,0.32,22,8-Sep,PL18,Negative
+7,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Venkannapalem,వెంకన్నపాలెం,Deep Sea Hatchery,డీప్ సీ హ్యాచరీ,29ppt,0.34,20,9-Sep,PL20,Negative
+8,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Venkannapalem,వెంకన్నపాలెం,Golden Shrimp Hatchery,గోల్డెన్ శ్రింప్ హ్యాచరీ,30ppt,0.36,25,10-Sep,PL25,Negative
+9,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Venkannapalem,వెంకన్నపాలెం,Ocean View Hatchery,ఓషన్ వ్యూ హ్యాచరీ,27ppt,0.33,18,11-Sep,PL28,Negative
+10,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Venkannapalem,వెంకన్నపాలెం,Blue Aqua Hatchery,బ్లూ ఆక్వా హ్యాచరీ,28ppt,0.35,20,12-Sep,PL30,Negative
+11,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Koruturu,కోరటూరు,Sri Venkateswara Hatchery,శ్రీ వెంకటేశ్వర హ్యాచరీ,28ppt,0.34,20,13-Sep,PL18,Negative
+12,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Koruturu,కోరటూరు,Royal Blue Hatchery,రాయల్ బ్లూ హ్యాచరీ,29ppt,0.36,22,14-Sep,PL20,Negative
+13,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Koruturu,కోరటూరు,Sun Aqua Farms,సన్ ఆక్వా ఫార్మ్స్,27ppt,0.32,18,15-Sep,PL22,Negative
+14,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Koruturu,కోరటూరు,Ocean King Hatchery,ఓషన్ కింగ్ హ్యాచరీ,30ppt,0.38,25,16-Sep,PL25,Negative
+15,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Koruturu,కోరటూరు,Blue Crown Hatchery,బ్లూ క్రౌన్ హ్యాచరీ,28ppt,0.35,20,17-Sep,PL28,Negative
+16,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Prakasam,ప్రకాశం,Chirala,చీరాల,BlueBay Hatchery,బ్లూబే హ్యాచరీ,30ppt,340,25,4-Sep,PL20,Negative
+17,Tamil Nadu,తమిళనాడు,,,,,Ocean Hatchery,ఓషన్ హ్యాచరీ,30ppt,0.36,20,6-Sep,PL25,Negative
+18,Tamil Nadu,తమిళనాడు,,,,,Sunrise Hatchery,సన్‌రైజ్ హ్యాచరీ,28ppt,0.35,22,7-Sep,PL28,Negative
+19,Tamil Nadu,తమిళనాడు,,,,,Golden Aqua Hatchery,గోల్డెన్ ఆక్వా హ్యాచరీ,29ppt,0.36,18,8-Sep,PL30,Negative
+20,Tamil Nadu,తమిళనాడు,,,,,Blue Pearl Hatchery,బ్లూ పెర్ల్ హ్యాచరీ,27ppt,0.70,25,9-Sep,PL32,Negative
+21,Tamil Nadu,తమిళనాడు,,,,,Royal Shrimp Hatchery,రాయల్ శ్రింప్ హ్యాచరీ,30ppt,0.75,20,10-Sep,PL35,Negative
