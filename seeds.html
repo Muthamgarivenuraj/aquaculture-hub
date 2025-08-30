@@ -24,6 +24,11 @@
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
       <a href="index.html" class="rounded-lg px-3 py-1.5 border border-slate-200 dark:border-slate-800">←</a>
       <h1 class="text-lg font-bold flex-1">Seed Booking</h1>
+
+      <!-- 🌙/☀️ toggle -->
+      <button id="themeToggle" class="rounded-full px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-800">
+        🌙/☀️
+      </button>
     </div>
   </header>
 
@@ -117,6 +122,18 @@
   </main>
 
   <script>
+    // Dark mode toggle (same as index.html)
+    (function(){
+      const saved = localStorage.getItem('theme');
+      if(saved==='dark' || (!saved && matchMedia('(prefers-color-scheme: dark)').matches)){
+        document.documentElement.classList.add('dark');
+      }
+      document.getElementById('themeToggle').onclick=()=>{
+        document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');
+      };
+    })();
+
     let hatcheries=[],currentOTP=null,otpOk=false,resendTimer=null,left=0;
     async function loadCSV(path){
       const res=await fetch(path);
