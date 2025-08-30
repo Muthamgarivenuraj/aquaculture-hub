@@ -4,27 +4,21 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Seeds • Aquaculture A–Z</title>
-
-  <!-- 🌙 Early theme boot -->
   <script>
-    (function(){
-      try{
-        const t=localStorage.getItem('theme');
-        if(t==='dark'||(!t && matchMedia('(prefers-color-scheme: dark)').matches)){
-          document.documentElement.classList.add('dark');
-        }
-      }catch(e){}
-    })();
+    (function(){try{
+      const t=localStorage.getItem('theme');
+      if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches)){
+        document.documentElement.classList.add('dark');
+      }
+    }catch(e){}})();
   </script>
-
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config={darkMode:'class',theme:{extend:{boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'}}}}
   </script>
   <style>
-    html{scroll-behavior:smooth}
-    body{background:linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#f0fdf4 100%)}
-    .dark body{background:linear-gradient(135deg,#0f172a 0%,#082f49 50%,#14532d 100%)}
+    body{background:linear-gradient(135deg,#dbeafe 0,#e0f2fe 50%,#f0fdf4 100%)}
+    .dark body{background:linear-gradient(135deg,#0f172a 0,#082f49 50%,#14532d 100%)}
     .field{border:1px solid rgb(226,232,240);border-radius:.5rem;padding:.5rem .6rem}
     .dark .field{background:#0b1220;border-color:#334155;color:#e2e8f0}
     .btn{padding:.6rem 1rem;border-radius:.75rem}
@@ -37,7 +31,7 @@
   <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
       <a href="index.html" class="rounded-lg px-3 py-1.5 border border-slate-200 dark:border-slate-800">←</a>
-      <h1 class="text-lg font-bold flex-1" data-i18n="seed_title">Seed Booking</h1>
+      <h1 class="text-lg font-bold flex-1">Seed Booking</h1>
       <div class="hidden sm:flex rounded-full bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-800">
         <button id="langTE" class="px-3 py-1.5 text-sm rounded-full bg-white dark:bg-slate-800">తెలుగు</button>
         <button id="langEN" class="px-3 py-1.5 text-sm rounded-full">English</button>
@@ -46,386 +40,171 @@
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto p-4">
-    <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800 space-y-5">
-
-      <!-- Region & Hatchery selection -->
+  <main class="max-w-5xl mx-auto p-4 space-y-6">
+    <!-- Selectors -->
+    <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border space-y-4">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-        <label class="text-sm">
-          <span data-i18n="state">State</span>
-          <select id="sState" class="mt-1 field w-full">
-            <option>Andhra Pradesh</option>
-            <option>Tamil Nadu</option>
-          </select>
+        <label class="text-sm">State
+          <select id="sState" class="mt-1 field w-full"></select>
         </label>
-
-        <label class="text-sm" id="wrapDistrict">
-          <span data-i18n="district">District</span>
+        <label class="text-sm">District
           <select id="sDistrict" class="mt-1 field w-full"></select>
         </label>
-
-        <label class="text-sm" id="wrapVillage">
-          <span data-i18n="village">Village</span>
+        <label class="text-sm">Village
           <select id="sVillage" class="mt-1 field w-full"></select>
         </label>
-
-        <label class="text-sm">
-          <span data-i18n="hatchery">Hatchery</span>
+        <label class="text-sm">Hatchery
           <select id="sHatchery" class="mt-1 field w-full"></select>
         </label>
       </div>
 
-      <!-- Hatchery details card (appears after selection) -->
-      <div id="detailsCard" class="hidden rounded-xl border border-slate-200 dark:border-slate-800 p-4 bg-slate-50 dark:bg-slate-900/40">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 id="dName" class="text-lg font-semibold">—</h2>
-            <p class="text-sm opacity-80" id="dRegion">—</p>
-          </div>
-          <span id="dBonus" class="badge bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200">Bonus — 0%</span>
+      <!-- Hatchery Details -->
+      <div id="hatchDetails" class="hidden p-4 rounded-xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 space-y-2">
+        <h2 id="hName" class="font-bold text-lg"></h2>
+        <p id="hLoc" class="text-sm"></p>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-sm">
+          <div>Next Production <div id="hProd" class="font-bold"></div></div>
+          <div>Next Batch <div id="hBatch" class="font-bold"></div></div>
+          <div>Salinity <div id="hSalinity" class="font-bold"></div></div>
+          <div>Price <div id="hPrice" class="font-bold"></div></div>
+          <div>EHP Result <div id="hEhp" class="font-bold"></div></div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mt-3 text-sm">
-          <div><span class="opacity-70" data-i18n="next_prod">Next Production</span><br><b id="dProd">—</b></div>
-          <div><span class="opacity-70" data-i18n="next_batch">Next Batch</span><br><b id="dBatch">—</b></div>
-          <div><span class="opacity-70" data-i18n="salinity">Salinity</span><br><b id="dSalinity">—</b></div>
-          <div><span class="opacity-70" data-i18n="price_per">Price/1000 (₹)</span><br><b id="dPrice">—</b></div>
-        </div>
-        <div class="mt-4">
-          <button id="startBook" class="btn btn-primary" type="button" data-i18n="start_booking">Book</button>
-        </div>
+        <span id="hBonus" class="badge bg-emerald-100 text-emerald-700"></span>
+        <button id="bookBtn" class="btn btn-primary">Book</button>
+      </div>
+    </div>
+
+    <!-- Booking Form -->
+    <div id="bookingForm" class="hidden rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <label class="text-sm">Booking Date
+          <input id="sDate" type="date" class="mt-1 field w-full">
+        </label>
+        <label class="text-sm">Production
+          <input id="sBatch" type="text" class="mt-1 field w-full" readonly>
+        </label>
+        <label class="text-sm">Quantity (pcs)
+          <input id="sQty" type="number" value="0" class="mt-1 field w-full">
+        </label>
+        <label class="text-sm">Price
+          <input id="sPrice" type="number" class="mt-1 field w-full" readonly>
+        </label>
       </div>
 
-      <!-- Booking section (hidden until Book) -->
-      <div id="bookingWrap" class="hidden space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-          <label class="text-sm">
-            <span data-i18n="booking_date">Booking Date</span>
-            <input id="sDate" type="date" class="mt-1 field w-full">
-          </label>
+      <p class="text-sm">Bonus %: <b id="sBonus">0%</b> | Total Seeds: <b id="sTotal">0</b> | Amount: <b id="sAmount">₹ 0</b></p>
 
-          <label class="text-sm">
-            <span data-i18n="production">Production</span>
-            <select id="sBatch" class="mt-1 field w-full">
-              <option>Batch 1</option>
-              <option>Batch 2</option>
-            </select>
-          </label>
-
-          <label class="text-sm">
-            <span data-i18n="qty_pcs">Quantity (pcs)</span>
-            <input id="sQty" type="number" value="0" class="mt-1 field w-full" min="0">
-          </label>
-
-          <label class="text-sm">
-            <span data-i18n="price_per">Price/1000 (₹)</span>
-            <input id="sPrice" type="number" class="mt-1 field w-full" readonly>
-          </label>
-        </div>
-
-        <p class="text-sm">
-          <span data-i18n="bonus_percent">Bonus %</span>:
-          <b id="sBonusPct">0%</b> |
-          <span data-i18n="total_seeds">Total Seeds</span>:
-          <b id="sTotalSeeds">0</b> |
-          <span data-i18n="amount">Amount</span>:
-          <b id="sAmount">₹ 0</b>
-        </p>
-
-        <!-- Customer (OTP + Address) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <label class="text-sm">
-            <span data-i18n="cust_mobile">Customer Mobile *</span>
-            <div class="mt-1 flex gap-2">
-              <input id="custMobile" type="tel" placeholder="9xxxxxxxxx" class="field w-full" maxlength="10" inputmode="numeric" pattern="[6-9][0-9]{9}">
-              <button id="otpBtn" class="btn btn-primary whitespace-nowrap" type="button" data-mode="send" data-i18n="send_otp">Send OTP</button>
-            </div>
-            <div id="otpHint" class="mt-1 text-xs text-slate-500"></div>
-          </label>
-
-          <label class="text-sm">
-            <span data-i18n="enter_otp">Enter OTP</span>
-            <div class="mt-1 flex gap-2">
-              <input id="otpInput" type="number" class="field w-full" placeholder="******" maxlength="6">
-              <button id="verifyOtp" class="btn border border-emerald-600 text-emerald-700" type="button" data-i18n="verify">Verify</button>
-            </div>
-            <div id="otpStatus" class="mt-1 text-xs"></div>
-          </label>
-
-          <label class="text-sm">
-            <span data-i18n="address">Address *</span>
-            <div class="mt-1 flex gap-2">
-              <input id="custAddress" class="field w-full" placeholder="Village, Mandal, District">
-              <button id="locBtn" class="btn border border-slate-300 dark:border-slate-700" type="button" data-i18n="use_location">Use current location</button>
-            </div>
-            <div id="locStatus" class="mt-1 text-xs text-slate-500"></div>
-          </label>
-        </div>
-
-        <!-- Action -->
-        <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <div class="text-sm font-medium">🧮 <span data-i18n="grand_total">Grand Total</span>:
-            <b id="sGrand">₹ 0</b>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <label class="text-sm">Customer Mobile *
+          <div class="mt-1 flex gap-2">
+            <input id="custMobile" class="field w-full" maxlength="10">
+            <button id="sendOtp" class="btn btn-primary">Send OTP</button>
           </div>
-          <button id="sBook" class="btn btn-primary md:self-end" disabled data-i18n="final_book">Finalize Booking</button>
-        </div>
+          <div id="otpHint" class="text-xs"></div>
+        </label>
+        <label class="text-sm">Enter OTP
+          <div class="mt-1 flex gap-2">
+            <input id="otpInput" class="field w-full">
+            <button id="verifyOtp" class="btn border">Verify</button>
+          </div>
+          <div id="otpStatus" class="text-xs"></div>
+        </label>
+        <label class="text-sm">Address *
+          <div class="flex gap-2">
+            <input id="custAddress" class="field w-full">
+            <button id="locBtn" class="btn border">Use current location</button>
+          </div>
+        </label>
+      </div>
 
-        <p class="text-xs text-slate-500"><span class="badge bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200">Note</span>
-          <span data-i18n="note_text">Booking requires verified mobile & address.</span>
-        </p>
+      <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex justify-between">
+        <div>🧮 Grand Total: <b id="sGrand">₹ 0</b></div>
+        <button id="finalBook" class="btn btn-primary" disabled>Finalize Booking</button>
       </div>
     </div>
   </main>
 
   <script>
-    // ---------- i18n ----------
-    const dict={
-      en:{seed_title:"Seed Booking",state:"State",district:"District",village:"Village",hatchery:"Hatchery",next_prod:"Next Production",next_batch:"Next Batch",salinity:"Salinity",price_per:"Price/1000 (₹)",start_booking:"Book",production:"Production",booking_date:"Booking Date",qty_pcs:"Quantity (pcs)",bonus_percent:"Bonus %",total_seeds:"Total Seeds",amount:"Amount",cust_mobile:"Customer Mobile",send_otp:"Send OTP",resend_otp:"Resend",enter_otp:"Enter OTP",verify:"Verify",address:"Address",use_location:"Use current location",locating:"Getting location...",location_ok:"Location set",location_denied:"Permission denied",location_unavailable:"Location unavailable",location_error:"Could not fetch address",grand_total:"Grand Total",final_book:"Finalize Booking",note_text:"Booking requires verified mobile & address.",otp_sent:"OTP sent (demo): ",otp_invalid:"Invalid number. Enter 10 digits starting with 6–9.",otp_ok:"Verified ✓",otp_wrong:"Wrong OTP"},
-      te:{seed_title:"సీడ్స్ బుకింగ్",state:"రాష్ట్రం",district:"జిల్లా",village:"గ్రామం",hatchery:"హ్యాచరీ",next_prod:"తదుపరి ప్రొడక్షన్",next_batch:"తదుపరి బ్యాచ్",salinity:"సాలినిటీ",price_per:"ధర/1000 (₹)",start_booking:"బుక్",production:"ప్రొడక్షన్",booking_date:"బుకింగ్ తేదీ",qty_pcs:"పరిమాణం (పీసులు)",bonus_percent:"బోనస్ %",total_seeds:"మొత్తం సీడ్స్",amount:"అమౌంట్",cust_mobile:"కస్టమర్ మొబైల్",send_otp:"OTP పంపు",resend_otp:"మళ్లీ పంపు",enter_otp:"OTP ఎంటర్ చేయి",verify:"వెరిఫై",address:"అడ్రస్",use_location:"కరెంట్ లొకేషన్ వాడు",locating:"లొకేషన్ తీసుకుంటున్నాం...",location_ok:"లొకేషన్ సెట్ అయింది",location_denied:"పర్మిషన్ నిరాకరించబడింది",location_unavailable:"లొకేషన్ దొరకలేదు",location_error:"అడ్రస్ తెచ్చలేకపోయాం",grand_total:"గ్రాండ్ టోటల్",final_book:"ఫైనల్ బుక్",note_text:"బుకింగ్‌కి వెరిఫై అయిన మొబైల్ & అడ్రస్ అవసరం.",otp_sent:"OTP పంపబడింది (డెమో): ",otp_invalid:"సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి (6–9 తో ప్రారంభం).",otp_ok:"వెరిఫై అయింది ✓",otp_wrong:"తప్పు OTP"}
-    };
-    function t(k){const l=localStorage.getItem('lang')||'te';return (dict[l]&&dict[l][k])||k;}
-    function setLang(){const l=localStorage.getItem('lang')||'te';document.documentElement.lang=l;document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(dict[l][k]) el.textContent=dict[l][k];});}
-    themeToggle.onclick=()=>{document.documentElement.classList.toggle('dark');localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');};
-    langEN.onclick=()=>{localStorage.setItem('lang','en');setLang();};
-    langTE.onclick=()=>{localStorage.setItem('lang','te');setLang();};
-
-    // ---------- CSV loader (simple, handles quotes) ----------
-    async function loadCSV(url){
-      const res = await fetch(url, {cache:'no-store'});
-      if(!res.ok) throw new Error('CSV load failed: '+url);
-      const text = await res.text();
-      const rows=[]; let cur='', inQ=false, row=[];
-      function pushCell(){ row.push(cur); cur=''; }
-      for(let i=0;i<text.length;i++){
-        const ch=text[i];
-        if(ch=='"'){
-          if(inQ && text[i+1]=='"'){ cur+='"'; i++; }
-          else inQ=!inQ;
-        }else if(ch===',' && !inQ){ pushCell(); }
-        else if((ch==='\n'||ch==='\r') && !inQ){
-          if(row.length>0 || cur.trim()!==''){ pushCell(); rows.push(row); row=[]; }
-        }else{ cur+=ch; }
-      }
-      if(cur.length || row.length){ pushCell(); rows.push(row); }
-      // header
-      const header = rows.shift().map(h=>h.trim());
-      return rows.filter(r=>r.length).map(r=>{
-        const obj={}; header.forEach((h,idx)=>obj[h]= (r[idx]??'').trim()); return obj;
+    let hatcheries=[];
+    async function loadCSV(path){
+      const res=await fetch(path);
+      const txt=await res.text();
+      return txt.trim().split('\n').slice(1).map(r=>{
+        const [id,state,district,village,hatchery,salinity,price,bonus,next_production,next_batch,ehp]=r.split(',');
+        return {state,district,village,hatchery,salinity,price:+price,bonus:+bonus,next_production,next_batch,ehp_result:ehp};
       });
     }
 
-    // ---------- Data holders ----------
-    let VILLAGES=[], HATCHERIES=[];
+    async function init(){
+      hatcheries=await loadCSV('data/hatcheries.csv');
+      const states=[...new Set(hatcheries.map(h=>h.state))];
+      const sState=document.getElementById('sState'),
+            sDistrict=document.getElementById('sDistrict'),
+            sVillage=document.getElementById('sVillage'),
+            sHatch=document.getElementById('sHatchery');
+      sState.innerHTML=states.map(s=>`<option>${s}</option>`).join('');
+      sState.onchange=()=>fillDistrict();
+      sDistrict.onchange=()=>fillVillage();
+      sVillage.onchange=()=>fillHatch();
+      sHatch.onchange=()=>showDetails();
+      fillDistrict();
 
-    // ---------- UI elements ----------
-    const sState   = document.getElementById('sState');
-    const wrapDist = document.getElementById('wrapDistrict');
-    const wrapVill = document.getElementById('wrapVillage');
-    const sDistrict= document.getElementById('sDistrict');
-    const sVillage = document.getElementById('sVillage');
-    const sHatch   = document.getElementById('sHatchery');
-
-    const card     = document.getElementById('detailsCard');
-    const dName    = document.getElementById('dName');
-    const dRegion  = document.getElementById('dRegion');
-    const dBonus   = document.getElementById('dBonus');
-    const dProd    = document.getElementById('dProd');
-    const dBatch   = document.getElementById('dBatch');
-    const dSal     = document.getElementById('dSalinity');
-    const dPrice   = document.getElementById('dPrice');
-    const startBook= document.getElementById('startBook');
-
-    const bookingWrap = document.getElementById('bookingWrap');
-    const sDate    = document.getElementById('sDate');
-    const sBatch   = document.getElementById('sBatch');
-    const sQty     = document.getElementById('sQty');
-    const sPriceIn = document.getElementById('sPrice');
-    const sBonusPct= document.getElementById('sBonusPct');
-    const sTotalSeeds = document.getElementById('sTotalSeeds');
-    const sAmount  = document.getElementById('sAmount');
-    const sGrand   = document.getElementById('sGrand');
-    const sBook    = document.getElementById('sBook');
-
-    // OTP & Address
-    const mobile   = document.getElementById('custMobile');
-    const otpBtn   = document.getElementById('otpBtn');
-    const otpInput = document.getElementById('otpInput');
-    const verifyOtp= document.getElementById('verifyOtp');
-    const otpHint  = document.getElementById('otpHint');
-    const otpStatus= document.getElementById('otpStatus');
-    const address  = document.getElementById('custAddress');
-    const locBtn   = document.getElementById('locBtn');
-    const locStatus= document.getElementById('locStatus');
-
-    // ---------- Populate UI from CSV ----------
-    function onStateChange(){
-      const st = sState.value;
-      card.classList.add('hidden'); bookingWrap.classList.add('hidden'); sHatch.innerHTML='';
-      if(st==="Andhra Pradesh"){
-        wrapDist.style.display=''; wrapVill.style.display='';
-        const dists=[...new Set(VILLAGES.filter(v=>v.state===st).map(v=>v.district))].sort();
-        sDistrict.innerHTML=dists.map(d=>`<option>${d}</option>`).join('');
-        onDistrictChange();
-      }else{
-        wrapDist.style.display='none'; wrapVill.style.display='';
-        const vills=[...new Set(VILLAGES.filter(v=>v.state===st).map(v=>v.village))].sort();
-        sVillage.innerHTML=vills.map(v=>`<option>${v}</option>`).join('');
-        fillHatchList();
-      }
-    }
-    function onDistrictChange(){
-      const st=sState.value, d=sDistrict.value;
-      const vills=[...new Set(VILLAGES.filter(v=>v.state===st && v.district===d).map(v=>v.village))].sort();
-      sVillage.innerHTML=vills.map(v=>`<option>${v}</option>`).join('');
-      fillHatchList();
-    }
-    function fillHatchList(){
-      const st=sState.value;
-      let list=[];
-      if(st==="Andhra Pradesh"){
-        const d=sDistrict.value, v=sVillage.value;
-        list=HATCHERIES.filter(h=>h.state===st && h.district===d && (!h.village || h.village===v));
-      }else{
-        const v=sVillage.value;
-        list=HATCHERIES.filter(h=>h.state===st && (!h.village || h.village===v));
-      }
-      sHatch.innerHTML=list.map((h,i)=>`<option value="${h.id}">${h.hatchery}</option>`).join('');
-      card.classList.add('hidden'); bookingWrap.classList.add('hidden');
+      document.getElementById('bookBtn').onclick=()=>{document.getElementById('bookingForm').classList.remove('hidden');updateTotals();};
+      document.getElementById('sQty').oninput=updateTotals;
     }
 
-    sState.addEventListener('change', onStateChange);
-    sDistrict.addEventListener('change', onDistrictChange);
-    sVillage.addEventListener('change', ()=>fillHatchList());
-    sHatch.addEventListener('change', showDetails);
-
-    function getHatchById(id){ return HATCHERIES.find(h=>h.id===id); }
-
-    // ---------- Show details ----------
+    function fillDistrict(){
+      const st=document.getElementById('sState').value;
+      const ds=[...new Set(hatcheries.filter(h=>h.state===st).map(h=>h.district))];
+      document.getElementById('sDistrict').innerHTML=ds.map(d=>`<option>${d}</option>`).join('');
+      fillVillage();
+    }
+    function fillVillage(){
+      const st=document.getElementById('sState').value;
+      const d=document.getElementById('sDistrict').value;
+      const vs=[...new Set(hatcheries.filter(h=>h.state===st && h.district===d).map(h=>h.village))];
+      document.getElementById('sVillage').innerHTML=vs.map(v=>`<option>${v}</option>`).join('');
+      fillHatch();
+    }
+    function fillHatch(){
+      const st=document.getElementById('sState').value;
+      const d=document.getElementById('sDistrict').value;
+      const v=document.getElementById('sVillage').value;
+      const hs=hatcheries.filter(h=>h.state===st && h.district===d && h.village===v);
+      document.getElementById('sHatchery').innerHTML=hs.map(h=>`<option>${h.hatchery}</option>`).join('');
+      showDetails();
+    }
     function showDetails(){
-      const id = sHatch.value;
-      const h = getHatchById(id);
-      if(!h) return;
-      const st=sState.value;
-      const region = (st==="Andhra Pradesh") ? `${h.district || sDistrict.value}, ${sVillage.value}` : `${sVillage.value}, ${st}`;
-
-      dName.textContent = h.hatchery;
-      dRegion.textContent = region;
-      dBonus.textContent = `Bonus — ${h.bonus}%`;
-      dProd.textContent = h.next_production || '—';
-      dBatch.textContent= h.next_batch || '—';
-      dSal.textContent  = h.salinity || '—';
-      dPrice.textContent= `₹ ${h.price}`;
-
-      // inject into booking
-      sPriceIn.value = h.price;
-      sBonusPct.textContent = `${h.bonus}%`;
-      sQty.value = 0;
+      const st=document.getElementById('sState').value;
+      const d=document.getElementById('sDistrict').value;
+      const v=document.getElementById('sVillage').value;
+      const h=document.getElementById('sHatchery').value;
+      const x=hatcheries.find(x=>x.state===st && x.district===d && x.village===v && x.hatchery===h);
+      if(!x) return;
+      document.getElementById('hatchDetails').classList.remove('hidden');
+      document.getElementById('hName').textContent=x.hatchery;
+      document.getElementById('hLoc').textContent=`${x.district}, ${x.village}`;
+      document.getElementById('hProd').textContent=x.next_production;
+      document.getElementById('hBatch').textContent=x.next_batch;
+      document.getElementById('hSalinity').textContent=x.salinity;
+      document.getElementById('hPrice').textContent="₹ "+x.price;
+      document.getElementById('hEhp').textContent=x.ehp_result;
+      document.getElementById('hBonus').textContent=`Bonus — ${x.bonus}%`;
+      document.getElementById('sPrice').value=x.price;
+      document.getElementById('sBatch').value=x.next_batch;
+      document.getElementById('sBonus').textContent=`${x.bonus}%`;
       updateTotals();
-
-      card.classList.remove('hidden');
-      bookingWrap.classList.add('hidden');
     }
-
-    // ---------- Start booking ----------
-    document.getElementById('startBook').addEventListener('click', ()=>{
-      bookingWrap.classList.remove('hidden');
-      const h=getHatchById(sHatch.value);
-      if(h){
-        const idx=[...sBatch.options].findIndex(o=>o.text=== (h.next_batch||'Batch 1'));
-        if(idx>=0) sBatch.selectedIndex=idx;
-      }
-      bookingWrap.scrollIntoView({behavior:'smooth',block:'start'});
-    });
-
-    // ---------- Totals ----------
     function updateTotals(){
-      const pricePerK = +sPriceIn.value || 0;
-      const qtyPieces = +sQty.value || 0;
-      const bonusPct  = parseInt((sBonusPct.textContent||'0').replace('%',''))||0;
-      const totalSeeds = Math.floor(qtyPieces + (qtyPieces * bonusPct/100));
-      const amount = Math.round((qtyPieces/1000) * pricePerK);
-      sTotalSeeds.textContent = totalSeeds.toLocaleString('en-IN');
-      sAmount.textContent     = `₹ ${amount.toLocaleString('en-IN')}`;
-      sGrand.textContent      = sAmount.textContent;
-      validateForm();
+      const qty=+document.getElementById('sQty').value||0;
+      const price=+document.getElementById('sPrice').value||0;
+      const bonus=parseInt(document.getElementById('sBonus').textContent)||0;
+      const total=qty+Math.floor(qty*bonus/100);
+      const amt=qty*price;
+      document.getElementById('sTotal').textContent=total;
+      document.getElementById('sAmount').textContent="₹ "+amt;
+      document.getElementById('sGrand').textContent="₹ "+amt;
     }
-    sQty.addEventListener('input', updateTotals);
-
-    // ---------- OTP: single button Send→Resend ----------
-    let currentOTP=null, otpOk=false, resendTimer=null, left=0, hasSentOnce=false;
-    function validMobile(n){return /^[6-9]\d{9}$/.test(n||'');}
-    function startCountdown(){
-      left=30; otpBtn.disabled=true; otpBtn.textContent=`${left}s`;
-      resendTimer && clearInterval(resendTimer);
-      resendTimer=setInterval(()=>{left--; otpBtn.textContent=`${left}s`; if(left<=0){clearInterval(resendTimer); otpBtn.disabled=false; otpBtn.textContent=t(hasSentOnce?'resend_otp':'send_otp');}},1000);
-    }
-    function sendOrResendOtp(){
-      if(!validMobile(mobile.value)){ otpHint.textContent=t('otp_invalid'); otpStatus.textContent=''; return; }
-      currentOTP=(''+Math.floor(100000+Math.random()*900000));
-      otpOk=false; otpInput.value=''; otpStatus.textContent='';
-      otpHint.innerHTML = `${t('otp_sent')} <b>${currentOTP}</b>`;
-      hasSentOnce=true; otpBtn.textContent=t('resend_otp'); startCountdown(); validateForm();
-    }
-    otpBtn.addEventListener('click', sendOrResendOtp);
-    verifyOtp.addEventListener('click',()=>{ if(otpInput.value===currentOTP&&currentOTP){otpOk=true; otpStatus.textContent=t('otp_ok'); otpStatus.className='mt-1 text-xs text-emerald-600';} else {otpOk=false; otpStatus.textContent=t('otp_wrong'); otpStatus.className='mt-1 text-xs text-rose-600';} validateForm(); });
-
-    // ---------- Location ----------
-    async function reverseGeocode(lat, lon){
-      try{ const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`); if(!r.ok) throw 0; const j=await r.json(); return j.display_name||''; }catch(e){ return ''; }
-    }
-    locBtn.addEventListener('click', async ()=>{
-      locStatus.textContent = t('locating'); locBtn.disabled=true;
-      if(!('geolocation' in navigator)){ locStatus.textContent=t('location_unavailable'); locBtn.disabled=false; return;}
-      navigator.geolocation.getCurrentPosition(async p=>{
-        const {latitude:lat, longitude:lon}=p.coords;
-        let addr=await reverseGeocode(lat,lon); if(!addr) addr=`${lat.toFixed(6)}, ${lon.toFixed(6)}`;
-        address.value=addr; locStatus.textContent=t('location_ok'); validateForm(); locBtn.disabled=false;
-      },err=>{locStatus.textContent=(err.code===1)?t('location_denied'):t('location_unavailable'); locBtn.disabled=false;},{enableHighAccuracy:true,timeout:15000,maximumAge:0});
-    });
-
-    // ---------- Validation ----------
-    function validateForm(){
-      const okMobile = validMobile(mobile.value) && otpOk;
-      const okAddr = (address.value||'').trim().length>0;
-      sBook.disabled = !(okMobile && okAddr);
-    }
-    mobile.addEventListener('input',()=>{otpOk=false; otpStatus.textContent=''; validateForm();});
-    address.addEventListener('input',validateForm);
-
-    // ---------- Finalize ----------
-    sBook.addEventListener('click',()=>{
-      if(sBook.disabled) return;
-      const h=getHatchById(sHatch.value);
-      const region = (sState.value==="Andhra Pradesh") ? `${h.district || sDistrict.value}, ${sVillage.value}` : `${sVillage.value}, ${sState.value}`;
-      const msg =
-        `Seeds Booking\n`+
-        `• ${sState.value} • ${region}\n`+
-        `• Hatchery: ${h.hatchery} | Price: ₹${h.price}/1000 | Bonus: ${h.bonus}%\n`+
-        `• Next Production: ${h.next_production||'-'} | Next Batch: ${h.next_batch||'-'} | Salinity: ${h.salinity||'-'}\n`+
-        `• Booking Date: ${sDate.value||'-'} | Production: ${sBatch.value}\n`+
-        `• Qty: ${(+(sQty.value||0)).toLocaleString('en-IN')} pcs | Total: ${sTotalSeeds.textContent}\n`+
-        `• Amount: ${sAmount.textContent}\n`+
-        `• Mobile: +91 ${mobile.value}\n`+
-        `• Address: ${address.value}`;
-      alert('✅ ' + msg);
-      // window.open('https://wa.me/91XXXXXXXXXX?text='+encodeURIComponent(msg),'_blank');
-    });
-
-    // ---------- INIT ----------
-    (async function init(){
-      if(!localStorage.getItem('lang')) localStorage.setItem('lang','te');
-      setLang();
-      try{
-        VILLAGES   = await loadCSV('data/villages.csv');
-        HATCHERIES = await loadCSV('data/hatcheries.csv');
-        // simple ids
-        HATCHERIES.forEach((h,i)=>{ if(!h.id) h.id = 'H'+(i+1); });
-      }catch(e){
-        alert('CSV load failed. Using demo data.');
-        VILLAGES=[{state:'Andhra Pradesh',district:'Nellore',village:'Kavali'},{state:'Tamil Nadu',district:'',village:'Cuddalore'}];
-        HATCHERIES=[{id:'H1',state:'Andhra Pradesh',district:'Nellore',village:'Kavali',hatchery:'Blue Aqua',salinity:'15–25 ppt',price:'350',bonus:'20',next_production:'2025-09-05',next_batch:'Batch 1'}];
-      }
-      onStateChange(); // populate first view
-    })();
+    init();
   </script>
 </body>
 </html>
