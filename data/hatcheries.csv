@@ -1,6 +1,6 @@
 id,state,district,village,hatchery,salinity,price,bonus,next_production,next_batch,ehp_result
 ,Andhra Pradesh,Nellore,Kavali,Blue Aqua,"15–25 ppt",350,20,2025-09-05,Batch 1,Negative
-,Andhra Pradesh,Nellore,Muthyalathopu,Biomarien,"18–28 ppt",350,30,2025-09-10,Batch 2,Negative
+,Andhra Pradesh,Nellore,Muthyalathopu,Biomarien,"18–28 ppt",0.35,30,2025-09-10,Batch 2,Negative
 ,Andhra Pradesh,Krishna,Avanigadda,Delta Hatchery,"12–22 ppt",370,25,2025-09-08,Batch 1,Positive
 ,Andhra Pradesh,East Godavari,Kakinada,Seabreeze Hatchery,"16–24 ppt",365,15,2025-09-11,Batch 2,Negative
 ,Andhra Pradesh,West Godavari,Bhimavaram,Godavari Aqua Farms,"14–22 ppt",355,10,2025-09-06,Batch 1,Pending
