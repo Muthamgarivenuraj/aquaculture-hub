@@ -32,22 +32,18 @@
     <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border space-y-4">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
         <label class="text-sm">State
-          <select id="sState" class="mt-1 field w-full"></select>
+          <select id="sState" class="mt-1 field w-full">
+            <option value="">Select</option>
+          </select>
         </label>
         <label class="text-sm">District
-          <select id="sDistrict" class="mt-1 field w-full">
-            <option value="">Select</option>
-          </select>
+          <select id="sDistrict" class="mt-1 field w-full"><option value="">Select</option></select>
         </label>
         <label class="text-sm">Village
-          <select id="sVillage" class="mt-1 field w-full">
-            <option value="">Select</option>
-          </select>
+          <select id="sVillage" class="mt-1 field w-full"><option value="">Select</option></select>
         </label>
         <label class="text-sm">Hatchery
-          <select id="sHatchery" class="mt-1 field w-full">
-            <option value="">Select</option>
-          </select>
+          <select id="sHatchery" class="mt-1 field w-full"><option value="">Select</option></select>
         </label>
       </div>
 
@@ -105,9 +101,8 @@
     async function init(){
       hatcheries=await loadCSV('data/hatcheries.csv');
       const states=[...new Set(hatcheries.map(h=>h.state))];
-      const sState=document.getElementById('sState');
-      sState.innerHTML=states.map(s=>`<option>${s}</option>`).join('');
-      sState.onchange=fillDistrict;
+      document.getElementById('sState').innerHTML='<option value="">Select</option>'+states.map(s=>`<option>${s}</option>`).join('');
+      document.getElementById('sState').onchange=fillDistrict;
       document.getElementById('sDistrict').onchange=fillVillage;
       document.getElementById('sVillage').onchange=fillHatch;
       document.getElementById('sHatchery').onchange=showDetails;
@@ -115,27 +110,26 @@
 
     function fillDistrict(){
       const st=document.getElementById('sState').value;
+      if(!st){resetDropdowns(['sDistrict','sVillage','sHatchery']);return;}
       const ds=[...new Set(hatcheries.filter(h=>h.state===st).map(h=>h.district))];
       document.getElementById('sDistrict').innerHTML='<option value="">Select</option>'+ds.map(d=>`<option>${d}</option>`).join('');
-      document.getElementById('sVillage').innerHTML='<option value="">Select</option>';
-      document.getElementById('sHatchery').innerHTML='<option value="">Select</option>';
-      document.getElementById('hatchDetails').classList.add('hidden');
+      resetDropdowns(['sVillage','sHatchery']);
     }
     function fillVillage(){
       const st=document.getElementById('sState').value;
       const d=document.getElementById('sDistrict').value;
+      if(!d){resetDropdowns(['sVillage','sHatchery']);return;}
       const vs=[...new Set(hatcheries.filter(h=>h.state===st && h.district===d).map(h=>h.village))];
       document.getElementById('sVillage').innerHTML='<option value="">Select</option>'+vs.map(v=>`<option>${v}</option>`).join('');
-      document.getElementById('sHatchery').innerHTML='<option value="">Select</option>';
-      document.getElementById('hatchDetails').classList.add('hidden');
+      resetDropdowns(['sHatchery']);
     }
     function fillHatch(){
       const st=document.getElementById('sState').value;
       const d=document.getElementById('sDistrict').value;
       const v=document.getElementById('sVillage').value;
+      if(!v){resetDropdowns(['sHatchery']);return;}
       const hs=hatcheries.filter(h=>h.state===st && h.district===d && h.village===v);
       document.getElementById('sHatchery').innerHTML='<option value="">Select</option>'+hs.map(h=>`<option>${h.hatchery}</option>`).join('');
-      document.getElementById('hatchDetails').classList.add('hidden');
     }
     function showDetails(){
       const st=document.getElementById('sState').value;
@@ -156,7 +150,12 @@
       document.getElementById('sPrice').value=x.price;
       document.getElementById('sBatch').value=x.next_batch;
       document.getElementById('sBonus').textContent=`${x.bonus}%`;
-      updateTotals();
+
+      // Book button show booking form
+      document.getElementById('bookBtn').onclick=()=>{
+        document.getElementById('bookingForm').classList.remove('hidden');
+        updateTotals();
+      };
     }
     function updateTotals(){
       const qty=+document.getElementById('sQty').value||0;
@@ -167,6 +166,13 @@
       document.getElementById('sTotal').textContent=total;
       document.getElementById('sAmount').textContent="₹ "+amt;
       document.getElementById('sGrand').textContent="₹ "+amt;
+    }
+    function resetDropdowns(ids){
+      ids.forEach(id=>{
+        document.getElementById(id).innerHTML='<option value="">Select</option>';
+      });
+      document.getElementById('hatchDetails').classList.add('hidden');
+      document.getElementById('bookingForm').classList.add('hidden');
     }
     init();
   </script>
