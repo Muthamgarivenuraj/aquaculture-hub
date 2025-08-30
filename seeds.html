@@ -80,15 +80,44 @@
         </label>
       </div>
       <p class="text-sm">Bonus %: <b id="sBonus">0%</b> | Total Seeds: <b id="sTotal">0</b> | Amount: <b id="sAmount">₹ 0</b></p>
+
+      <!-- Customer Details -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <label class="text-sm">Customer Mobile *
+          <div class="mt-1 flex gap-2">
+            <input id="custMobile" type="tel" placeholder="9xxxxxxxxx" class="field w-full" maxlength="10" inputmode="numeric" pattern="[6-9][0-9]{9}">
+            <button id="sendOtp" class="btn btn-primary whitespace-nowrap" type="button">Send OTP</button>
+          </div>
+          <div id="otpHint" class="mt-1 text-xs text-slate-500"></div>
+        </label>
+
+        <label class="text-sm">Enter OTP
+          <div class="mt-1 flex gap-2">
+            <input id="otpInput" type="number" class="field w-full" placeholder="******" maxlength="6">
+            <button id="verifyOtp" class="btn border border-emerald-600 text-emerald-700" type="button">Verify</button>
+          </div>
+          <div id="otpStatus" class="mt-1 text-xs"></div>
+        </label>
+
+        <label class="text-sm">Address *
+          <div class="mt-1 flex gap-2">
+            <input id="custAddress" class="field w-full" placeholder="Village, Mandal, District">
+            <button id="locBtn" class="btn border">Use current location</button>
+          </div>
+        </label>
+      </div>
+
+      <!-- Final -->
       <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex justify-between">
         <div>🧮 Grand Total: <b id="sGrand">₹ 0</b></div>
         <button id="finalBook" class="btn btn-primary" disabled>Finalize Booking</button>
       </div>
+      <p class="text-xs text-slate-500"><span class="badge bg-amber-100 text-amber-700">Note</span> Booking requires verified mobile & address.</p>
     </div>
   </main>
 
   <script>
-    let hatcheries=[];
+    let hatcheries=[],currentOTP=null,otpOk=false,resendTimer=null,left=0;
     async function loadCSV(path){
       const res=await fetch(path);
       const txt=await res.text();
@@ -97,7 +126,6 @@
         return {state,district,village,hatchery,salinity,price:+price,bonus:+bonus,next_production,next_batch,ehp_result:ehp};
       });
     }
-
     async function init(){
       hatcheries=await loadCSV('data/hatcheries.csv');
       const states=[...new Set(hatcheries.map(h=>h.state))];
@@ -106,74 +134,77 @@
       document.getElementById('sDistrict').onchange=fillVillage;
       document.getElementById('sVillage').onchange=fillHatch;
       document.getElementById('sHatchery').onchange=showDetails;
+      document.getElementById('sQty').addEventListener('input',updateTotals);
     }
-
     function fillDistrict(){
-      const st=document.getElementById('sState').value;
+      const st=sState.value;
       if(!st){resetDropdowns(['sDistrict','sVillage','sHatchery']);return;}
       const ds=[...new Set(hatcheries.filter(h=>h.state===st).map(h=>h.district))];
-      document.getElementById('sDistrict').innerHTML='<option value="">Select</option>'+ds.map(d=>`<option>${d}</option>`).join('');
+      sDistrict.innerHTML='<option value="">Select</option>'+ds.map(d=>`<option>${d}</option>`).join('');
       resetDropdowns(['sVillage','sHatchery']);
     }
     function fillVillage(){
-      const st=document.getElementById('sState').value;
-      const d=document.getElementById('sDistrict').value;
+      const st=sState.value,d=sDistrict.value;
       if(!d){resetDropdowns(['sVillage','sHatchery']);return;}
       const vs=[...new Set(hatcheries.filter(h=>h.state===st && h.district===d).map(h=>h.village))];
-      document.getElementById('sVillage').innerHTML='<option value="">Select</option>'+vs.map(v=>`<option>${v}</option>`).join('');
+      sVillage.innerHTML='<option value="">Select</option>'+vs.map(v=>`<option>${v}</option>`).join('');
       resetDropdowns(['sHatchery']);
     }
     function fillHatch(){
-      const st=document.getElementById('sState').value;
-      const d=document.getElementById('sDistrict').value;
-      const v=document.getElementById('sVillage').value;
+      const st=sState.value,d=sDistrict.value,v=sVillage.value;
       if(!v){resetDropdowns(['sHatchery']);return;}
       const hs=hatcheries.filter(h=>h.state===st && h.district===d && h.village===v);
-      document.getElementById('sHatchery').innerHTML='<option value="">Select</option>'+hs.map(h=>`<option>${h.hatchery}</option>`).join('');
+      sHatchery.innerHTML='<option value="">Select</option>'+hs.map(h=>`<option>${h.hatchery}</option>`).join('');
     }
     function showDetails(){
-      const st=document.getElementById('sState').value;
-      const d=document.getElementById('sDistrict').value;
-      const v=document.getElementById('sVillage').value;
-      const h=document.getElementById('sHatchery').value;
+      const st=sState.value,d=sDistrict.value,v=sVillage.value,h=sHatchery.value;
       const x=hatcheries.find(x=>x.state===st && x.district===d && x.village===v && x.hatchery===h);
-      if(!x) return;
-      document.getElementById('hatchDetails').classList.remove('hidden');
-      document.getElementById('hName').textContent=x.hatchery;
-      document.getElementById('hLoc').textContent=`${x.district}, ${x.village}`;
-      document.getElementById('hProd').textContent=x.next_production;
-      document.getElementById('hBatch').textContent=x.next_batch;
-      document.getElementById('hSalinity').textContent=x.salinity;
-      document.getElementById('hPrice').textContent="₹ "+x.price;
-      document.getElementById('hEhp').textContent=x.ehp_result;
-      document.getElementById('hBonus').textContent=`Bonus — ${x.bonus}%`;
-      document.getElementById('sPrice').value=x.price;
-      document.getElementById('sBatch').value=x.next_batch;
-      document.getElementById('sBonus').textContent=`${x.bonus}%`;
-
-      // Book button show booking form
-      document.getElementById('bookBtn').onclick=()=>{
-        document.getElementById('bookingForm').classList.remove('hidden');
-        updateTotals();
-      };
+      if(!x)return;
+      hatchDetails.classList.remove('hidden');
+      hName.textContent=x.hatchery; hLoc.textContent=`${x.district}, ${x.village}`;
+      hProd.textContent=x.next_production; hBatch.textContent=x.next_batch;
+      hSalinity.textContent=x.salinity; hPrice.textContent="₹ "+x.price; hEhp.textContent=x.ehp_result;
+      hBonus.textContent=`Bonus — ${x.bonus}%`;
+      sPrice.value=x.price; sBatch.value=x.next_batch; sBonus.textContent=`${x.bonus}%`;
+      bookBtn.onclick=()=>{bookingForm.classList.remove('hidden'); updateTotals();};
     }
     function updateTotals(){
-      const qty=+document.getElementById('sQty').value||0;
-      const price=+document.getElementById('sPrice').value||0;
-      const bonus=parseInt(document.getElementById('sBonus').textContent)||0;
-      const total=qty+Math.floor(qty*bonus/100);
-      const amt=qty*price;
-      document.getElementById('sTotal').textContent=total;
-      document.getElementById('sAmount').textContent="₹ "+amt;
-      document.getElementById('sGrand').textContent="₹ "+amt;
+      const qty=+sQty.value||0,price=+sPrice.value||0,bonus=parseInt(sBonus.textContent)||0;
+      const total=qty+Math.floor(qty*bonus/100); const amt=qty*price;
+      sTotal.textContent=total.toLocaleString('en-IN'); sAmount.textContent="₹ "+amt.toLocaleString('en-IN'); sGrand.textContent="₹ "+amt.toLocaleString('en-IN');
+      validateForm();
     }
     function resetDropdowns(ids){
-      ids.forEach(id=>{
-        document.getElementById(id).innerHTML='<option value="">Select</option>';
-      });
-      document.getElementById('hatchDetails').classList.add('hidden');
-      document.getElementById('bookingForm').classList.add('hidden');
+      ids.forEach(id=>document.getElementById(id).innerHTML='<option value="">Select</option>');
+      hatchDetails.classList.add('hidden'); bookingForm.classList.add('hidden');
     }
+
+    // OTP + Address validation
+    const validMobile=n=>/^[6-9]\d{9}$/.test(n||'');
+    sendOtp.onclick=()=>{
+      if(!validMobile(custMobile.value)){otpHint.textContent="❌ Invalid mobile";return;}
+      currentOTP=(''+Math.floor(100000+Math.random()*900000)); otpOk=false; otpInput.value=''; otpStatus.textContent='';
+      otpHint.innerHTML="OTP (demo): <b>"+currentOTP+"</b>";
+      left=30; sendOtp.disabled=true; sendOtp.textContent=`${left}s`;
+      resendTimer&&clearInterval(resendTimer);
+      resendTimer=setInterval(()=>{left--;sendOtp.textContent=`${left}s`;if(left<=0){clearInterval(resendTimer);sendOtp.disabled=false;sendOtp.textContent="Resend OTP";}},1000);
+      validateForm();
+    };
+    verifyOtp.onclick=()=>{
+      if(otpInput.value===currentOTP && currentOTP){otpOk=true;otpStatus.textContent="✔ Verified";otpStatus.className='text-xs text-emerald-600';}
+      else{otpOk=false;otpStatus.textContent="❌ Wrong OTP";otpStatus.className='text-xs text-rose-600';}
+      validateForm();
+    };
+    locBtn.onclick=(e)=>{e.preventDefault();navigator.geolocation?.getCurrentPosition(pos=>{
+      custAddress.value=`Lat:${pos.coords.latitude.toFixed(4)}, Lng:${pos.coords.longitude.toFixed(4)}`;validateForm();
+    });};
+    function validateForm(){
+      const okMobile=validMobile(custMobile.value)&&otpOk, okAddr=(custAddress.value||'').trim().length>0;
+      finalBook.disabled=!(okMobile&&okAddr);
+    }
+    custMobile.oninput=()=>{otpOk=false;otpStatus.textContent='';validateForm();};
+    custAddress.oninput=validateForm;
+    finalBook.onclick=()=>{if(finalBook.disabled)return;alert("✅ Seeds booking confirmed!");};
     init();
   </script>
 </body>
