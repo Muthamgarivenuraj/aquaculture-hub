@@ -6,195 +6,142 @@
   <title>Feed Dealers • Aquaculture A–Z</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config={darkMode:'class',theme:{extend:{boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'}}}}
+    tailwind.config={darkMode:'class'}
   </script>
   <style>
     body{background:linear-gradient(135deg,#dbeafe 0,#e0f2fe 50%,#f0fdf4 100%)}
     .dark body{background:linear-gradient(135deg,#0f172a 0,#082f49 50%,#14532d 100%)}
-    .field{border:1px solid rgb(226,232,240);border-radius:.5rem;padding:.5rem .6rem}
+    .field{border:1px solid #e2e8f0;border-radius:.5rem;padding:.5rem .6rem}
     .dark .field{background:#0b1220;border-color:#334155;color:#e2e8f0}
-    .btn{padding:.6rem 1rem;border-radius:.75rem}
-    .btn-primary{background:#059669;color:#fff}
-    .btn-primary[disabled]{opacity:.5;cursor:not-allowed}
-    .badge{font-size:.75rem;padding:.2rem .55rem;border-radius:.5rem}
+    .btn{padding:.6rem 1rem;border-radius:.75rem;background:#059669;color:#fff}
+    .btn[disabled]{opacity:.5;cursor:not-allowed}
   </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100">
-  <!-- Header -->
-  <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800">
-    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
-      <a href="index.html" class="rounded-lg px-3 py-1.5 border border-slate-200 dark:border-slate-800">←</a>
-      <h1 class="text-lg font-bold flex-1">Feed Dealers</h1>
-      <button id="themeToggle" class="rounded-full px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-800">
-        🌙/☀️
-      </button>
-    </div>
-  </header>
+<header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b dark:border-slate-800">
+  <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+    <h1 class="text-lg font-bold">Feed Dealers</h1>
+    <button id="themeToggle" class="rounded-full px-3 py-1.5 border">🌙/☀️</button>
+  </div>
+</header>
 
-  <main class="max-w-5xl mx-auto p-4 space-y-6">
-    <!-- Selectors -->
-    <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border space-y-4">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <label class="text-sm">State
-          <select id="sState" class="mt-1 field w-full"><option value="">Select</option></select>
-        </label>
-        <label class="text-sm">District
-          <select id="sDistrict" class="mt-1 field w-full"><option value="">Select</option></select>
-        </label>
-        <label class="text-sm">Dealer
-          <select id="sDealer" class="mt-1 field w-full"><option value="">Select</option></select>
-        </label>
-      </div>
-
-      <!-- Dealer Details -->
-      <div id="dealerDetails" class="hidden p-4 rounded-xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 space-y-2">
-        <h2 id="dName" class="font-bold text-lg"></h2>
-        <p id="dLoc" class="text-sm"></p>
-        <p><b>Company:</b> <span id="dCompany"></span></p>
-        <p>📞 <span id="dPhone"></span></p>
-        <button id="bookBtn" class="btn btn-primary mt-3">Book</button>
-      </div>
+<main class="max-w-5xl mx-auto p-4 space-y-6">
+  <!-- Selectors -->
+  <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 border space-y-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <label class="text-sm">State
+        <select id="sState" class="mt-1 field w-full"><option value="">Select</option></select>
+      </label>
+      <label class="text-sm">District
+        <select id="sDistrict" class="mt-1 field w-full"><option value="">Select</option></select>
+      </label>
+      <label class="text-sm">Dealer
+        <select id="sDealer" class="mt-1 field w-full"><option value="">Select</option></select>
+      </label>
     </div>
 
-    <!-- Booking Form -->
-    <div id="bookingForm" class="hidden rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border space-y-4">
-      <!-- Feed selection -->
-      <label class="text-sm">Feed Company
-        <select id="feedType" class="mt-1 field w-full">
-          <option value="">Select Feed</option>
-          <option value="Avanthi">Avanthi</option>
-          <option value="CP">CP</option>
-          <option value="Growel">Growel</option>
+    <div id="dealerDetails" class="hidden p-4 rounded-xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+      <h2 id="dName" class="font-bold text-lg"></h2>
+      <p id="dLoc" class="text-sm"></p>
+      <p><b>Company:</b> <span id="dCompany"></span></p>
+      <p>📞 <span id="dPhone"></span></p>
+      <button id="bookBtn" class="btn mt-3">Book</button>
+    </div>
+  </div>
+
+  <!-- Booking Form -->
+  <div id="bookingForm" class="hidden rounded-2xl p-4 bg-white dark:bg-slate-900 border space-y-4">
+    <label class="text-sm">Feed Company
+      <select id="feedType" class="mt-1 field w-full">
+        <option value="">Select Feed</option>
+        <option>Avanthi</option>
+        <option>CP</option>
+        <option>Growel</option>
+      </select>
+    </label>
+
+    <div class="flex gap-4 mt-2">
+      <label><input type="radio" name="payType" value="cash" checked> Spot Cash</label>
+      <label><input type="radio" name="payType" value="credit"> Credit</label>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+      <label class="text-sm">Quantity Type
+        <select id="qtyType" class="mt-1 field w-full">
+          <option value="">Select</option>
+          <option value="bag">Bags</option>
+          <option value="ton">Tons</option>
         </select>
       </label>
-
-      <!-- Payment type -->
-      <div class="flex gap-4 mt-2">
-        <label><input type="radio" name="payType" value="cash" checked> Spot Cash</label>
-        <label><input type="radio" name="payType" value="credit"> Credit (Appu)</label>
-      </div>
-
-      <!-- Quantity -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
-        <label class="text-sm">Quantity Type
-          <select id="qtyType" class="mt-1 field w-full">
-            <option value="">Select</option>
-            <option value="bag">Bags</option>
-            <option value="ton">Tons</option>
-          </select>
-        </label>
-        <label class="text-sm">Quantity
-          <input id="qty" type="number" value="0" class="mt-1 field w-full">
-        </label>
-        <label class="text-sm">Feed Cost
-          <input id="fCost" type="text" class="mt-1 field w-full" readonly>
-        </label>
-      </div>
-
-      <!-- Transport -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <label class="text-sm">Transport Type
-          <select id="vehicle" class="mt-1 field w-full">
-            <option value="80">Auto Van (₹80/km)</option>
-            <option value="150">Big Truck (₹150/km)</option>
-          </select>
-        </label>
-        <label class="text-sm">Distance (km)
-          <input id="distance" type="number" value="0" class="mt-1 field w-full">
-        </label>
-        <label class="text-sm">Transport Cost
-          <input id="tCost" type="text" class="mt-1 field w-full" readonly>
-        </label>
-      </div>
-
-      <!-- Customer Details -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <label class="text-sm">Customer Mobile *
-          <input id="custMobile" type="tel" placeholder="9xxxxxxxxx" class="mt-1 field w-full" maxlength="10">
-        </label>
-        <label class="text-sm">Address *
-          <input id="custAddress" class="mt-1 field w-full" placeholder="Village, Mandal, District">
-        </label>
-      </div>
-
-      <!-- Final -->
-      <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex justify-between">
-        <div>🧮 Grand Total: <b id="grandTotal">₹ 0</b></div>
-        <button id="finalBook" class="btn btn-primary" disabled>Finalize Booking</button>
-      </div>
+      <label class="text-sm">Quantity
+        <input id="qty" type="number" value="1" class="mt-1 field w-full">
+      </label>
+      <label class="text-sm">Feed Cost
+        <input id="fCost" type="text" class="mt-1 field w-full" readonly>
+      </label>
     </div>
-  </main>
 
-  <script>
-    const dealers=[
-      {state_en:"Andhra Pradesh",district_en:"Nellore",dealer_en:"Venu Aqua",company:"Avanthi",phone:"9963643062"},
-      {state_en:"Andhra Pradesh",district_en:"Nellore",dealer_en:"Suresh Aqua",company:"CP",phone:"9876543210"},
-    ];
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <label class="text-sm">Transport Type
+        <select id="vehicle" class="mt-1 field w-full">
+          <option value="80">Auto Van (₹80/km)</option>
+          <option value="150">Big Truck (₹150/km)</option>
+        </select>
+      </label>
+      <label class="text-sm">Distance (km)
+        <input id="distance" type="number" value="0" class="mt-1 field w-full">
+      </label>
+      <label class="text-sm">Transport Cost
+        <input id="tCost" type="text" class="mt-1 field w-full" readonly>
+      </label>
+    </div>
 
-    function fillStates(){
-      const states=[...new Set(dealers.map(d=>d.state_en))];
-      sState.innerHTML='<option value="">Select</option>'+states.map(s=>`<option>${s}</option>`).join('');
-    }
-    function fillDistrict(){
-      const st=sState.value;if(!st){sDistrict.innerHTML='<option value="">Select</option>';return;}
-      const ds=[...new Set(dealers.filter(d=>d.state_en===st).map(d=>d.district_en))];
-      sDistrict.innerHTML='<option value="">Select</option>'+ds.map(d=>`<option>${d}</option>`).join('');
-    }
-    function fillDealer(){
-      const st=sState.value,d=sDistrict.value;if(!d){sDealer.innerHTML='<option value="">Select</option>';return;}
-      const list=dealers.filter(x=>x.state_en===st && x.district_en===d);
-      sDealer.innerHTML='<option value="">Select</option>'+list.map(x=>`<option>${x.dealer_en}</option>`).join('');
-    }
-    function showDealer(){
-      const st=sState.value,d=sDistrict.value,name=sDealer.value;
-      const x=dealers.find(x=>x.state_en===st&&x.district_en===d&&x.dealer_en===name);
-      if(!x)return;
-      dealerDetails.classList.remove("hidden");
-      dName.textContent=x.dealer_en;
-      dLoc.textContent=`${x.district_en}, ${x.state_en}`;
-      dCompany.textContent=x.company;
-      dPhone.textContent=x.phone;
-      bookBtn.onclick=()=>bookingForm.classList.remove("hidden");
-    }
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <label class="text-sm">Customer Mobile
+        <input id="custMobile" type="tel" placeholder="9xxxxxxxxx" class="mt-1 field w-full">
+      </label>
+      <label class="text-sm">Address
+        <input id="custAddress" class="mt-1 field w-full" placeholder="Village, Mandal, District">
+      </label>
+    </div>
 
-    function calcFeedCost(){
-      const qty=+qty.value||0;
-      const type=document.querySelector('input[name="payType"]:checked').value;
-      const unit=qtyType.value;
-      let cost=0;
-      if(type==="cash"){
-        if(unit==="bag") cost=qty*2100;
-        if(unit==="ton") cost=qty*84000;
-      }else{
-        if(unit==="bag") cost=qty*2250;
-        if(unit==="ton") cost=qty*90000;
-      }
-      fCost.value="₹ "+cost;
-      return cost;
-    }
+    <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex justify-between">
+      <div>🧮 Grand Total: <b id="grandTotal">₹ 0</b></div>
+      <button id="finalBook" class="btn" disabled>Finalize Booking</button>
+    </div>
+  </div>
+</main>
 
-    function updateTransport(){
-      const dist=+distance.value||0,rate=+vehicle.value||0;
-      tCost.value="₹ "+(dist*rate);
-      updateGrand();
-    }
-    function updateGrand(){
-      const feed=calcFeedCost();
-      const t=+(distance.value||0)*+(vehicle.value||0);
-      grandTotal.textContent="₹ "+(feed+t);
-      finalBook.disabled=false;
-    }
+<script>
+  const dealers=[{state_en:"Andhra Pradesh",district_en:"Nellore",dealer_en:"Venu Aqua",company:"Avanthi",phone:"9963643062"}];
 
-    finalBook.onclick=()=>{alert("✅ Feed booking confirmed!");};
+  function fillStates(){sState.innerHTML='<option value="">Select</option>'+[...new Set(dealers.map(d=>d.state_en))].map(s=>`<option>${s}</option>`).join('');}
+  function fillDistrict(){sDistrict.innerHTML='<option value="">Select</option>'+[...new Set(dealers.filter(d=>d.state_en===sState.value).map(d=>d.district_en))].map(d=>`<option>${d}</option>`).join('');}
+  function fillDealer(){sDealer.innerHTML='<option value="">Select</option>'+dealers.filter(x=>x.state_en===sState.value&&x.district_en===sDistrict.value).map(x=>`<option>${x.dealer_en}</option>`).join('');}
+  function showDealer(){const x=dealers.find(x=>x.state_en===sState.value&&x.district_en===sDistrict.value&&x.dealer_en===sDealer.value);if(!x)return;dealerDetails.classList.remove("hidden");dName.textContent=x.dealer_en;dLoc.textContent=`${x.district_en}, ${x.state_en}`;dCompany.textContent=x.company;dPhone.textContent=x.phone;bookBtn.onclick=()=>bookingForm.classList.remove("hidden");}
 
-    document.addEventListener("DOMContentLoaded",()=>{
-      if(localStorage.getItem("theme")==="dark"){document.documentElement.classList.add("dark");}
-      themeToggle.onclick=()=>{document.documentElement.classList.toggle("dark");localStorage.setItem("theme",document.documentElement.classList.contains("dark")?"dark":"light");};
-      fillStates();
-      sState.onchange=fillDistrict;sDistrict.onchange=fillDealer;sDealer.onchange=showDealer;
-      qty.oninput=updateGrand;qtyType.onchange=updateGrand;document.querySelectorAll('input[name="payType"]').forEach(r=>r.onchange=updateGrand);
-      vehicle.onchange=updateTransport;distance.oninput=updateTransport;
-    });
-  </script>
+  function calcFeedCost(){
+    const qty=+document.getElementById("qty").value||0;
+    const type=document.querySelector('input[name="payType"]:checked').value;
+    const unit=qtyType.value;let cost=0;
+    if(type==="cash"){if(unit==="bag")cost=qty*2100;if(unit==="ton")cost=qty*84000;}
+    else{if(unit==="bag")cost=qty*2250;if(unit==="ton")cost=qty*90000;}
+    fCost.value="₹ "+cost;return cost;
+  }
+
+  function updateTransport(){tCost.value="₹ "+((+distance.value||0)*(+vehicle.value||0));updateGrand();}
+  function updateGrand(){const feed=calcFeedCost();const t=(+distance.value||0)*(+vehicle.value||0);grandTotal.textContent="₹ "+(feed+t);finalBook.disabled=false;}
+
+  finalBook.onclick=()=>alert("✅ Feed booking confirmed!");
+
+  document.addEventListener("DOMContentLoaded",()=>{
+    if(localStorage.getItem("theme")==="dark"){document.documentElement.classList.add("dark");}
+    themeToggle.onclick=()=>{document.documentElement.classList.toggle("dark");localStorage.setItem("theme",document.documentElement.classList.contains("dark")?"dark":"light");};
+    fillStates();sState.onchange=fillDistrict;sDistrict.onchange=fillDealer;sDealer.onchange=showDealer;
+    qty.oninput=updateGrand;qtyType.onchange=()=>{qty.value=1;updateGrand();};
+    document.querySelectorAll('input[name="payType"]').forEach(r=>r.onchange=updateGrand);
+    vehicle.onchange=updateTransport;distance.oninput=updateTransport;
+  });
+</script>
 </body>
 </html>
