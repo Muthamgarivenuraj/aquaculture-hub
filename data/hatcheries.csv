@@ -1,6 +1,12 @@
-id,state,district,village,hatchery,salinity,price,bonus,next_production,next_batch,ehp
-1,Andhra Pradesh,Nellore,Muthyalathopu,Sri Sai Hatchery,28ppt,0.32,20,2-Sep,PL15,Negative
-2,Andhra Pradesh,Nellore,Muthyalathopu,Coastal Aqua Hatchery,29ppt,0.28,25,3-Sep,PL20,Negative
-3,Andhra Pradesh,Nellore,Muthyalathopu,BlueOcean Hatchery,27ppt,0.35,30,5-Sep,PL25,Negative
-4,Andhra Pradesh,Nellore,Muthyalathopu,Golden Shrimp Hatchery,30ppt,0.32,20,6-Sep,PL30,Negative
-5,Andhra Pradesh,Nellore,Muthyalathopu,Sun Aqua Hatchery,28ppt,0.38,15,8-Sep,PL35,Negative
+id,state_en,state_te,district_en,district_te,village_en,village_te,hatchery_en,hatchery_te,salinity,price,bonus,next_production,next_batch,ehp
+1,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Muthyalathopu,ముత్యాలతొపూ,Sri Sai Hatchery,శ్రీ సాయి హ్యాచరీ,28ppt,320,20,2-Sep,PL15,Negative
+2,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Muthyalathopu,ముత్యాలతొపూ,Coastal Aqua Hatchery,కొస్తా ఆక్వా హ్యాచరీ,27ppt,325,22,3-Sep,PL18,Negative
+3,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Muthyalathopu,ముత్యాలతొపూ,Blue Ocean Hatchery,బ్లూ ఓషన్ హ్యాచరీ,29ppt,330,25,5-Sep,PL20,Negative
+4,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Muthyalathopu,ముత్యాలతొపూ,Sun Aqua Hatchery,సన్ ఆక్వా హ్యాచరీ,28ppt,335,18,6-Sep,PL22,Negative
+5,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Nellore,నెల్లూరు,Muthyalathopu,ముత్యాలతొపూ,Green Valley Hatchery,గ్రీన్ వ్యాలీ హ్యాచరీ,30ppt,340,20,7-Sep,PL25,Negative
+6,Andhra Pradesh,ఆంధ్ర ప్రదేశ్,Prakasam,ప్రకాశం,Chirala,చీరాల,BlueBay Hatchery,బ్లూబే హ్యాచరీ,30ppt,340,25,4-Sep,PL20,Negative
+7,Tamil Nadu,తమిళనాడు,,,,,Ocean Hatchery,ఓషన్ హ్యాచరీ,30ppt,360,20,6-Sep,PL25,Negative
+8,Tamil Nadu,తమిళనాడు,,,,,Sunrise Hatchery,సన్‌రైజ్ హ్యాచరీ,28ppt,355,22,7-Sep,PL28,Negative
+9,Tamil Nadu,తమిళనాడు,,,,,Golden Aqua Hatchery,గోల్డెన్ ఆక్వా హ్యాచరీ,29ppt,365,18,8-Sep,PL30,Negative
+10,Tamil Nadu,తమిళనాడు,,,,,Blue Pearl Hatchery,బ్లూ పెర్ల్ హ్యాచరీ,27ppt,370,25,9-Sep,PL32,Negative
+11,Tamil Nadu,తమిళనాడు,,,,,Royal Shrimp Hatchery,రాయల్ శ్రింప్ హ్యాచరీ,30ppt,375,20,10-Sep,PL35,Negative
