@@ -34,10 +34,10 @@
         <label class="text-sm"><span data-i18n="state">State</span>
           <select id="sState" class="mt-1 field w-full"><option value="">Select</option></select>
         </label>
-        <label class="text-sm"><span data-i18n="district">District</span>
+        <label class="text-sm ap-only"><span data-i18n="district">District</span>
           <select id="sDistrict" class="mt-1 field w-full"><option value="">Select</option></select>
         </label>
-        <label class="text-sm"><span data-i18n="village">Village</span>
+        <label class="text-sm ap-only"><span data-i18n="village">Village</span>
           <select id="sVillage" class="mt-1 field w-full"><option value="">Select</option></select>
         </label>
         <label class="text-sm"><span data-i18n="hatchery">Hatchery</span>
@@ -63,6 +63,7 @@
   </main>
 
   <script>
+    // -------- i18n dict --------
     const dict={ en:{seed_title:"Seed Booking",state:"State",district:"District",village:"Village",hatchery:"Hatchery",next_production:"Next Production",next_batch:"Next Batch",salinity:"Salinity",price:"Price",ehp_result:"EHP Result",book:"Book"}, te:{seed_title:"సీడ్ బుకింగ్",state:"రాష్ట్రం",district:"జిల్లా",village:"గ్రామం",hatchery:"హ్యాచరీ",next_production:"తరువాతి ఉత్పత్తి",next_batch:"తరువాతి బ్యాచ్",salinity:"ఉప్పుతనం",price:"ధర",ehp_result:"EHP ఫలితం",book:"బుక్"}};
 
     function applyI18n(){
@@ -95,13 +96,23 @@
 
     function fillDistrict(){
       const st=sState.value;
-      if(!st){resetDropdowns(['sDistrict','sVillage','sHatchery']);return;}
-      if(st==="Tamil Nadu"||st==="తమిళనాడు"){ // Tamil Nadu direct hatchery
-        sDistrict.innerHTML="";sVillage.innerHTML="";
+      const lang=localStorage.getItem("lang")||"te";
+
+      // Reset always
+      resetDropdowns(["sDistrict","sVillage","sHatchery"]);
+
+      if(st.includes("Tamil") || st.includes("తమిళ")){
+        // Hide District + Village
+        document.querySelectorAll(".ap-only").forEach(el=>el.style.display="none");
+        // Fill hatcheries directly
         const hs=hatcheries.filter(h=>getLabel(h,"state")===st);
-        sHatchery.innerHTML=`<option value="">Select</option>`+hs.map(h=>`<option>${getLabel(h,"hatchery")}</option>`).join('');
+        sHatchery.innerHTML=`<option value="">${lang==="te"?"ఎంచుకోండి":"Select"}</option>`+
+          hs.map(h=>`<option>${getLabel(h,"hatchery")}</option>`).join('');
         return;
       }
+
+      // Show District + Village for Andhra Pradesh
+      document.querySelectorAll(".ap-only").forEach(el=>el.style.display="block");
       const ds=[...new Set(hatcheries.filter(h=>getLabel(h,"state")===st).map(h=>getLabel(h,"district")))];
       sDistrict.innerHTML='<option value="">Select</option>'+ds.map(d=>`<option>${d}</option>`).join('');
     }
