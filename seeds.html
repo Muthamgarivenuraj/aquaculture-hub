@@ -4,14 +4,6 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Seeds • Aquaculture A–Z</title>
-  <script>
-    (function(){try{
-      const t=localStorage.getItem('theme');
-      if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches)){
-        document.documentElement.classList.add('dark');
-      }
-    }catch(e){}})();
-  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config={darkMode:'class',theme:{extend:{boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'}}}}
@@ -32,11 +24,6 @@
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
       <a href="index.html" class="rounded-lg px-3 py-1.5 border border-slate-200 dark:border-slate-800">←</a>
       <h1 class="text-lg font-bold flex-1">Seed Booking</h1>
-      <div class="hidden sm:flex rounded-full bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-800">
-        <button id="langTE" class="px-3 py-1.5 text-sm rounded-full bg-white dark:bg-slate-800">తెలుగు</button>
-        <button id="langEN" class="px-3 py-1.5 text-sm rounded-full">English</button>
-      </div>
-      <button id="themeToggle" class="rounded-full px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-800">🌙/☀️</button>
     </div>
   </header>
 
@@ -48,13 +35,19 @@
           <select id="sState" class="mt-1 field w-full"></select>
         </label>
         <label class="text-sm">District
-          <select id="sDistrict" class="mt-1 field w-full"></select>
+          <select id="sDistrict" class="mt-1 field w-full">
+            <option value="">Select</option>
+          </select>
         </label>
         <label class="text-sm">Village
-          <select id="sVillage" class="mt-1 field w-full"></select>
+          <select id="sVillage" class="mt-1 field w-full">
+            <option value="">Select</option>
+          </select>
         </label>
         <label class="text-sm">Hatchery
-          <select id="sHatchery" class="mt-1 field w-full"></select>
+          <select id="sHatchery" class="mt-1 field w-full">
+            <option value="">Select</option>
+          </select>
         </label>
       </div>
 
@@ -90,32 +83,7 @@
           <input id="sPrice" type="number" class="mt-1 field w-full" readonly>
         </label>
       </div>
-
       <p class="text-sm">Bonus %: <b id="sBonus">0%</b> | Total Seeds: <b id="sTotal">0</b> | Amount: <b id="sAmount">₹ 0</b></p>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <label class="text-sm">Customer Mobile *
-          <div class="mt-1 flex gap-2">
-            <input id="custMobile" class="field w-full" maxlength="10">
-            <button id="sendOtp" class="btn btn-primary">Send OTP</button>
-          </div>
-          <div id="otpHint" class="text-xs"></div>
-        </label>
-        <label class="text-sm">Enter OTP
-          <div class="mt-1 flex gap-2">
-            <input id="otpInput" class="field w-full">
-            <button id="verifyOtp" class="btn border">Verify</button>
-          </div>
-          <div id="otpStatus" class="text-xs"></div>
-        </label>
-        <label class="text-sm">Address *
-          <div class="flex gap-2">
-            <input id="custAddress" class="field w-full">
-            <button id="locBtn" class="btn border">Use current location</button>
-          </div>
-        </label>
-      </div>
-
       <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex justify-between">
         <div>🧮 Grand Total: <b id="sGrand">₹ 0</b></div>
         <button id="finalBook" class="btn btn-primary" disabled>Finalize Booking</button>
@@ -137,41 +105,37 @@
     async function init(){
       hatcheries=await loadCSV('data/hatcheries.csv');
       const states=[...new Set(hatcheries.map(h=>h.state))];
-      const sState=document.getElementById('sState'),
-            sDistrict=document.getElementById('sDistrict'),
-            sVillage=document.getElementById('sVillage'),
-            sHatch=document.getElementById('sHatchery');
+      const sState=document.getElementById('sState');
       sState.innerHTML=states.map(s=>`<option>${s}</option>`).join('');
-      sState.onchange=()=>fillDistrict();
-      sDistrict.onchange=()=>fillVillage();
-      sVillage.onchange=()=>fillHatch();
-      sHatch.onchange=()=>showDetails();
-      fillDistrict();
-
-      document.getElementById('bookBtn').onclick=()=>{document.getElementById('bookingForm').classList.remove('hidden');updateTotals();};
-      document.getElementById('sQty').oninput=updateTotals;
+      sState.onchange=fillDistrict;
+      document.getElementById('sDistrict').onchange=fillVillage;
+      document.getElementById('sVillage').onchange=fillHatch;
+      document.getElementById('sHatchery').onchange=showDetails;
     }
 
     function fillDistrict(){
       const st=document.getElementById('sState').value;
       const ds=[...new Set(hatcheries.filter(h=>h.state===st).map(h=>h.district))];
-      document.getElementById('sDistrict').innerHTML=ds.map(d=>`<option>${d}</option>`).join('');
-      fillVillage();
+      document.getElementById('sDistrict').innerHTML='<option value="">Select</option>'+ds.map(d=>`<option>${d}</option>`).join('');
+      document.getElementById('sVillage').innerHTML='<option value="">Select</option>';
+      document.getElementById('sHatchery').innerHTML='<option value="">Select</option>';
+      document.getElementById('hatchDetails').classList.add('hidden');
     }
     function fillVillage(){
       const st=document.getElementById('sState').value;
       const d=document.getElementById('sDistrict').value;
       const vs=[...new Set(hatcheries.filter(h=>h.state===st && h.district===d).map(h=>h.village))];
-      document.getElementById('sVillage').innerHTML=vs.map(v=>`<option>${v}</option>`).join('');
-      fillHatch();
+      document.getElementById('sVillage').innerHTML='<option value="">Select</option>'+vs.map(v=>`<option>${v}</option>`).join('');
+      document.getElementById('sHatchery').innerHTML='<option value="">Select</option>';
+      document.getElementById('hatchDetails').classList.add('hidden');
     }
     function fillHatch(){
       const st=document.getElementById('sState').value;
       const d=document.getElementById('sDistrict').value;
       const v=document.getElementById('sVillage').value;
       const hs=hatcheries.filter(h=>h.state===st && h.district===d && h.village===v);
-      document.getElementById('sHatchery').innerHTML=hs.map(h=>`<option>${h.hatchery}</option>`).join('');
-      showDetails();
+      document.getElementById('sHatchery').innerHTML='<option value="">Select</option>'+hs.map(h=>`<option>${h.hatchery}</option>`).join('');
+      document.getElementById('hatchDetails').classList.add('hidden');
     }
     function showDetails(){
       const st=document.getElementById('sState').value;
