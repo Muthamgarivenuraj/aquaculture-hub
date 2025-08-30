@@ -46,11 +46,6 @@
         </label>
       </div>
     </div>
-
-    <!-- Booking Form (same as before, skip for brevity) -->
-    <div id="bookingForm" class="hidden rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border space-y-4">
-      <p>Form details here...</p>
-    </div>
   </main>
 
   <script>
@@ -98,10 +93,35 @@
     }
 
     let hatcheries=[];
+    function fillDistrict(){
+      const st=sState.value;
+      const ds=[...new Set(hatcheries.filter(h=>h.state===st).map(h=>h.district))];
+      fillDropdown("sDistrict",ds);
+      fillDropdown("sVillage",[]);
+      fillDropdown("sHatchery",[]);
+    }
+    function fillVillage(){
+      const st=sState.value,d=sDistrict.value;
+      const vs=[...new Set(hatcheries.filter(h=>h.state===st&&h.district===d).map(h=>h.village))];
+      fillDropdown("sVillage",vs);
+      fillDropdown("sHatchery",[]);
+    }
+    function fillHatchery(){
+      const st=sState.value,d=sDistrict.value,v=sVillage.value;
+      const hs=[...new Set(hatcheries.filter(h=>h.state===st&&h.district===d&&h.village===v).map(h=>h.hatchery))];
+      fillDropdown("sHatchery",hs);
+    }
+
     async function init(){
       hatcheries=await loadCSV("data/hatcheries.csv");
       const states=[...new Set(hatcheries.map(h=>h.state))];
       fillDropdown("sState",states);
+      fillDropdown("sDistrict",[]);
+      fillDropdown("sVillage",[]);
+      fillDropdown("sHatchery",[]);
+      sState.onchange=fillDistrict;
+      sDistrict.onchange=fillVillage;
+      sVillage.onchange=fillHatchery;
     }
 
     document.addEventListener("DOMContentLoaded",()=>{
