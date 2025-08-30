@@ -25,7 +25,6 @@
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
       <a href="index.html" class="rounded-lg px-3 py-1.5 border border-slate-200 dark:border-slate-800">←</a>
       <h1 class="text-lg font-bold flex-1" data-i18n="seed_title">Seed Booking</h1>
-      <!-- 🌙/☀️ Toggle -->
       <button id="themeToggle" class="rounded-full px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-800">
         🌙/☀️
       </button>
@@ -62,7 +61,6 @@
           <div><span data-i18n="ehp_result">EHP Result</span> <div id="hEhp" class="font-bold"></div></div>
         </div>
         <span id="hBonus" class="badge bg-emerald-100 text-emerald-700"></span>
-        <!-- ✅ Book button -->
         <button id="bookBtn" class="btn btn-primary mt-3" data-i18n="book">Book</button>
       </div>
     </div>
@@ -83,7 +81,10 @@
           <input id="sPrice" type="number" class="mt-1 field w-full" readonly>
         </label>
       </div>
-      <p class="text-sm"><span data-i18n="bonus">Bonus %</span>: <b id="sBonus">0%</b> | <span data-i18n="total_seeds">Total Seeds</span>: <b id="sTotal">0</b> | <span data-i18n="amount">Amount</span>: <b id="sAmount">₹ 0</b></p>
+      <p class="text-sm"><span data-i18n="bonus">Bonus %</span>: <b id="sBonus">0%</b> | 
+        <span data-i18n="total_seeds">Total Seeds</span>: <b id="sTotal">0</b> | 
+        <span data-i18n="amount">Amount</span>: <b id="sAmount">₹ 0</b>
+      </p>
 
       <!-- Customer Details -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -117,17 +118,16 @@
         <div>🧮 <span data-i18n="grand_total">Grand Total</span>: <b id="sGrand">₹ 0</b></div>
         <button id="finalBook" class="btn btn-primary" disabled data-i18n="final_book">Finalize Booking</button>
       </div>
-      <p class="text-xs text-slate-500"><span class="badge bg-amber-100 text-amber-700">Note</span> <span data-i18n="note_text">Booking requires verified mobile & address.</span></p>
+      <p class="text-xs text-slate-500">
+        <span class="badge bg-amber-100 text-amber-700">Note</span> 
+        <span data-i18n="note_text">Booking requires verified mobile & address.</span>
+      </p>
     </div>
   </main>
 
   <script>
-    // i18n
-    const dict={ 
-      en:{seed_title:"Seed Booking",state:"State",district:"District",village:"Village",hatchery:"Hatchery",next_production:"Next Production",next_batch:"Next Batch",salinity:"Salinity",price:"Price",ehp_result:"EHP Result",book:"Book",booking_date:"Booking Date",production:"Production",quantity:"Quantity (pcs)",bonus:"Bonus %",total_seeds:"Total Seeds",amount:"Amount",cust_mobile:"Customer Mobile",send_otp:"Send OTP",enter_otp:"Enter OTP",verify:"Verify",address:"Address",use_location:"Use current location",grand_total:"Grand Total",final_book:"Finalize Booking",note_text:"Booking requires verified mobile & address."},
-      te:{seed_title:"సీడ్ బుకింగ్",state:"రాష్ట్రం",district:"జిల్లా",village:"గ్రామం",hatchery:"హ్యాచరీ",next_production:"తరువాతి ఉత్పత్తి",next_batch:"తరువాతి బ్యాచ్",salinity:"ఉప్పుతనం",price:"ధర",ehp_result:"EHP ఫలితం",book:"బుక్",booking_date:"బుకింగ్ తేదీ",production:"ఉత్పత్తి",quantity:"మొత్తం (pcs)",bonus:"బోనస్ %",total_seeds:"మొత్తం సీడ్స్",amount:"మొత్తం",cust_mobile:"కస్టమర్ మొబైల్",send_otp:"OTP పంపు",enter_otp:"OTP ఎంటర్ చేయి",verify:"వెరిఫై",address:"అడ్రస్",use_location:"ప్రస్తుత లొకేషన్ వాడు",grand_total:"గ్రాండ్ టోటల్",final_book:"ఫైనల్ బుక్",note_text:"బుకింగ్‌కి వెరిఫై అయిన మొబైల్ & అడ్రస్ అవసరం."}
-    };
-
+    // i18n dict & helpers (same as your code)
+    const dict={en:{seed_title:"Seed Booking",state:"State",district:"District",village:"Village",hatchery:"Hatchery",next_production:"Next Production",next_batch:"Next Batch",salinity:"Salinity",price:"Price",ehp_result:"EHP Result",book:"Book",booking_date:"Booking Date",production:"Production",quantity:"Quantity (pcs)",bonus:"Bonus %",total_seeds:"Total Seeds",amount:"Amount",cust_mobile:"Customer Mobile",send_otp:"Send OTP",enter_otp:"Enter OTP",verify:"Verify",address:"Address",use_location:"Use current location",grand_total:"Grand Total",final_book:"Finalize Booking",note_text:"Booking requires verified mobile & address."},te:{seed_title:"సీడ్ బుకింగ్",state:"రాష్ట్రం",district:"జిల్లా",village:"గ్రామం",hatchery:"హ్యాచరీ",next_production:"తరువాతి ఉత్పత్తి",next_batch:"తరువాతి బ్యాచ్",salinity:"ఉప్పుతనం",price:"ధర",ehp_result:"EHP ఫలితం",book:"బుక్",booking_date:"బుకింగ్ తేదీ",production:"ఉత్పత్తి",quantity:"మొత్తం (pcs)",bonus:"బోనస్ %",total_seeds:"మొత్తం సీడ్స్",amount:"మొత్తం",cust_mobile:"కస్టమర్ మొబైల్",send_otp:"OTP పంపు",enter_otp:"OTP ఎంటర్ చేయి",verify:"వెరిఫై",address:"అడ్రస్",use_location:"ప్రస్తుత లొకేషన్ వాడు",grand_total:"గ్రాండ్ టోటల్",final_book:"ఫైనల్ బుక్",note_text:"బుకింగ్‌కి వెరిఫై అయిన మొబైల్ & అడ్రస్ అవసరం."}};
     function applyI18n(){const lang=localStorage.getItem('lang')||'te';document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(dict[lang][k]) el.textContent=dict[lang][k];});}
     function getLabel(obj,key){const lang=localStorage.getItem("lang")||"te";return lang==="te"?obj[key+"_te"]:obj[key+"_en"];}
 
@@ -137,20 +137,17 @@
 
     function fillStates(){const lang=localStorage.getItem("lang")||"te";const states=[...new Set(hatcheries.map(h=>getLabel(h,"state")))];sState.innerHTML=`<option value="">${lang==="te"?"ఎంచుకోండి":"Select"}</option>`+states.map(st=>`<option>${st}</option>`).join('');}
 
-    function fillDistrict(){
-      const st=sState.value,lang=localStorage.getItem("lang")||"te";resetDropdowns(["sDistrict","sVillage","sHatchery"]);
-      if(st.includes("Tamil")||st.includes("తమిళ")){document.querySelectorAll(".ap-only").forEach(el=>el.style.display="none");const hs=hatcheries.filter(h=>getLabel(h,"state")===st);sHatchery.innerHTML=`<option value="">${lang==="te"?"ఎంచుకోండి":"Select"}</option>`+hs.map(h=>`<option>${getLabel(h,"hatchery")}</option>`).join('');return;}
-      document.querySelectorAll(".ap-only").forEach(el=>el.style.display="block");const ds=[...new Set(hatcheries.filter(h=>getLabel(h,"state")===st).map(h=>getLabel(h,"district")))];sDistrict.innerHTML='<option value="">Select</option>'+ds.map(d=>`<option>${d}</option>`).join('');
-    }
+    function fillDistrict(){const st=sState.value,lang=localStorage.getItem("lang")||"te";resetDropdowns(["sDistrict","sVillage","sHatchery"]);if(st.includes("Tamil")||st.includes("తమిళ")){document.querySelectorAll(".ap-only").forEach(el=>el.style.display="none");const hs=hatcheries.filter(h=>getLabel(h,"state")===st);sHatchery.innerHTML=`<option value="">${lang==="te"?"ఎంచుకోండి":"Select"}</option>`+hs.map(h=>`<option>${getLabel(h,"hatchery")}</option>`).join('');return;}document.querySelectorAll(".ap-only").forEach(el=>el.style.display="block");const ds=[...new Set(hatcheries.filter(h=>getLabel(h,"state")===st).map(h=>getLabel(h,"district")))];sDistrict.innerHTML='<option value="">Select</option>'+ds.map(d=>`<option>${d}</option>`).join('');}
 
     function fillVillage(){const st=sState.value,d=sDistrict.value;if(!d){resetDropdowns(['sVillage','sHatchery']);return;}const vs=[...new Set(hatcheries.filter(h=>getLabel(h,"state")===st&&getLabel(h,"district")===d).map(h=>getLabel(h,"village")))];sVillage.innerHTML='<option value="">Select</option>'+vs.map(v=>`<option>${v}</option>`).join('');}
     function fillHatch(){const st=sState.value,d=sDistrict.value,v=sVillage.value;const hs=hatcheries.filter(h=>getLabel(h,"state")===st&&(!d||getLabel(h,"district")===d)&&(!v||getLabel(h,"village")===v));sHatchery.innerHTML='<option value="">Select</option>'+hs.map(h=>`<option>${getLabel(h,"hatchery")}</option>`).join('');}
 
-    function showDetails(){const st=sState.value,d=sDistrict.value,v=sVillage.value,h=sHatchery.value;const x=hatcheries.find(x=>getLabel(x,"state")===st&&getLabel(x,"hatchery")===h&&(!d||getLabel(x,"district")===d)&&(!v||getLabel(x,"village")===v));if(!x)return;hatchDetails.classList.remove("hidden");hName.textContent=getLabel(x,"hatchery");hLoc.textContent=`${getLabel(x,"district")||""}, ${getLabel(x,"village")||""}`;hProd.textContent=x.next_production;hBatch.textContent=x.next_batch;hSalinity.textContent=x.salinity;hPrice.textContent="₹ "+x.price;hEhp.textContent=x.ehp_result;hBonus.textContent=`Bonus — ${x.bonus}%`;sPrice.value=x.price;sBatch.value=x.next_batch;sBonus.textContent=`${x.bonus}%`;bookBtn.onclick=()=>{bookingForm.classList.remove("hidden");};}
+    function showDetails(){const st=sState.value,d=sDistrict.value,v=sVillage.value,h=sHatchery.value;const x=hatcheries.find(x=>getLabel(x,"state")===st&&getLabel(x,"hatchery")===h&&(!d||getLabel(x,"district")===d)&&(!v||getLabel(x,"village")===v));if(!x)return;hatchDetails.classList.remove("hidden");hName.textContent=getLabel(x,"hatchery");hLoc.textContent=`${getLabel(x,"district")||""}, ${getLabel(x,"village")||""}`;hProd.textContent=x.next_production;hBatch.textContent=x.next_batch;hSalinity.textContent=x.salinity;hPrice.textContent="₹ "+x.price;hEhp.textContent=x.ehp_result;hBonus.textContent=`Bonus — ${x.bonus}%`;sPrice.value=x.price;sBatch.value=x.next_batch;sBonus.textContent=`${x.bonus}%`;bookBtn.onclick=()=>{bookingForm.classList.remove("hidden");updateTotals();};}
 
+    function updateTotals(){const qty=+sQty.value||0,price=+sPrice.value||0,bonus=parseInt(sBonus.textContent)||0;const total=qty+Math.floor(qty*bonus/100);const amt=qty*price;sTotal.textContent=total.toLocaleString('en-IN');sAmount.textContent="₹ "+amt.toLocaleString('en-IN');sGrand.textContent="₹ "+amt.toLocaleString('en-IN');validateForm();return {total,amt};}
     function resetDropdowns(ids){ids.forEach(id=>document.getElementById(id).innerHTML='<option value="">Select</option>');hatchDetails.classList.add('hidden');bookingForm.classList.add('hidden');}
 
-    // OTP flow
+    // OTP + validation (same as before)
     const validMobile=n=>/^[6-9]\d{9}$/.test(n||'');
     sendOtp?.addEventListener("click",()=>{if(!validMobile(custMobile.value)){otpHint.textContent="❌ Invalid mobile";return;}currentOTP=(''+Math.floor(100000+Math.random()*900000));otpOk=false;otpInput.value='';otpStatus.textContent='';otpHint.innerHTML="OTP (demo): <b>"+currentOTP+"</b>";left=30;sendOtp.disabled=true;sendOtp.textContent=`${left}s`;resendTimer&&clearInterval(resendTimer);resendTimer=setInterval(()=>{left--;sendOtp.textContent=`${left}s`;if(left<=0){clearInterval(resendTimer);sendOtp.disabled=false;sendOtp.textContent="Resend OTP";}},1000);validateForm();});
     verifyOtp?.addEventListener("click",()=>{if(otpInput.value===currentOTP&&currentOTP){otpOk=true;otpStatus.textContent="✔ Verified";otpStatus.className='text-xs text-emerald-600';}else{otpOk=false;otpStatus.textContent="❌ Wrong OTP";otpStatus.className='text-xs text-rose-600';}validateForm();});
@@ -159,12 +156,13 @@
     function validateForm(){const okMobile=validMobile(custMobile.value)&&otpOk,okAddr=(custAddress.value||'').trim().length>0;finalBook.disabled=!(okMobile&&okAddr);}
     custMobile?.addEventListener("input",()=>{otpOk=false;otpStatus.textContent='';validateForm();});
     custAddress?.addEventListener("input",validateForm);
-    finalBook?.addEventListener("click",()=>{if(finalBook.disabled)return;alert("✅ Seeds booking confirmed!");});
+
+    finalBook?.addEventListener("click",()=>{if(finalBook.disabled)return;const {total,amt}=updateTotals();alert(`✅ Seeds booking confirmed!\n🌱 Total Seeds: ${total}\n💰 Amount: ₹${amt.toLocaleString('en-IN')}`);});
 
     document.addEventListener("DOMContentLoaded",async()=>{if(localStorage.getItem("theme")==="dark"){document.documentElement.classList.add("dark");}
       document.getElementById("themeToggle").onclick=()=>{document.documentElement.classList.toggle("dark");localStorage.setItem("theme",document.documentElement.classList.contains("dark")?"dark":"light");};
       if(!localStorage.getItem("lang")) localStorage.setItem("lang","te");applyI18n();
-      hatcheries=await loadCSV("data/hatcheries.csv");fillStates();sState.onchange=fillDistrict;sDistrict.onchange=fillVillage;sVillage.onchange=fillHatch;sHatchery.onchange=showDetails;
+      hatcheries=await loadCSV("data/hatcheries.csv");fillStates();sState.onchange=fillDistrict;sDistrict.onchange=fillVillage;sVillage.onchange=fillHatch;sHatchery.onchange=showDetails;sQty.addEventListener("input",updateTotals);
     });
   </script>
 </body>
