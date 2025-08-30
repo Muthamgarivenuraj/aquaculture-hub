@@ -24,7 +24,7 @@
   <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
       <a href="index.html" class="rounded-lg px-3 py-1.5 border border-slate-200 dark:border-slate-800">←</a>
-      <h1 class="text-lg font-bold flex-1" data-i18n="feed_title">Feed Dealers</h1>
+      <h1 class="text-lg font-bold flex-1">Feed Dealers</h1>
       <button id="themeToggle" class="rounded-full px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-800">
         🌙/☀️
       </button>
@@ -35,13 +35,13 @@
     <!-- Selectors -->
     <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border space-y-4">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <label class="text-sm"><span data-i18n="state">State</span>
+        <label class="text-sm">State
           <select id="sState" class="mt-1 field w-full"><option value="">Select</option></select>
         </label>
-        <label class="text-sm"><span data-i18n="district">District</span>
+        <label class="text-sm">District
           <select id="sDistrict" class="mt-1 field w-full"><option value="">Select</option></select>
         </label>
-        <label class="text-sm"><span data-i18n="dealer">Dealer</span>
+        <label class="text-sm">Dealer
           <select id="sDealer" class="mt-1 field w-full"><option value="">Select</option></select>
         </label>
       </div>
@@ -51,16 +51,15 @@
         <h2 id="dName" class="font-bold text-lg"></h2>
         <p id="dLoc" class="text-sm"></p>
         <p><b>Company:</b> <span id="dCompany"></span></p>
-        <p>Cash Price: ₹ <span id="dCash"></span> | Credit Price: ₹ <span id="dCredit"></span></p>
         <p>📞 <span id="dPhone"></span></p>
-        <button id="bookBtn" class="btn btn-primary mt-3" data-i18n="book">Book</button>
+        <button id="bookBtn" class="btn btn-primary mt-3">Book</button>
       </div>
     </div>
 
     <!-- Booking Form -->
     <div id="bookingForm" class="hidden rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border space-y-4">
       <!-- Feed selection -->
-      <label class="text-sm">Feed
+      <label class="text-sm">Feed Company
         <select id="feedType" class="mt-1 field w-full">
           <option value="">Select Feed</option>
           <option value="Avanthi">Avanthi</option>
@@ -68,6 +67,29 @@
           <option value="Growel">Growel</option>
         </select>
       </label>
+
+      <!-- Payment type -->
+      <div class="flex gap-4 mt-2">
+        <label><input type="radio" name="payType" value="cash" checked> Spot Cash</label>
+        <label><input type="radio" name="payType" value="credit"> Credit (Appu)</label>
+      </div>
+
+      <!-- Quantity -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+        <label class="text-sm">Quantity Type
+          <select id="qtyType" class="mt-1 field w-full">
+            <option value="">Select</option>
+            <option value="bag">Bags</option>
+            <option value="ton">Tons</option>
+          </select>
+        </label>
+        <label class="text-sm">Quantity
+          <input id="qty" type="number" value="0" class="mt-1 field w-full">
+        </label>
+        <label class="text-sm">Feed Cost
+          <input id="fCost" type="text" class="mt-1 field w-full" readonly>
+        </label>
+      </div>
 
       <!-- Transport -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -104,53 +126,51 @@
   </main>
 
   <script>
-    // i18n labels
-    const dict={en:{feed_title:"Feed Dealers",state:"State",district:"District",dealer:"Dealer",book:"Book"},
-                te:{feed_title:"ఫీడ్ డీలర్లు",state:"రాష్ట్రం",district:"జిల్లా",dealer:"డీలర్",book:"బుక్"}};
-
-    function applyI18n(){
-      const lang=localStorage.getItem("lang")||"te";
-      document.querySelectorAll("[data-i18n]").forEach(el=>{
-        const k=el.dataset.i18n;if(dict[lang][k])el.textContent=dict[lang][k];
-      });
-    }
-
-    // Sample dealer data
     const dealers=[
-      {state_en:"Andhra Pradesh",state_te:"ఆంధ్ర ప్రదేశ్",district_en:"Nellore",district_te:"నెల్లూరు",
-       dealer_en:"Venu Aqua",dealer_te:"వేణు ఆక్వా",company:"Avanthi",cash_price:1150,credit_price:1200,phone:"9963643062"},
-      {state_en:"Andhra Pradesh",state_te:"ఆంధ్ర ప్రదేశ్",district_en:"Nellore",district_te:"నెల్లూరు",
-       dealer_en:"Suresh Aqua",dealer_te:"సురేష్ ఆక్వా",company:"CP",cash_price:1180,credit_price:1230,phone:"9876543210"},
+      {state_en:"Andhra Pradesh",district_en:"Nellore",dealer_en:"Venu Aqua",company:"Avanthi",phone:"9963643062"},
+      {state_en:"Andhra Pradesh",district_en:"Nellore",dealer_en:"Suresh Aqua",company:"CP",phone:"9876543210"},
     ];
 
-    function getLabel(obj,key){const lang=localStorage.getItem("lang")||"te";return lang==="te"?obj[key+"_te"]:obj[key+"_en"];}
-
     function fillStates(){
-      const states=[...new Set(dealers.map(d=>getLabel(d,"state")))];
+      const states=[...new Set(dealers.map(d=>d.state_en))];
       sState.innerHTML='<option value="">Select</option>'+states.map(s=>`<option>${s}</option>`).join('');
     }
     function fillDistrict(){
       const st=sState.value;if(!st){sDistrict.innerHTML='<option value="">Select</option>';return;}
-      const ds=[...new Set(dealers.filter(d=>getLabel(d,"state")===st).map(d=>getLabel(d,"district")))];
+      const ds=[...new Set(dealers.filter(d=>d.state_en===st).map(d=>d.district_en))];
       sDistrict.innerHTML='<option value="">Select</option>'+ds.map(d=>`<option>${d}</option>`).join('');
     }
     function fillDealer(){
       const st=sState.value,d=sDistrict.value;if(!d){sDealer.innerHTML='<option value="">Select</option>';return;}
-      const list=dealers.filter(x=>getLabel(x,"state")===st && getLabel(x,"district")===d);
-      sDealer.innerHTML='<option value="">Select</option>'+list.map(x=>`<option>${getLabel(x,"dealer")}</option>`).join('');
+      const list=dealers.filter(x=>x.state_en===st && x.district_en===d);
+      sDealer.innerHTML='<option value="">Select</option>'+list.map(x=>`<option>${x.dealer_en}</option>`).join('');
     }
     function showDealer(){
       const st=sState.value,d=sDistrict.value,name=sDealer.value;
-      const x=dealers.find(x=>getLabel(x,"state")===st&&getLabel(x,"district")===d&&getLabel(x,"dealer")===name);
+      const x=dealers.find(x=>x.state_en===st&&x.district_en===d&&x.dealer_en===name);
       if(!x)return;
       dealerDetails.classList.remove("hidden");
-      dName.textContent=getLabel(x,"dealer");
-      dLoc.textContent=`${getLabel(x,"district")}, ${getLabel(x,"state")}`;
+      dName.textContent=x.dealer_en;
+      dLoc.textContent=`${x.district_en}, ${x.state_en}`;
       dCompany.textContent=x.company;
-      dCash.textContent=x.cash_price;
-      dCredit.textContent=x.credit_price;
       dPhone.textContent=x.phone;
       bookBtn.onclick=()=>bookingForm.classList.remove("hidden");
+    }
+
+    function calcFeedCost(){
+      const qty=+qty.value||0;
+      const type=document.querySelector('input[name="payType"]:checked').value;
+      const unit=qtyType.value;
+      let cost=0;
+      if(type==="cash"){
+        if(unit==="bag") cost=qty*2100;
+        if(unit==="ton") cost=qty*84000;
+      }else{
+        if(unit==="bag") cost=qty*2250;
+        if(unit==="ton") cost=qty*90000;
+      }
+      fCost.value="₹ "+cost;
+      return cost;
     }
 
     function updateTransport(){
@@ -159,21 +179,20 @@
       updateGrand();
     }
     function updateGrand(){
-      const feedPrice=0; // future: add qty*price
+      const feed=calcFeedCost();
       const t=+(distance.value||0)*+(vehicle.value||0);
-      grandTotal.textContent="₹ "+(feedPrice+t);
+      grandTotal.textContent="₹ "+(feed+t);
       finalBook.disabled=false;
     }
 
     finalBook.onclick=()=>{alert("✅ Feed booking confirmed!");};
 
-    // Init
     document.addEventListener("DOMContentLoaded",()=>{
       if(localStorage.getItem("theme")==="dark"){document.documentElement.classList.add("dark");}
       themeToggle.onclick=()=>{document.documentElement.classList.toggle("dark");localStorage.setItem("theme",document.documentElement.classList.contains("dark")?"dark":"light");};
-      if(!localStorage.getItem("lang"))localStorage.setItem("lang","te");applyI18n();
       fillStates();
       sState.onchange=fillDistrict;sDistrict.onchange=fillDealer;sDealer.onchange=showDealer;
+      qty.oninput=updateGrand;qtyType.onchange=updateGrand;document.querySelectorAll('input[name="payType"]').forEach(r=>r.onchange=updateGrand);
       vehicle.onchange=updateTransport;distance.oninput=updateTransport;
     });
   </script>
