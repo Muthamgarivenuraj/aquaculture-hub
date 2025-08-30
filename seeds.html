@@ -115,35 +115,94 @@
   </main>
 
   <script>
-    // -------- i18n dict (same as index/harvest) --------
-    const dict={ en:{seed_title:"Seed Booking",state:"State",district:"District",village:"Village",hatchery:"Hatchery",next_production:"Next Production",next_batch:"Next Batch",salinity:"Salinity",price:"Price",ehp_result:"EHP Result",book:"Book",booking_date:"Booking Date",production:"Production",quantity:"Quantity (pcs)",bonus:"Bonus %",total_seeds:"Total Seeds",amount:"Amount",cust_mobile:"Customer Mobile",send_otp:"Send OTP",enter_otp:"Enter OTP",verify:"Verify",address:"Address",use_location:"Use current location",grand_total:"Grand Total",final_book:"Finalize Booking",note_text:"Booking requires verified mobile & address."}, te:{seed_title:"సీడ్ బుకింగ్",state:"రాష్ట్రం",district:"జిల్లా",village:"గ్రామం",hatchery:"హ్యాచరీ",next_production:"తరువాతి ఉత్పత్తి",next_batch:"తరువాతి బ్యాచ్",salinity:"ఉప్పుతనం",price:"ధర",ehp_result:"EHP ఫలితం",book:"బుక్",booking_date:"బుకింగ్ తేదీ",production:"ఉత్పత్తి",quantity:"మొత్తం (pcs)",bonus:"బోనస్ %",total_seeds:"మొత్తం సీడ్స్",amount:"మొత్తం",cust_mobile:"కస్టమర్ మొబైల్",send_otp:"OTP పంపు",enter_otp:"OTP ఎంటర్ చేయి",verify:"వెరిఫై",address:"అడ్రస్",use_location:"ప్రస్తుత లొకేషన్ వాడు",grand_total:"గ్రాండ్ టోటల్",final_book:"ఫైనల్ బుక్",note_text:"బుకింగ్‌కి వెరిఫై అయిన మొబైల్ & అడ్రస్ అవసరం."} };
+    // i18n dict
+    const dict={
+      en:{seed_title:"Seed Booking",state:"State",district:"District",village:"Village",hatchery:"Hatchery",next_production:"Next Production",next_batch:"Next Batch",salinity:"Salinity",price:"Price",ehp_result:"EHP Result",book:"Book",booking_date:"Booking Date",production:"Production",quantity:"Quantity (pcs)",bonus:"Bonus %",total_seeds:"Total Seeds",amount:"Amount",cust_mobile:"Customer Mobile",send_otp:"Send OTP",enter_otp:"Enter OTP",verify:"Verify",address:"Address",use_location:"Use current location",grand_total:"Grand Total",final_book:"Finalize Booking",note_text:"Booking requires verified mobile & address.",select:"Select"},
+      te:{seed_title:"సీడ్స్ బుకింగ్",state:"రాష్ట్రం",district:"జిల్లా",village:"గ్రామం",hatchery:"హ్యాచరీ",next_production:"తరువాతి ఉత్పత్తి",next_batch:"తరువాతి బ్యాచ్",salinity:"ఉప్పుతనం",price:"ధర",ehp_result:"EHP ఫలితం",book:"బుక్",booking_date:"బుకింగ్ తేదీ",production:"ఉత్పత్తి",quantity:"పరిమాణం (pcs)",bonus:"బోనస్ %",total_seeds:"మొత్తం సీడ్స్",amount:"మొత్తం ధర",cust_mobile:"కస్టమర్ మొబైల్",send_otp:"OTP పంపు",enter_otp:"OTP ఎంటర్ చేయి",verify:"వెరిఫై",address:"అడ్రస్",use_location:"ప్రస్తుత లొకేషన్ వాడు",grand_total:"గ్రాండ్ టోటల్",final_book:"ఫైనల్ బుక్",note_text:"బుకింగ్‌కి వెరిఫై అయిన మొబైల్ & అడ్రస్ అవసరం.",select:"ఎంచుకోండి"}
+    };
 
-    function applyI18n(){const lang=localStorage.getItem('lang')||'te';document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(dict[lang][k]) el.textContent=dict[lang][k];});}
+    function applyI18n(){
+      const lang=localStorage.getItem('lang')||'te';
+      document.documentElement.lang=lang;
+      document.querySelectorAll('[data-i18n]').forEach(el=>{
+        const k=el.dataset.i18n; if(dict[lang][k]) el.textContent=dict[lang][k];
+      });
+      // Update first option of selects
+      document.querySelectorAll("select").forEach(sel=>{
+        if(sel.options.length && sel.options[0].value===""){
+          sel.options[0].text=dict[lang].select;
+        }
+      });
+    }
 
-    // Auto theme + lang from localStorage
-    (function(){ if(localStorage.getItem('theme')==='dark'){document.documentElement.classList.add('dark');} applyI18n(); })();
+    // Dark mode persist
+    (function(){
+      if(localStorage.getItem('theme')==='dark'){
+        document.documentElement.classList.add('dark');
+      }
+      applyI18n();
+    })();
 
-    // ---- Seeds Booking Logic (same as before) ----
+    // Existing logic (CSV + OTP + Booking)
     let hatcheries=[],currentOTP=null,otpOk=false,resendTimer=null,left=0;
-    async function loadCSV(path){const res=await fetch(path);const txt=await res.text();return txt.trim().split('\n').slice(1).map(r=>{const [id,state,district,village,hatchery,salinity,price,bonus,next_production,next_batch,ehp]=r.split(',');return {state,district,village,hatchery,salinity,price:+price,bonus:+bonus,next_production,next_batch,ehp_result:ehp};});}
-    async function init(){hatcheries=await loadCSV('data/hatcheries.csv');const states=[...new Set(hatcheries.map(h=>h.state))];sState.innerHTML='<option value="">Select</option>'+states.map(s=>`<option>${s}</option>`).join('');sState.onchange=fillDistrict;sDistrict.onchange=fillVillage;sVillage.onchange=fillHatch;sHatchery.onchange=showDetails;sQty.addEventListener('input',updateTotals);}
-    function fillDistrict(){const st=sState.value;if(!st){resetDropdowns(['sDistrict','sVillage','sHatchery']);return;}const ds=[...new Set(hatcheries.filter(h=>h.state===st).map(h=>h.district))];sDistrict.innerHTML='<option value="">Select</option>'+ds.map(d=>`<option>${d}</option>`).join('');resetDropdowns(['sVillage','sHatchery']);}
-    function fillVillage(){const st=sState.value,d=sDistrict.value;if(!d){resetDropdowns(['sVillage','sHatchery']);return;}const vs=[...new Set(hatcheries.filter(h=>h.state===st&&h.district===d).map(h=>h.village))];sVillage.innerHTML='<option value="">Select</option>'+vs.map(v=>`<option>${v}</option>`).join('');resetDropdowns(['sHatchery']);}
-    function fillHatch(){const st=sState.value,d=sDistrict.value,v=sVillage.value;if(!v){resetDropdowns(['sHatchery']);return;}const hs=hatcheries.filter(h=>h.state===st&&h.district===d&&h.village===v);sHatchery.innerHTML='<option value="">Select</option>'+hs.map(h=>`<option>${h.hatchery}</option>`).join('');}
-    function showDetails(){const st=sState.value,d=sDistrict.value,v=sVillage.value,h=sHatchery.value;const x=hatcheries.find(x=>x.state===st&&x.district===d&&x.village===v&&x.hatchery===h);if(!x)return;hatchDetails.classList.remove('hidden');hName.textContent=x.hatchery;hLoc.textContent=`${x.district}, ${x.village}`;hProd.textContent=x.next_production;hBatch.textContent=x.next_batch;hSalinity.textContent=x.salinity;hPrice.textContent="₹ "+x.price;hEhp.textContent=x.ehp_result;hBonus.textContent=`Bonus — ${x.bonus}%`;sPrice.value=x.price;sBatch.value=x.next_batch;sBonus.textContent=`${x.bonus}%`;bookBtn.onclick=()=>{bookingForm.classList.remove('hidden');updateTotals();};}
-    function updateTotals(){const qty=+sQty.value||0,price=+sPrice.value||0,bonus=parseInt(sBonus.textContent)||0;const total=qty+Math.floor(qty*bonus/100);const amt=qty*price;sTotal.textContent=total.toLocaleString('en-IN');sAmount.textContent="₹ "+amt.toLocaleString('en-IN');sGrand.textContent="₹ "+amt.toLocaleString('en-IN');validateForm();}
-    function resetDropdowns(ids){ids.forEach(id=>document.getElementById(id).innerHTML='<option value="">Select</option>');hatchDetails.classList.add('hidden');bookingForm.classList.add('hidden');}
+    async function loadCSV(path){
+      const res=await fetch(path); const txt=await res.text();
+      return txt.trim().split('\n').slice(1).map(r=>{
+        const [id,state,district,village,hatchery,salinity,price,bonus,next_production,next_batch,ehp]=r.split(',');
+        return {state,district,village,hatchery,salinity,price:+price,bonus:+bonus,next_production,next_batch,ehp_result:ehp};
+      });
+    }
+    async function init(){
+      hatcheries=await loadCSV('data/hatcheries.csv');
+      const states=[...new Set(hatcheries.map(h=>h.state))];
+      sState.innerHTML='<option value="">'+dict[localStorage.getItem("lang")||"te"].select+'</option>'+states.map(s=>`<option>${s}</option>`).join('');
+      sState.onchange=fillDistrict; sDistrict.onchange=fillVillage; sVillage.onchange=fillHatch; sHatchery.onchange=showDetails;
+      sQty.addEventListener('input',updateTotals);
+    }
+    function fillDistrict(){const st=sState.value;if(!st){resetDropdowns(['sDistrict','sVillage','sHatchery']);return;}
+      const ds=[...new Set(hatcheries.filter(h=>h.state===st).map(h=>h.district))];
+      sDistrict.innerHTML='<option value="">'+dict[localStorage.getItem("lang")||"te"].select+'</option>'+ds.map(d=>`<option>${d}</option>`).join('');
+      resetDropdowns(['sVillage','sHatchery']);}
+    function fillVillage(){const st=sState.value,d=sDistrict.value;if(!d){resetDropdowns(['sVillage','sHatchery']);return;}
+      const vs=[...new Set(hatcheries.filter(h=>h.state===st&&h.district===d).map(h=>h.village))];
+      sVillage.innerHTML='<option value="">'+dict[localStorage.getItem("lang")||"te"].select+'</option>'+vs.map(v=>`<option>${v}</option>`).join('');
+      resetDropdowns(['sHatchery']);}
+    function fillHatch(){const st=sState.value,d=sDistrict.value,v=sVillage.value;if(!v){resetDropdowns(['sHatchery']);return;}
+      const hs=hatcheries.filter(h=>h.state===st&&h.district===d&&h.village===v);
+      sHatchery.innerHTML='<option value="">'+dict[localStorage.getItem("lang")||"te"].select+'</option>'+hs.map(h=>`<option>${h.hatchery}</option>`).join('');}
+    function showDetails(){const st=sState.value,d=sDistrict.value,v=sVillage.value,h=sHatchery.value;
+      const x=hatcheries.find(x=>x.state===st&&x.district===d&&x.village===v&&x.hatchery===h);
+      if(!x)return; hatchDetails.classList.remove('hidden');
+      hName.textContent=x.hatchery; hLoc.textContent=`${x.district}, ${x.village}`;
+      hProd.textContent=x.next_production; hBatch.textContent=x.next_batch;
+      hSalinity.textContent=x.salinity; hPrice.textContent="₹ "+x.price; hEhp.textContent=x.ehp_result;
+      hBonus.textContent=`Bonus — ${x.bonus}%`;
+      sPrice.value=x.price; sBatch.value=x.next_batch; sBonus.textContent=`${x.bonus}%`;
+      bookBtn.onclick=()=>{bookingForm.classList.remove('hidden');updateTotals();};}
+    function updateTotals(){const qty=+sQty.value||0,price=+sPrice.value||0,bonus=parseInt(sBonus.textContent)||0;
+      const total=qty+Math.floor(qty*bonus/100);const amt=qty*price;
+      sTotal.textContent=total.toLocaleString('en-IN');sAmount.textContent="₹ "+amt.toLocaleString('en-IN');sGrand.textContent="₹ "+amt.toLocaleString('en-IN');
+      validateForm();}
+    function resetDropdowns(ids){ids.forEach(id=>document.getElementById(id).innerHTML='<option value="">'+dict[localStorage.getItem("lang")||"te"].select+'</option>');
+      hatchDetails.classList.add('hidden');bookingForm.classList.add('hidden');}
 
-    // OTP + Address validation
+    // OTP + Address
     const validMobile=n=>/^[6-9]\d{9}$/.test(n||'');
-    sendOtp.onclick=()=>{if(!validMobile(custMobile.value)){otpHint.textContent="❌ Invalid mobile";return;}currentOTP=(''+Math.floor(100000+Math.random()*900000));otpOk=false;otpInput.value='';otpStatus.textContent='';otpHint.innerHTML="OTP (demo): <b>"+currentOTP+"</b>";left=30;sendOtp.disabled=true;sendOtp.textContent=`${left}s`;resendTimer&&clearInterval(resendTimer);resendTimer=setInterval(()=>{left--;sendOtp.textContent=`${left}s`;if(left<=0){clearInterval(resendTimer);sendOtp.disabled=false;sendOtp.textContent="Resend OTP";}},1000);validateForm();};
-    verifyOtp.onclick=()=>{if(otpInput.value===currentOTP&&currentOTP){otpOk=true;otpStatus.textContent="✔ Verified";otpStatus.className='text-xs text-emerald-600';}else{otpOk=false;otpStatus.textContent="❌ Wrong OTP";otpStatus.className='text-xs text-rose-600';}validateForm();};
+    sendOtp.onclick=()=>{if(!validMobile(custMobile.value)){otpHint.textContent="❌ Invalid mobile";return;}
+      currentOTP=(''+Math.floor(100000+Math.random()*900000));otpOk=false;otpInput.value='';otpStatus.textContent='';
+      otpHint.innerHTML="OTP (demo): <b>"+currentOTP+"</b>";left=30;sendOtp.disabled=true;sendOtp.textContent=`${left}s`;
+      resendTimer&&clearInterval(resendTimer);resendTimer=setInterval(()=>{left--;sendOtp.textContent=`${left}s`;
+      if(left<=0){clearInterval(resendTimer);sendOtp.disabled=false;sendOtp.textContent="Resend OTP";}},1000);validateForm();};
+    verifyOtp.onclick=()=>{if(otpInput.value===currentOTP&&currentOTP){otpOk=true;otpStatus.textContent="✔ Verified";otpStatus.className='text-xs text-emerald-600';}
+      else{otpOk=false;otpStatus.textContent="❌ Wrong OTP";otpStatus.className='text-xs text-rose-600';}
+      validateForm();};
     locBtn.onclick=(e)=>{e.preventDefault();navigator.geolocation?.getCurrentPosition(pos=>{custAddress.value=`Lat:${pos.coords.latitude.toFixed(4)}, Lng:${pos.coords.longitude.toFixed(4)}`;validateForm();});};
     function validateForm(){const okMobile=validMobile(custMobile.value)&&otpOk,okAddr=(custAddress.value||'').trim().length>0;finalBook.disabled=!(okMobile&&okAddr);}
     custMobile.oninput=()=>{otpOk=false;otpStatus.textContent='';validateForm();};
     custAddress.oninput=validateForm;
     finalBook.onclick=()=>{if(finalBook.disabled)return;alert("✅ Seeds booking confirmed!");};
-    init();
+
+    document.addEventListener("DOMContentLoaded",()=>{init();});
   </script>
 </body>
 </html>
