@@ -1,317 +1,96 @@
 <!DOCTYPE html>
 <html lang="te">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Aquaculture A–Z • Vendors & Culture</title>
-  <meta name="description" content="Vendors directory with category & district filters and prawn culture guides. TE/EN + dark mode." />
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Vendors • Aquaculture A–Z</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
-      darkMode:'class',
-      theme:{ extend:{ boxShadow:{soft:'0 12px 28px rgba(2,6,23,.08)'} } }
+      darkMode: 'class',
+      theme: { extend: { boxShadow: { soft: '0 12px 28px rgba(2,6,23,.08)' } } }
     }
   </script>
   <style>
-    html{scroll-behavior:smooth}
-    body{background: linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#f0fdf4 100%)}
-    .dark body{background: linear-gradient(135deg,#0f172a 0%,#082f49 50%,#14532d 100%)}
+    body {background:linear-gradient(135deg,#dbeafe 0%,#e0f2fe 50%,#f0fdf4 100%)}
+    .dark body {background:linear-gradient(135deg,#0f172a 0%,#082f49 50%,#14532d 100%)}
+    .btn {padding:1rem 1.5rem; border-radius:.75rem; font-weight:600; display:flex; align-items:center; justify-content:center; gap:.5rem;}
+    .btn-primary {background:#059669;color:#fff;}
+    .btn-primary:hover {opacity:0.9;}
   </style>
 </head>
-<body class="text-slate-900 dark:text-slate-100 overflow-x-hidden">
-  <!-- Top Bar -->
+<body class="text-slate-900 dark:text-slate-100">
+  <!-- Header -->
   <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
-      <div class="h-9 w-9 rounded-xl overflow-hidden shadow-soft">
-        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" class="h-full w-full" aria-hidden="true">
-          <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#34d399"/></linearGradient></defs>
-          <rect rx="14" ry="14" width="64" height="64" fill="url(#g1)"/>
-          <g fill="#fff" opacity="0.95"><path d="M46 20c-6-2-13 1-17 6-4 5-5 12-1 16 4 4 10 3 14-1 3-3 4-7 3-11-4 1-8 0-11-2 4-1 8-2 12-8z"/><circle cx="42" cy="24" r="2"/></g>
-        </svg>
-      </div>
-      <div>
-        <h1 class="text-lg font-bold" data-i18n="title"></h1>
-        <p class="text-xs text-slate-500" data-i18n="subtitle"></p>
-      </div>
-      <div class="ml-auto flex items-center gap-2">
-        <div class="flex rounded-full bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-800">
-          <button id="langTE" class="px-3 py-1.5 text-sm rounded-full bg-white dark:bg-slate-800 shadow-soft">తెలుగు</button>
-          <button id="langEN" class="px-3 py-1.5 text-sm rounded-full">English</button>
-        </div>
-        <button id="themeToggle" class="rounded-full px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-800">🌙/☀️</button>
-        <a href="./index.html" class="px-3 py-1.5 text-sm rounded-full border border-slate-200 dark:border-slate-800">← <span data-i18n="back_home"></span></a>
-      </div>
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
+      <a href="index.html" class="rounded-lg px-3 py-1.5 border border-slate-200 dark:border-slate-800">←</a>
+      <h1 class="text-lg font-bold flex-1" data-i18n="vendors_title">Vendors</h1>
+      <button id="themeToggle" class="rounded-full px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-800">🌙/☀️</button>
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto p-4 space-y-4">
-    <!-- Toggle + Filters -->
-    <div class="flex flex-wrap items-center gap-2">
-      <div class="inline-flex rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
-        <button id="btnVendors" class="px-4 py-2 text-sm bg-emerald-600 text-white"><span data-i18n="vendors"></span></button>
-        <button id="btnCulture" class="px-4 py-2 text-sm bg-white dark:bg-slate-900"><span data-i18n="culture"></span></button>
-      </div>
-
-      <!-- Filters for Vendors -->
-      <div id="vendorFilters" class="flex flex-col sm:flex-row sm:items-center gap-2 sm:ml-auto w-full sm:w-auto">
-        <select id="fCategory" class="w-full sm:w-44 rounded-md border px-2 py-2 text-sm dark:bg-slate-950 dark:border-slate-800">
-          <option value="">{All}</option>
-        </select>
-        <select id="fDistrict" class="w-full sm:w-44 rounded-md border px-2 py-2 text-sm dark:bg-slate-950 dark:border-slate-800">
-          <option value="">{All}</option>
-        </select>
-        <input id="fSearch" class="w-full sm:w-60 rounded-md border px-3 py-2 text-sm dark:bg-slate-950 dark:border-slate-800" data-i18n-placeholder="search_ph" />
-      </div>
+  <main class="max-w-5xl mx-auto p-4 space-y-6">
+    <!-- Buttons -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <a href="feed.html" class="btn btn-primary text-center text-lg">🥬 <span data-i18n="feed">Feed Dealers</span></a>
+      <a href="medicine.html" class="btn btn-primary text-center text-lg">💊 <span data-i18n="medicine">Medicine</span></a>
+      <a href="technicians.html" class="btn btn-primary text-center text-lg">👨‍🔧 <span data-i18n="technicians">Technicians</span></a>
     </div>
 
-    <!-- Vendors (compact: Name + Mobile only) -->
-    <section id="v-vendors" class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
-      <div class="overflow-x-hidden">
-        <table class="w-full text-sm" id="dealersTable">
-          <thead>
-            <tr class="border-b dark:border-slate-800 text-slate-500">
-              <th class="text-left py-2 pr-4" data-i18n="th_name"></th>
-              <th class="text-left py-2 pr-0" data-i18n="th_mobile"></th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+    <!-- Ads Section -->
+    <section class="space-y-6">
+      <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border">
+        <h2 class="font-semibold text-lg">🥬 <span data-i18n="feed_info">Feed Dealers</span></h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300" data-i18n="feed_desc">
+          Top quality shrimp and fish feed available across Andhra Pradesh & Tamil Nadu. 
+          / ఆంధ్రప్రదేశ్ & తమిళనాడు అంతటా ఉన్నతమైన రొయ్యల ఫీడ్ లభ్యం.
+        </p>
       </div>
-    </section>
-
-    <!-- Prawn Culture -->
-    <section id="v-culture" class="hidden rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border border-slate-200/60 dark:border-slate-800">
-      <h3 class="font-semibold text-lg mb-3" data-i18n="culture_title"></h3>
-      <div class="divide-y divide-slate-200 dark:divide-slate-800">
-        <details class="py-3" open>
-          <summary class="cursor-pointer font-medium" data-i18n="c_pond_title"></summary>
-          <ul class="list-disc pl-6 mt-2 text-sm leading-relaxed" id="c_pond_list"></ul>
-        </details>
-        <details class="py-3">
-          <summary class="cursor-pointer font-medium" data-i18n="c_stock_title"></summary>
-          <ul class="list-disc pl-6 mt-2 text-sm" id="c_stock_list"></ul>
-        </details>
-        <details class="py-3">
-          <summary class="cursor-pointer font-medium" data-i18n="c_water_title"></summary>
-          <ul class="list-disc pl-6 mt-2 text-sm" id="c_water_list"></ul>
-        </details>
-        <details class="py-3">
-          <summary class="cursor-pointer font-medium" data-i18n="c_health_title"></summary>
-          <ul class="list-disc pl-6 mt-2 text-sm" id="c_health_list"></ul>
-        </details>
-        <details class="py-3">
-          <summary class="cursor-pointer font-medium" data-i18n="c_harvest_title"></summary>
-          <ul class="list-disc pl-6 mt-2 text-sm" id="c_harvest_list"></ul>
-        </details>
+      <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border">
+        <h2 class="font-semibold text-lg">💊 <span data-i18n="medicine_info">Medicine</span></h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300" data-i18n="medicine_desc">
+          Effective aquaculture medicines and probiotics. 
+          / సమర్థవంతమైన ఆక్వా మెడిసిన్స్ మరియు ప్రోబయోటిక్స్.
+        </p>
+      </div>
+      <div class="rounded-2xl p-4 bg-white dark:bg-slate-900 shadow-soft border">
+        <h2 class="font-semibold text-lg">👨‍🔧 <span data-i18n="technicians_info">Technicians</span></h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300" data-i18n="technicians_desc">
+          Experienced technicians for pond setup, water testing and culture guidance. 
+          / కొలను సెట్‌అప్, నీటి పరీక్షలు మరియు కల్చర్ గైడెన్స్ కోసం అనుభవజ్ఞులైన టెక్నీషియన్స్.
+        </p>
       </div>
     </section>
   </main>
 
   <script>
-    /* ---------------- i18n ---------------- */
-    const dict = {
-      en:{
-        title:"Aquaculture A–Z", subtitle:"Vendors & Culture", back_home:"Back",
-        vendors:"Vendors", culture:"Prawn Culture",
-        th_name:"Name", th_mobile:"Mobile",
-        search_ph:"Search name or number…",
-        // culture
-        culture_title:"Prawn Culture – Quick Guides",
-        c_pond_title:"Pond Preparation (7–10 days)",
-        c_pond_list:[
-          "Dry pond bed; lime as per soil pH (6.5–8.5 target).",
-          "Fill water 3–4 ft; chlorinate if needed; dechlorinate after 48 hrs.",
-          "Probiotics pre-stock; check salinity, alkalinity, hardness."
-        ],
-        c_stock_title:"Stocking (Vannamei SPF PL)",
-        c_stock_list:[
-          "Acclimatize PL (temp/salinity) for 45–60 min.",
-          "Density per practice (e.g., 40–60/m² intensive).",
-          "Start feed @ 4–5% biomass; adjust by tray observations."
-        ],
-        c_water_title:"Daily Water Quality",
-        c_water_list:[
-          "DO > 5 mg/L (night aeration 8pm–3am if shallow).",
-          "pH 7.5–8.2 (check morning/evening).",
-          "Transparency 25–35 cm; stable golden/brown color."
-        ],
-        c_health_title:"Health & Disease",
-        c_health_list:[
-          "Vibriosis prevention: regular probiotics, avoid overfeeding.",
-          "Lab checks weekly; histology if stress signs.",
-          "Biosecurity: bird fencing, foot dips, sanitize gear."
-        ],
-        c_harvest_title:"Harvest & Post-Harvest",
-        c_harvest_list:[
-          "Plan ice & van logistics (use Harvest calculators).",
-          "Clean ice; rapid chilling; avoid freshwater wash in saline species."
-        ]
-      },
-      te:{
-        title:"Aquaculture A–Z", subtitle:"వెండర్లు & కల్చర్", back_home:"తిరుగు",
-        vendors:"వెండర్లు", culture:"ప్రాన్ కల్చర్",
-        th_name:"పేరు", th_mobile:"మొబైల్",
-        search_ph:"పేరు లేదా నంబరు సెర్చ్…",
-        culture_title:"ప్రాన్ కల్చర్ – క్విక్ గైడ్స్",
-        c_pond_title:"పాండ్ ప్రిపరేషన్ (7–10 రోజులు)",
-        c_pond_list:[
-          "పాండ్ బెడ్ ఎండబెట్టి, మట్టి pH ప్రకారం లైమ్ (లక్ష్యం 6.5–8.5).",
-          "నీళ్లు 3–4 అడుగులు; అవసరమైతే క్లోరిన్, 48గం. తర్వాత డీక్లోరిన్.",
-          "స్టాకింగ్ ముందు ప్రోబయోటిక్స్; సాలినిటీ/ఆల్కలినిటీ/హార్డ్నెస్ చెక్."
-        ],
-        c_stock_title:"స్టాకింగ్ (వన్నామీ SPF PL)",
-        c_stock_list:[
-          "PL ను టెంప్/సాలినిటీకి 45–60 నిమిషాలు అలవాటు చేయండి.",
-          "డెన్సిటీ స్థానిక పద్ధతి ప్రకారం (40–60/చ.మీ – ఇంటెన్సివ్).",
-          "ఫీడ్ బయోమాస్ 4–5% తో మొదలు; ట్రే అబ్జర్వేషన్ బట్టి మార్చండి."
-        ],
-        c_water_title:"రోజువారీ నీటి గుణాలు",
-        c_water_list:[
-          "DO > 5 mg/L (చిన్న లోతు ponds లో రాత్రి 8–3 ఎరేషన్).",
-          "pH 7.5–8.2 (ఉదయం/సాయంత్రం చెక్).",
-          "ట్రాన్స్‌పరెన్సీ 25–35 సెం.మీ; గోల్డెన్/బ్రౌన్ కలర్ స్థిరంగా ఉండాలి."
-        ],
-        c_health_title:"హెల్త్ & డిసీజ్",
-        c_health_list:[
-          "విబ్రియోసిస్ నివారణ: రెగ్యులర్ ప్రోబయోటిక్స్, ఓవర్‌ఫీడింగ్ వద్దు.",
-          "ప్రతి వారం ల్యాబ్ చెక్; స్ట్రెస్ లక్షణాలైతే హిస్టాలజీ.",
-          "బయోసెక్యూరిటీ: పక్షి జాలర్లు, ఫుట్ డిప్స్, గేర్ శుభ్రపరచడం."
-        ],
-        c_harvest_title:"హార్వెస్ట్ & పోస్ట్-హార్వెస్ట్",
-        c_harvest_list:[
-          "ఐస్ & వాన్ లాజిస్టిక్స్ ముందుగానే ప్లాన్ (హార్వెస్ట్ కెల్కులేటర్స్ ఉపయోగించండి).",
-          "శుభ్రమైన ఐస్; వేగంగా చల్లబరచడం; సాలైన్ స్పీసీస్‌కి ఫ్రెష్ వాటర్ వాష్ వద్దు."
-        ]
-      }
+    // Dark mode
+    if(localStorage.getItem("theme")==="dark"){document.documentElement.classList.add("dark");}
+    document.getElementById("themeToggle").onclick=()=>{
+      document.documentElement.classList.toggle("dark");
+      localStorage.setItem("theme",document.documentElement.classList.contains("dark")?"dark":"light");
     };
 
-    function setLangTexts(){
-      const lang = localStorage.getItem('lang') || 'te';
-      const L = dict[lang];
-      document.documentElement.lang = lang;
-      document.querySelectorAll('[data-i18n]').forEach(el=>{
-        const k = el.getAttribute('data-i18n');
-        el.textContent = L[k] ?? '';
-      });
-      const ph = document.querySelector('[data-i18n-placeholder="search_ph"]');
-      if (ph) ph.placeholder = L.search_ph;
+    // Language dict
+    const dict = {
+      en:{vendors_title:"Vendors",feed:"Feed Dealers",medicine:"Medicine",technicians:"Technicians",
+          feed_info:"Feed Dealers",feed_desc:"Top quality shrimp and fish feed available across Andhra Pradesh & Tamil Nadu.",
+          medicine_info:"Medicine",medicine_desc:"Effective aquaculture medicines and probiotics.",
+          technicians_info:"Technicians",technicians_desc:"Experienced technicians for pond setup, water testing and culture guidance."},
+      te:{vendors_title:"వెండర్లు",feed:"ఫీడ్ డీలర్లు",medicine:"మెడిసిన్",technicians:"టెక్నీషియన్స్",
+          feed_info:"ఫీడ్ డీలర్లు",feed_desc:"ఆంధ్రప్రదేశ్ & తమిళనాడు అంతటా ఉన్నతమైన రొయ్యల ఫీడ్ లభ్యం.",
+          medicine_info:"మెడిసిన్",medicine_desc:"సమర్థవంతమైన ఆక్వా మెడిసిన్స్ మరియు ప్రోబయోటిక్స్.",
+          technicians_info:"టెక్నీషియన్స్",technicians_desc:"కొలను సెట్‌అప్, నీటి పరీక్షలు మరియు కల్చర్ గైడెన్స్ కోసం అనుభవజ్ఞులైన టెక్నీషియన్స్."}
+    };
 
-      // culture lists fill
-      const fill = (id, arr)=>{ const ul=document.getElementById(id); if(!ul) return; ul.innerHTML = (arr||[]).map(x=>`<li>${x}</li>`).join(''); };
-      fill('c_pond_list',L.c_pond_list); fill('c_stock_list',L.c_stock_list);
-      fill('c_water_list',L.c_water_list); fill('c_health_list',L.c_health_list);
-      fill('c_harvest_list',L.c_harvest_list);
-    }
-
-    // Theme
-    const themeToggle = document.getElementById('themeToggle');
-    const savedTheme = localStorage.getItem('theme');
-    if(savedTheme==='dark'||(!savedTheme&&matchMedia('(prefers-color-scheme: dark)').matches)){
-      document.documentElement.classList.add('dark');
-    }
-    themeToggle.addEventListener('click',()=>{
-      document.documentElement.classList.toggle('dark');
-      localStorage.setItem('theme', document.documentElement.classList.contains('dark')?'dark':'light');
-    });
-
-    // Toggle Views
-    const btnVendors = document.getElementById('btnVendors');
-    const btnCulture = document.getElementById('btnCulture');
-    const secVendors = document.getElementById('v-vendors');
-    const secCulture = document.getElementById('v-culture');
-    const vendorFilters = document.getElementById('vendorFilters');
-    function showVendors(){
-      btnVendors.classList.add('bg-emerald-600','text-white');
-      btnCulture.classList.remove('bg-emerald-600','text-white');
-      btnCulture.classList.add('bg-white','dark:bg-slate-900');
-      secVendors.classList.remove('hidden'); secCulture.classList.add('hidden');
-      vendorFilters.classList.remove('hidden');
-    }
-    function showCulture(){
-      btnCulture.classList.add('bg-emerald-600','text-white');
-      btnVendors.classList.remove('bg-emerald-600','text-white');
-      btnVendors.classList.add('bg-white','dark:bg-slate-900');
-      secCulture.classList.remove('hidden'); secVendors.classList.add('hidden');
-      vendorFilters.classList.add('hidden');
-    }
-    btnVendors.addEventListener('click',showVendors);
-    btnCulture.addEventListener('click',showCulture);
-
-    // Vendors data + filters
-    const fCategory = document.getElementById('fCategory');
-    const fDistrict = document.getElementById('fDistrict');
-    const fSearch   = document.getElementById('fSearch');
-    const tbody     = document.querySelector('#dealersTable tbody');
-
-    const demoRows = [
-      {name:'Sri Venkateswara Feeds',cat:'Feeds',district:'Nellore',phone:'+91 98765 43210',wa:'+919876543210'},
-      {name:'Blue Aqua Hatchery',cat:'Seeds',district:'Nellore',phone:'+91 91234 56780',wa:'+919123456780'},
-      {name:'Godavari Aqua Care',cat:'Medicines',district:'East Godavari',phone:'+91 90000 11122',wa:'+919000011122'},
-      {name:'Krishna Aqua Mart',cat:'Supplies',district:'Krishna',phone:'+91 90123 45678',wa:'+919012345678'}
-    ];
-    let rows = [];
-
-    async function loadDealers(){
-      try{
-        const res = await fetch('./dealers.csv',{cache:'no-store'});
-        if(!res.ok) throw new Error('no csv');
-        const text = await res.text();
-        const lines = text.trim().split(/\r?\n/);
-        const h = lines[0].split(',').map(s=>s.trim().toLowerCase());
-        const iN=h.indexOf('name'), iC=h.indexOf('category'), iD=h.indexOf('district'), iP=h.indexOf('phone'), iW=h.indexOf('whatsapp');
-        rows = lines.slice(1).map(r=>{ const c=r.split(','); return {name:c[iN],cat:c[iC],district:c[iD],phone:c[iP],wa:c[iW]}; })
-                      .filter(r=>r && r.name);
-      }catch(e){ rows = demoRows; }
-      buildFilters(); draw();
-    }
-
-    function uniqSorted(arr){ return Array.from(new Set(arr.filter(Boolean))).sort((a,b)=>a.localeCompare(b)); }
-    function buildFilters(){
-      const cats = uniqSorted(rows.map(r=>r.cat));
-      const dists = uniqSorted(rows.map(r=>r.district));
-      fCategory.innerHTML = `<option value="">${dict[localStorage.getItem('lang')||'te'].vendors || 'Vendors'} – All</option>` + cats.map(c=>`<option>${c}</option>`).join('');
-      fDistrict.innerHTML = `<option value="">All</option>` + dists.map(d=>`<option>${d}</option>`).join('');
-    }
-
-    function normDigits(s){ return (s||'').replace(/[^\d]/g,''); }
-    function draw(){
-      const cat = fCategory.value||'';
-      const dist= fDistrict.value||'';
-      const term= (fSearch.value||'').toLowerCase();
-      const digits = normDigits(term);
-
-      const filtered = rows.filter(r=>{
-        if(cat && r.cat!==cat) return false;
-        if(dist && r.district!==dist) return false;
-        if(!term) return true;
-        return r.name.toLowerCase().includes(term) || (!!digits && normDigits(r.phone).includes(digits));
-      });
-
-      tbody.innerHTML = '';
-      filtered.forEach(d=>{
-        const tr=document.createElement('tr'); tr.className='border-b last:border-0 dark:border-slate-800';
-        const phone=(d.phone||'').trim();
-        tr.innerHTML = `
-          <td class="py-2 pr-4">${d.name}</td>
-          <td class="py-2 pr-0"><a class="underline" href="tel:${phone}">${phone}</a></td>`;
-        tbody.appendChild(tr);
+    function applyI18n(){
+      const lang=localStorage.getItem("lang")||"te";
+      document.querySelectorAll("[data-i18n]").forEach(el=>{
+        const key=el.dataset.i18n;
+        if(dict[lang][key]) el.textContent=dict[lang][key];
       });
     }
-
-    [fCategory,fDistrict].forEach(el=>el.addEventListener('change',draw));
-    fSearch.addEventListener('input',draw);
-
-    // Lang buttons
-    document.getElementById('langEN').addEventListener('click',()=>{localStorage.setItem('lang','en'); setLangTexts(); buildFilters(); draw();});
-    document.getElementById('langTE').addEventListener('click',()=>{localStorage.setItem('lang','te'); setLangTexts(); buildFilters(); draw();});
-
-    // INIT
-    (function init(){
-      if(!localStorage.getItem('lang')) localStorage.setItem('lang','te');
-      setLangTexts(); showVendors(); loadDealers();
-    })();
+    applyI18n();
   </script>
 </body>
 </html>
