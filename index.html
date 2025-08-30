@@ -43,17 +43,27 @@
 <body class="text-slate-900 dark:text-slate-100">
   <!-- Header -->
   <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center">
-      <!-- Logo -->
-      <div class="h-9 w-9 mr-1 relative">
-        <img src="assets/logo.png" alt="Logo" class="h-9 w-9 object-contain block dark:hidden">
-        <img src="assets/logo-dark.png" alt="Logo" class="h-9 w-9 object-contain hidden dark:block">
-      </div>
-      <!-- Titles -->
-      <h1 class="text-xl font-bold hidden sm:inline">Aquaculture A–Z</h1>
-      <h1 class="text-xl font-bold sm:hidden mr-14 sm:mr-0">Aquaa A–Z</h1>
+    	<!-- Logo + Titles (drop-in replace for your current block) -->
+<div class="max-w-7xl mx-auto px-4 py-3 flex items-center">
+  <!-- Logo: swap by theme -->
+  <div class="h-9 w-9 mr-1 relative">
+    <!-- Light mode logo -->
+    <img src="assets/logo.png" alt="Logo" class="h-9 w-9 object-contain block dark:hidden">
+    <!-- Dark mode logo (black background version) -->
+    <img src="assets/logo-dark.png" alt="Logo" class="h-9 w-9 object-contain hidden dark:block">
+  </div>
 
-      <!-- Desktop nav -->
+  <!-- Desktop title -->
+  <h1 class="text-xl font-bold hidden sm:inline">Aquaculture A–Z</h1>
+  <!-- Mobile title with extra gap -->
+  <h1 class="text-xl font-bold sm:hidden mr-14 sm:mr-0">Aquaa A–Z</h1>
+
+
+
+
+
+
+      <!-- Desktop nav: Home, Harvest, Seeds, Dealers, Shrimp, Contact -->
       <nav class="hidden sm:flex gap-2 flex-1 justify-center">
         <a href="index.html"   class="navbtn">🏠 <span data-i18n="m_home">Home</span></a>
         <a href="harvest.html" class="navbtn">🚚 <span data-i18n="t_harvest">Harvest</span></a>
@@ -77,7 +87,7 @@
 
   <main class="max-w-7xl mx-auto p-3 sm:p-4 space-y-4 pb-24 sm:pb-4">
 
-    <!-- Mobile quick nav -->
+    <!-- MOBILE ONLY: move Harvest / Seeds / Dealers ABOVE Flash News -->
     <div class="flex sm:hidden gap-2 justify-around">
       <a href="harvest.html" class="navbtn flex-1 text-center">🚚 <span data-i18n="t_harvest">Harvest</span></a>
       <a href="seeds.html"   class="navbtn flex-1 text-center">🦐 <span data-i18n="t_seeds">Seeds</span></a>
@@ -103,19 +113,29 @@
           <p class="text-xs text-slate-500"><span data-i18n="updated">అప్‌డేట్</span>: <span id="updatedAt">—</span></p>
         </div>
 
+        <!-- header row for Type aligned under PRICE. We nudge select a little LEFT -->
         <div class="mt-2 overflow-x-auto">
           <table class="min-w-full text-sm">
             <thead>
               <tr>
                 <th class="text-left py-1 pr-4"><span data-i18n="lbl_type">రకం</span></th>
-                <!-- ✅ Fix: Label + Dropdown stacked neatly -->
                 <th class="text-left py-1 pr-4">
-                  <div class="flex flex-col items-start">
-                    <span data-i18n="th_price">ధర (₹/kg)</span>
-                    <select id="prawnType" class="mt-1 text-sm border rounded-md px-2 py-1 dark:bg-slate-800 dark:border-slate-600"></select>
-                  </div>
+                  <!-- the -ml-2 nudges the dropdown to the LEFT to sit under the Price header neatly -->
+                  <select id="prawnType" class="text-sm border rounded-md px-2 py-1 dark:bg-slate-800 dark:border-slate-600 -ml-2"></select>
                 </th>
-                <th class="text-left py-1 pr-4" data-i18n="th_change">మార్పు</th>
+                <th></th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm" id="ratesTable">
+            <thead>
+              <tr class="border-b dark:border-slate-800 text-slate-500">
+                <th class="text-left py-2 pr-4" data-i18n="th_count">కౌంట్</th>
+                <th class="text-left py-2 pr-4" data-i18n="th_price">ధర (₹/kg)</th>
+                <th class="text-left py-2 pr-4" data-i18n="th_change">మార్పు</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -247,4 +267,60 @@
 
     const NEWS={
       en:[{tag:'Rates',text:'50c steady across coastal AP'},{tag:'Seed',text:'Batch 1 PL open this week'},{tag:'Harvest',text:'Night DO risk; add aeration 8pm–3am'},{tag:'Market',text:'Ice ₹1200/ton in Nellore'}],
-      te:[{tag:'రేట్స్',text:'50 కౌంట్ ధర స్థిరంగా ఉంది'},{tag:'సీడ్స్',text:'బ్యాచ్ 1 PL ఈ వారం ఓపెన్'},{tag:'హార్వెస్ట్',text:'రాత్రి DO రిస్క్ — 8pm–3am ఎయరేషన్ పె
+      te:[{tag:'రేట్స్',text:'50 కౌంట్ ధర స్థిరంగా ఉంది'},{tag:'సీడ్స్',text:'బ్యాచ్ 1 PL ఈ వారం ఓపెన్'},{tag:'హార్వెస్ట్',text:'రాత్రి DO రిస్క్ — 8pm–3am ఎయరేషన్ పెంచండి'},{tag:'మార్కెట్',text:'నెల్లూరు ఐస్ ₹1200/టన్'}]
+    };
+    function loadNews(){
+      const track=$id('newsTrackTop');
+      const lang=localStorage.getItem('lang')||'te';
+      const chip=(t,b=false)=>`<span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200 text-[11px] ${b?'blink':''}">${t}</span>`;
+      const isHarvest=t=>String(t||'').toLowerCase().includes('harvest')||String(t).includes('హార్వెస్ట్');
+      const row=NEWS[lang].map(n=>`<div class="flex items-center gap-2 pr-4">${chip(n.tag,isHarvest(n.tag))}<span>${n.text}</span></div>`).join('');
+      track.innerHTML=row+row+row;
+      $id('newsUpdatedTop').textContent=new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
+    }
+
+    let PROMOS=[], promoIdx=0, promoTimer=null;
+    function renderPromo(){
+      const track=$id('promoTrack'), dots=$id('promoDots');
+      const lang=localStorage.getItem('lang')||'te';
+      if(!PROMOS.length){
+        PROMOS=[
+          {badge:'Fresh PL',title_en:'Seeds — Batch 1 Open',title_te:'సీడ్స్ — బ్యాచ్ 1 ఓపెన్',desc_en:'Vannamei SPF PL. 30% bonus',desc_te:'వన్నామీ SPF PL. 30% బోనస్'}
+        ];
+      }
+      track.innerHTML = PROMOS.map((r,i)=>`
+        <div class="promo-slide rounded-xl p-4 bg-blue-50 dark:bg-slate-800/40 ${i===promoIdx?'active':''}">
+          ${r.badge?`<span class="inline-block text-xs px-3 py-1 rounded-full bg-sky-200/70 text-sky-900">${r.badge}</span>`:''}
+          <h4 class="mt-3 text-lg font-semibold">${lang==='te'?(r.title_te||r.title_en):(r.title_en||r.title_te)}</h4>
+          <p class="text-slate-600 dark:text-slate-300">${lang==='te'?(r.desc_te||r.desc_en):(r.desc_en||r.desc_te)}</p>
+        </div>`).join('');
+      dots.innerHTML = PROMOS.map((_,i)=>`<button class="promo-dot ${i===promoIdx?'active':''}" data-i="${i}"></button>`).join('');
+      dots.querySelectorAll('button').forEach(b=>b.onclick=()=>{promoIdx=+b.dataset.i;renderPromo();startPromo();});
+    }
+    function startPromo(){ if(promoTimer) clearInterval(promoTimer); promoTimer=setInterval(()=>{promoIdx=(promoIdx+1)%PROMOS.length;renderPromo();},6000); }
+
+    document.addEventListener('DOMContentLoaded',async()=>{
+      if(!localStorage.getItem('lang')) localStorage.setItem('lang','te');
+      applyI18n();
+
+      $id('langSel').addEventListener('change',e=>{
+        localStorage.setItem('lang', e.target.value);
+        applyI18n(); fillTypeOptions(); renderRates($id('prawnType').value); loadNews(); renderPromo();
+      });
+
+      fillTypeOptions();
+      const sel=$id('prawnType'); if(!sel.value) sel.value='Vannamei';
+      sel.onchange=()=>renderRates(sel.value);
+      renderRates(sel.value);
+
+      loadNews();
+      const csv = await loadCSV('./data/promotions.csv');
+      if(csv && csv.length){
+        PROMOS = csv.filter(r=>(r.slot||'').toLowerCase()==='slide')
+                    .sort((a,b)=>(+a.order||0)-(+b.order||0));
+      }
+      renderPromo(); startPromo();
+    });
+  </script>
+</body>
+</html>
